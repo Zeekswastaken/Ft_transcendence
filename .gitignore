@@ -1,3 +1,4 @@
 backend/node_modules/
 backend/pgdata/
 frontend/node_modules/
+frontend/.next/
