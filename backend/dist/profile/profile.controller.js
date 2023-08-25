@@ -18,20 +18,35 @@ const jwt_service_1 = require("../auth/jwt.service");
 const user_service_1 = require("../user/user.service");
 const profile_service_1 = require("./profile.service");
 const passwordChecker_1 = require("../utils/passwordChecker");
+const friends_service_1 = require("../friends/friends.service");
 let ProfileController = class ProfileController {
-    constructor(userservice, profileService, jwt) {
+    constructor(userservice, profileService, friendsService, jwt) {
         this.userservice = userservice;
         this.profileService = profileService;
+        this.friendsService = friendsService;
         this.jwt = jwt;
     }
     async display(username, res) {
-        console.log(username);
-        const user = await this.profileService.findByName(username);
-        if (user) {
-            console.log(user.stats);
-            delete user.password;
+        try {
+            console.log(username);
+            const user = await this.profileService.findByName(username);
+            if (user) {
+                console.log(user.stats);
+                delete user.password;
+                console.log("-------- ", user.id);
+                const details = await this.friendsService.getUserFriends(user.id);
+                console.log(details);
+                const info = {
+                    user: user,
+                    friends: details
+                };
+                res.send(info);
+            }
         }
-        res.send(user);
+        catch (error) {
+            console.error('Error getting the friends of the user: ', error.message);
+            throw error;
+        }
     }
     async update(Body, res, id) {
         console.log("\n\n\n\n\n\nFKJDFKJDSKGDSKHGD\n\n\n\n\n\n\n\n");
@@ -96,6 +111,6 @@ __decorate([
 ], ProfileController.prototype, "update", null);
 exports.ProfileController = ProfileController = __decorate([
     (0, common_1.Controller)('profile'),
-    __metadata("design:paramtypes", [user_service_1.UserService, profile_service_1.ProfileService, jwt_service_1.JWToken])
+    __metadata("design:paramtypes", [user_service_1.UserService, profile_service_1.ProfileService, friends_service_1.FriendsService, jwt_service_1.JWToken])
 ], ProfileController);
 //# sourceMappingURL=profile.controller.js.map

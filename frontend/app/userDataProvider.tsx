@@ -8,20 +8,28 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { JsxEmit } from "typescript";
 
 type userData = {
-  id:number
-  username: string
-  Bio: string
-  avatar_url: string
-  birthDay:string
-  gender:string
-  privacy:boolean
-  stats:{
-    matches_played:number
-    losses:number
-    wins:number
-    winrate:number
-    level: number
+  user: {
+    id:number
+    username: string
+    Bio: string
+    avatar_url: string
+    birthDay:string
+    gender:string
+    privacy:boolean
+    stats:{
+      matches_played:number
+      losses:number
+      wins:number
+      winrate:number
+      level: number
+    }
   }
+  friends: Array<{
+    id:number
+    username: string
+    avatar_url: string
+  }>
+  
 }
 
 
@@ -56,7 +64,6 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
     })
     
   }, [User])
-
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setUserData(user));

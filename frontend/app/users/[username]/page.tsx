@@ -25,7 +25,7 @@ const progress: CSS.Properties = {
 }
 
 const LevelReached: React.FC<Props> = ({ styles, title }) => {
-  const userData = useUserDataContext();
+  const userData = useUserDataContext()?.user;
   return (
     <div
       className={` animate-fade-right  glass overflow-auto no-scrollbar h-[350px] ${styles}`}
@@ -55,7 +55,7 @@ const CardStats:React.FC<Props> = ( {styles, title, number} ) => {
 }
 
 const WinRate: React.FC<Props> = ({ styles, title }) => {
-  const userData = useUserDataContext();
+  const userData = useUserDataContext()?.user;
   return (
     <div
       className={` glass animate-fade-right animate-delay-150 ${styles}`}

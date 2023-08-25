@@ -100,7 +100,7 @@ const Settings = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [bio, setBio] = useState("");
-  const userData = useUserDataContext();
+  const userData = useUserDataContext()?.user;
 
   return (
     <div className=" border-2 mt-10 border-primary-pink-300 rounded-[20px]">
@@ -151,7 +151,6 @@ const Settings = () => {
                     </label>
                     <textarea
                       onChange={e => setBio(e.target.value)}
-                      value={bio}
                       rows={3}
                       name="comment"
                       id="comment"

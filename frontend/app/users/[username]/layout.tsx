@@ -8,6 +8,7 @@ import { getCookie } from "cookies-next";
 import axios from "axios";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useUserDataContext } from "../../userDataProvider";
+import { io } from "socket.io-client";
 import { useAppSelector } from "@/redux/hooks";
 
 interface Props {
@@ -53,7 +54,7 @@ export default function RootLayout({
 }) {
   const User = useParams().username;
   const [currentUsername, setCurrentUsername] = useState<string>("");
-  const userData = useUserDataContext();
+  const userData = useUserDataContext()?.user ;
   // const userData = useAppSelector((state) => state.userDataReducer.value)
   const token = getCookie("accessToken");
   useEffect(() => {
@@ -87,7 +88,6 @@ export default function RootLayout({
   const handleAddFriend = () => {
     setIsClicked(!isClicked);
   };
-  const avatar = "bg-[url('" + userData?.avatar_url + "')]";
   return (
     <div className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat h-screen overflow-y-scroll no-scrollbar w-full">
         <div className=" 2xl:mt-[270px] lg:mt-[160px] mt-[50px] min-w-[400px] overflow-y-scroll w-full h-[75vh] no-scrollbar ">
@@ -184,7 +184,7 @@ export default function RootLayout({
                   ) : ("")}
                   { currentUsername !== User && isFriend ? (
                     <div className=" mt-20 flex space-x-5">
-                      <SetButtonText styles="text-white font-Bomb text-xl px-5 pt-2 pb-1 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300 w-[135px]" initialText="Friends" newText="ADD Friend" />
+                      <SetButtonText styles="text-white font-Bomb text-xl px-5 pt-2 pb-1 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300 w-[135px]" initialText="Friends" newText="Add Friend" />
                       <button className=" text-white font-Bomb text-xl px-5 pt-3 pb-2 rounded-2xl bg-[#AF0D63] hover:text-gray-100 hover:bg-[#cd237e] shadow-inner duration-300 w-[135px]">
                         Message
                       </button>

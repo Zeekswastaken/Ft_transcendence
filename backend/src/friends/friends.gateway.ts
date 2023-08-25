@@ -21,11 +21,11 @@ export class FriendsGateway {
       const request = await this.friendsService.create(data.userID, data.recipientID);
       console.log("}}}}}}}}}}");
       try {
-        const message = "It has been sent";
-        client.emit('friendRequest', request);
+        const message = "The friend request has been sent";
+        client.emit('message', message);
       } catch (error) {
         console.error('Error emitting friendRequest event: ', error.message);
-      }      console.log("{{{{{{{{{{{{{{{{");
+      } 
       return request;
     } catch (error)
     {
@@ -47,7 +47,9 @@ export class FriendsGateway {
       console.log("-------> user ");
       console.log("-------> user ", data.userID); 
       console.log("-------> recipient ", data.recipientID);
-    return await this.friendsService.acceptRequest(data.userID, data.recipientID);
+      await this.friendsService.acceptRequest(data.userID, data.recipientID);
+      const message = "The friend request has been accepted";
+      client.emit('message', message);
     } catch (error)
     {
       console.error('Error accepting the friend request: ',error.message);
@@ -59,7 +61,9 @@ export class FriendsGateway {
   @SubscribeMessage('denyFriendRequest')
   async deny(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try {
-    return await this.friendsService.refuseRequest(data.userID, data.recipientID);
+    const test =  await this.friendsService.refuseRequest(data.userID, data.recipientID);
+    const message = "The friend request has been refused";
+    client.emit('message', message);
     }  catch (error)
     {
       console.error('Error refusing the friend request: ',error.message);
@@ -71,24 +75,12 @@ export class FriendsGateway {
   @SubscribeMessage('Unfriend')
   remove(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
-      return this.friendsService.removeFriendship(data.userID, data.recipientID);
+       this.friendsService.removeFriendship(data.userID, data.recipientID);
+       const message = "Unfriended successfully";
+       client.emit('message', message);
     } catch (error)
     {
       console.error('Error unfriending the user: ',error.message);
-      client.emit('error', error.message);
-      throw error;
-    }
-  }
-
-  @SubscribeMessage('getAllFriends')
-  async getAll(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
-    try{
-        const details = await this.friendsService.getUserFriends(data.userID);
-        console.log(details);
-        return details;
-    } catch (error)
-    {
-      console.error('Error getting the friends of the user: ',error.message);
       client.emit('error', error.message);
       throw error;
     }
@@ -98,7 +90,7 @@ export class FriendsGateway {
   async check(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
       const isfriend = await this.friendsService.isFriend(data.userID, data.recipientID);
-      return isfriend;
+      client.emit('isfriend' ,isfriend);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
@@ -111,7 +103,7 @@ export class FriendsGateway {
   async checkPend(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
       const isfriend = await this.friendsService.isPending(data.userID, data.recipientID);
-      return isfriend;
+      client.emit('ispending' ,isfriend);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);

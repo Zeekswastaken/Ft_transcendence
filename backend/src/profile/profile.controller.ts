@@ -6,21 +6,35 @@ import { JWToken } from 'src/auth/jwt.service';
 import { UserService } from 'src/user/user.service';
 import { ProfileService } from './profile.service';
 import { checkPasswordStrength } from 'src/utils/passwordChecker';
+import { FriendsService } from 'src/friends/friends.service';
 
 @Controller('profile')
 export class ProfileController {
-    constructor (private readonly userservice:UserService,private readonly profileService:ProfileService,private readonly jwt:JWToken){}
+    constructor (private readonly userservice:UserService,private readonly profileService:ProfileService, private readonly friendsService: FriendsService ,private readonly jwt:JWToken){}
 
     @Get(':username')
     async display(@Param('username') username:String,@Res() res){
+        try{
         console.log(username);
         const user = await this.profileService.findByName(username);
         if (user)
         {
             console.log(user.stats);
             delete user.password;
+            console.log("-------- ", user.id);
+            const details = await this.friendsService.getUserFriends(user.id);
+            console.log(details);
+            const info = {
+                user:user, 
+                friends:details
+            }
+            res.send(info);
         }
-        res.send(user);
+        } catch (error)
+        {
+            console.error('Error getting the friends of the user: ',error.message);
+            throw error;
+        }
     }
     @Put('update/:id')
     async update(@Body() Body:Partial<User>,@Res() res,@Param('id') id:number){

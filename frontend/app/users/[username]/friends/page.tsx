@@ -8,15 +8,17 @@ import Link from "next/link";
 
 type Props = {
   styles: string;
+  username: string;
+  avatar_url?: string;
 }
 
-const FriendCard = ( {styles}:Props ) => {
+const FriendCard = ( {styles, username, avatar_url}:Props ) => {
 
   const [isFriend, setIsFriend] = useState(true);
 
-  const unFriend = (e: MouseEvent) => {
-    setIsFriend(false);
-  }
+  // const unFriend = (e: MouseEvent) => {
+  //   setIsFriend(false);
+  // }
 
   return (
     <>
@@ -25,14 +27,14 @@ const FriendCard = ( {styles}:Props ) => {
           <div className=" flex justify-between space-x-2 items-center">
             <div className=" flex space-x-5">
               <img
-                src="/Spectate.png"
+                src={avatar_url}
                 height={50}
                 width={50}
                 alt="avatar"
                 className=" rounded-2xl"
               />
               <div>
-                <Link href={"/user/Dwight"} className=" font-Heading text-[#EEEEEE] text-xl">Dwight</Link>
+                <Link href={`/users/${username}`} className=" font-Heading text-[#EEEEEE] text-xl">{username}</Link>
                 <p className=" text-[#B4B4B4] text-xs">3 mutual friends</p>
               </div>
             </div>
@@ -117,7 +119,9 @@ const Friends = () => {
     setFriends(false);
   };
 
-  const userData = useUserDataContext();
+  const Data = useUserDataContext();
+  const userData = Data?.user;
+  const userFriends = Data?.friends;
   const [currentUsername, setCurrentUsername] = useState<string>("");
 
   useEffect(() => {
@@ -155,10 +159,9 @@ const Friends = () => {
             </div>
             {friends && !blocked ? (
               <div className=" animate-fade-left overflow-y-auto pb-10 no-scrollbar max-h-[450px] rounded-xl mx-2  2xl:mx-10 mt-8 grid  grid-cols-1 xl:grid-cols-2 gap-4 ">
-                <FriendCard styles=""/>
-                <FriendCard styles=""/>
-                <FriendCard styles=""/>
-
+                {userFriends?.map((friend) => {
+                  return <FriendCard key={friend.id} styles="" username={friend.username} avatar_url={friend.avatar_url} />
+                })}
               </div>
             ) : (
               <div className=" animate-fade-right overflow-y-auto no-scrollbar max-h-[450px] rounded-xl mx-2 2xl:mx-10 mt-8 grid  grid-cols-1 xl:grid-cols-2 gap-4 ">
