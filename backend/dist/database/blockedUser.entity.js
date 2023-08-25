@@ -18,17 +18,17 @@ exports.BlockedUser = BlockedUser;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], BlockedUser.prototype, "BlockedId", void 0);
+], BlockedUser.prototype, "Blockedid", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.blockedUsers),
     (0, typeorm_1.JoinColumn)({ name: 'BlockedById' }),
     __metadata("design:type", user_entity_1.User)
-], BlockedUser.prototype, "blockedBy", void 0);
+], BlockedUser.prototype, "blockedby", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.usersBlocked),
     (0, typeorm_1.JoinColumn)({ name: 'BlockedUserId' }),
     __metadata("design:type", user_entity_1.User)
-], BlockedUser.prototype, "blockedUser", void 0);
+], BlockedUser.prototype, "blockeduser", void 0);
 exports.BlockedUser = BlockedUser = __decorate([
     (0, typeorm_1.Entity)()
 ], BlockedUser);

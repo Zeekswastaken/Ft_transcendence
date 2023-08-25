@@ -4,6 +4,8 @@ import { Stats } from "./stats.entity";
 import { GameInvite } from "./gameInvite.entity";
 import { Match } from "./match.entity";
 import { BlockedUser } from "./blockedUser.entity";
+import { Notification } from "./notifications.entity";
+import { UserFriends } from "./userFriends.entity";
 @Entity()
 export class User{
     @PrimaryGeneratedColumn()
@@ -24,23 +26,31 @@ export class User{
     avatar_url: String;
     @OneToMany(() => ChannelMembership, membership => membership.user, { cascade: true, onDelete: 'CASCADE' })
     memberships: ChannelMembership[];
-    @ManyToMany(() => User, user => user.friends)
-    @JoinTable({ name: 'userFriends' })
-    friends: User[];
+    @OneToMany(() => UserFriends, userFriends => userFriends.sender)
+    friendsassender: UserFriends[];
+    @OneToMany(() => UserFriends, userFriends => userFriends.receiver)
+    friendsasreceiver: UserFriends[];
+    
     @OneToOne(() => Stats, stats => stats.user)
     @JoinColumn()
-    stats: Stats ;
+    stats: Stats;
     @OneToMany(() => GameInvite, invite => invite.sender, { cascade: true, onDelete: 'CASCADE' })
-    sentInvites: GameInvite[];
+    sentinvites: GameInvite[];
     @OneToMany(() => GameInvite, invite => invite.receiver, { cascade: true, onDelete: 'CASCADE' })
-    receivedInvites: GameInvite[];
+    receivedinvites: GameInvite[];
     @OneToMany(() => Match, (matchHisory) => matchHisory.player1, { cascade: true, onDelete: 'CASCADE' })
     public player1: Match[];
     @OneToMany(() => Match, (matchHisory) => matchHisory.player2, { cascade: true, onDelete: 'CASCADE' })
     public player2: Match[];
-    @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockedBy)
+    @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockedby)
     blockedUsers: BlockedUser[]; //USERS THAT GOT BLOCKED
-    @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockedUser)
+    @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockeduser)
     usersBlocked: BlockedUser[]; //USERS THAT BLOCKED
+    @Column({ nullable: true })
+    twofactorsecret: string;
+    @Column({ default: false })
+    twofactorenabled: boolean;
+    @OneToMany(() => Notification, notification => notification.recipient)
+  receivednotifications: Notification[];
     user: Promise<String>;
 }

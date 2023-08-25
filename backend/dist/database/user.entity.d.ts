@@ -3,6 +3,8 @@ import { Stats } from "./stats.entity";
 import { GameInvite } from "./gameInvite.entity";
 import { Match } from "./match.entity";
 import { BlockedUser } from "./blockedUser.entity";
+import { Notification } from "./notifications.entity";
+import { UserFriends } from "./userFriends.entity";
 export declare class User {
     id: Number;
     username: String;
@@ -13,13 +15,17 @@ export declare class User {
     Bio: String;
     avatar_url: String;
     memberships: ChannelMembership[];
-    friends: User[];
+    friendsassender: UserFriends[];
+    friendsasreceiver: UserFriends[];
     stats: Stats;
-    sentInvites: GameInvite[];
-    receivedInvites: GameInvite[];
+    sentinvites: GameInvite[];
+    receivedinvites: GameInvite[];
     player1: Match[];
     player2: Match[];
     blockedUsers: BlockedUser[];
     usersBlocked: BlockedUser[];
+    twofactorsecret: string;
+    twofactorenabled: boolean;
+    receivednotifications: Notification[];
     user: Promise<String>;
 }

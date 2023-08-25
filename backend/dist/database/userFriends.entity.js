@@ -20,16 +20,20 @@ __decorate([
     __metadata("design:type", Number)
 ], UserFriends.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { eager: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'User1ID' }),
-    __metadata("design:type", user_entity_1.User)
-], UserFriends.prototype, "user1", void 0);
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], UserFriends.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { eager: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'User2ID' }),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.friendsassender, { eager: true, cascade: true, onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)({ name: 'senderid' }),
     __metadata("design:type", user_entity_1.User)
-], UserFriends.prototype, "user2", void 0);
+], UserFriends.prototype, "sender", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.friendsasreceiver, { eager: true, cascade: true, onDelete: 'CASCADE' }),
+    (0, typeorm_1.JoinColumn)({ name: 'receiverid' }),
+    __metadata("design:type", user_entity_1.User)
+], UserFriends.prototype, "receiver", void 0);
 exports.UserFriends = UserFriends = __decorate([
-    (0, typeorm_1.Entity)()
+    (0, typeorm_1.Entity)({ name: 'user_friends' })
 ], UserFriends);
 //# sourceMappingURL=userFriends.entity.js.map

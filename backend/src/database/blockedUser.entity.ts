@@ -3,13 +3,13 @@ import { User } from "./user.entity";
 @Entity()
 export class BlockedUser {
     @PrimaryGeneratedColumn()
-    BlockedId:Number;
+    Blockedid:Number;
     
     @ManyToOne(() => User, user => user.blockedUsers)
     @JoinColumn({ name: 'BlockedById' })
-    blockedBy: User;
+    blockedby: User;
   
     @ManyToOne(() => User, user => user.usersBlocked)
     @JoinColumn({ name: 'BlockedUserId' })
-    blockedUser: User;
+    blockeduser: User;
 };

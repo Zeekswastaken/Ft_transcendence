@@ -25,19 +25,19 @@ import { WebsocketGateway } from './chat/chat.gateway';
 import { ChatService } from './chat/chat.service';
 import { ChatModule } from './chat/chat.module';
 import { ProfileModule } from './profile/profile.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import typeorm from './config/typeorm';
+
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost', // Use the service name defined in your Docker Compose file
-      port: 5432,
-      username: 'admin',
-      password: 'pass',
-      database: 'mydb',
-      entities: [Message, Channel, User, ChannelMembership, Stats, Match, GameInvite, BlockedUser, UserFriends, Achievements],
-      logging: true,
-      synchronize: true,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [typeorm]
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => (configService.get('typeorm'))
     }),
     UserModule, AuthModule,ChannelModule,JwtModule.register({
       secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
@@ -45,7 +45,7 @@ import { ProfileModule } from './profile/profile.module';
     }), ChatModule,ProfileModule
   ],
   controllers: [AppController, UserController],
-  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService,],
+  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService],
 })
 export class AppModule {}
 

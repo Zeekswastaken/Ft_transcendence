@@ -1,16 +1,19 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity';
 
-@Entity()
+@Entity({ name: 'user_friends' })
 export class UserFriends {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: Number;
 
-  @ManyToOne(() => User, { eager: true })
-  @JoinColumn({ name: 'User1ID' })
-  user1: User;
+  @Column()
+  status: String;
 
-  @ManyToOne(() => User, { eager: true })
-  @JoinColumn({ name: 'User2ID' })
-  user2: User;
+  @ManyToOne(() => User, user => user.friendsassender, { eager: true , cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'senderid' })
+  sender: User; 
+
+  @ManyToOne(() => User, user => user.friendsasreceiver, { eager: true, cascade: true, onDelete: 'CASCADE'  })
+  @JoinColumn({ name: 'receiverid' })
+  receiver: User;
 }
