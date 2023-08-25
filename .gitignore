@@ -1,8 +1,3 @@
-node_modules/
-Model/node_modules
-Model/pgdata1
-Model/pgdata2
-Model/pgdata
-pgdata2/
-pgdata1/
-pgdata
+backend/node_modules/
+backend/pgdata/
+frontend/node_modules/
