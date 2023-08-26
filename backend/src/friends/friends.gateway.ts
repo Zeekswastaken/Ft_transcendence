@@ -16,8 +16,8 @@ export class FriendsGateway {
   @SubscribeMessage('sendFriendRequest')
   async create(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
-      console.log("---------> ", data.userID);
-      console.log("---------> ", data.recipientID);
+      console.log("------------> ", data.userID);
+      console.log("------------> ", data.recipientID);
       const request = await this.friendsService.create(data.userID, data.recipientID);
       console.log("}}}}}}}}}}");
       try {
@@ -61,6 +61,8 @@ export class FriendsGateway {
   @SubscribeMessage('denyFriendRequest')
   async deny(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try {
+      console.log("-------> user ", data.userID); 
+      console.log("-------> recipient ", data.recipientID);
     const test =  await this.friendsService.refuseRequest(data.userID, data.recipientID);
     const message = "The friend request has been refused";
     client.emit('message', message);
@@ -75,6 +77,8 @@ export class FriendsGateway {
   @SubscribeMessage('Unfriend')
   remove(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
+      console.log("-------> user ", data.userID); 
+      console.log("-------> recipient ", data.recipientID);
        this.friendsService.removeFriendship(data.userID, data.recipientID);
        const message = "Unfriended successfully";
        client.emit('message', message);
@@ -89,6 +93,8 @@ export class FriendsGateway {
   @SubscribeMessage('checkFriend')
   async check(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
+      console.log("-------> user ", data.userID); 
+      console.log("-------> recipient ", data.recipientID);
       const isfriend = await this.friendsService.isFriend(data.userID, data.recipientID);
       client.emit('isfriend' ,isfriend);
     }catch (error)
@@ -102,8 +108,11 @@ export class FriendsGateway {
   @SubscribeMessage('checkPending')
   async checkPend(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
+      console.log("checkPending-------> user ", data.userID); 
+      console.log("checkPending-------> recipient ", data.recipientID);
       const isfriend = await this.friendsService.isPending(data.userID, data.recipientID);
       client.emit('ispending' ,isfriend);
+      console.log("ispending: ", isfriend);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);

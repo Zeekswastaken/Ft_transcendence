@@ -14,6 +14,6 @@ describe('FriendsGateway', () => {
   });
 
   it('should be defined', () => {
-    expect(gateway).toBeDefined();
+    expect(gateway).toBeDefined()
   });
 });

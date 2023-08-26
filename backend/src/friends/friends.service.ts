@@ -131,7 +131,7 @@ async isFriend(userid: Number, recipientid: Number): Promise<boolean>
     return false;
 }
 
-async isPending(userid: Number, recipientid: Number): Promise<boolean>
+async isPending(userid: Number, recipientid: Number): Promise<any>
 {
   const user = await this.userRepository.findOne({
     where: { id: Equal(userid) },
@@ -148,7 +148,14 @@ async isPending(userid: Number, recipientid: Number): Promise<boolean>
     friendship.status === 'pending')
   .find(friend => friend.sender.id == recipientid || friend.receiver.id == recipientid);
   if (friends)
-    return true;
+  {
+    console.log("============= " , friends);
+    const friends2 = {
+      state: true,
+      receiver_username: friends.receiver.username
+    }
+    return friends2;
+  }
     else
     return false;
   }
