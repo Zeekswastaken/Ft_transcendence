@@ -148,9 +148,19 @@ async isPending(userid: Number, recipientid: Number): Promise<boolean>
     friendship.status === 'pending')
   .find(friend => friend.sender.id == recipientid || friend.receiver.id == recipientid);
   if (friends)
+  {
+    const check = user.friendsasreceiver
+    .concat(user.friendsassender)
+    .filter(friendship =>
+      friendship.status === 'pending')
+    .find(friend => friend.sender.id == recipientid);
+     
     return true;
+  }
     else
+    {
     return false;
+    }
   }
  
   

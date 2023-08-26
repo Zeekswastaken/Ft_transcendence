@@ -26,6 +26,7 @@ import { ChatService } from './chat/chat.service';
 import { ChatModule } from './chat/chat.module';
 import { ProfileModule } from './profile/profile.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BlockedModule } from './blocked/blocked.module';
 import typeorm from './config/typeorm';
 
 
@@ -42,7 +43,7 @@ import typeorm from './config/typeorm';
     UserModule, AuthModule,ChannelModule,JwtModule.register({
       secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
       signOptions: { expiresIn: '1h' },
-    }), ChatModule,ProfileModule
+    }), ChatModule,ProfileModule, BlockedModule
   ],
   controllers: [AppController, UserController],
   providers: [AppService,TokenGuard,JWToken,UserService,ChannelService],
