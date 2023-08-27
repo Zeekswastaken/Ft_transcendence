@@ -73,9 +73,9 @@ export class FriendsGateway {
   }
   
   @SubscribeMessage('Unfriend')
-  remove(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
+  async remove(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
-       this.friendsService.removeFriendship(data.userID, data.recipientID);
+       await this.friendsService.removeFriendship(data.userID, data.recipientID);
        const message = "Unfriended successfully";
        client.emit('message', message);
     } catch (error)

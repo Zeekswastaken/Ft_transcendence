@@ -18,36 +18,51 @@ export class BlockedGateway {
       console.log("---------> ", data.userID);
       console.log("---------> ", data.recipientID);
       const request = await this.blockedService.create(data.userID, data.recipientID);
-      try {
-        const message = "The friend request has been sent";
+        const message = "The User has been blocked";
         client.emit('message', message);
-      } catch (error) {
-        console.error('Error emitting friendRequest event: ', error.message);
-      } 
       return request;
     } catch (error)
     {
-      console.error('Error sending the friend request: ',error.message);
+      console.error('Error sending the blocking the user: ',error.message);
       client.emit('error', error.message);
       throw error;
     }
   }
 
-  @SubscribeMessage('findAllBlocked')
-  findAll() {
-    return this.blockedService.findAll();
+  @SubscribeMessage('Unblock')
+  async cancel(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
+    try {
+      await this.blockedService.unblock(data.userID, data.recipientID);
+      const message = "The user has been unblocked";
+      client.emit('message', message);
+    } catch(error){
+      console.error('Error sending unblocking the user: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
   }
 
-  @SubscribeMessage('findOneBlocked')
-  findOne(@MessageBody() id: number) {
-    return this.blockedService.findOne(id);
+  @SubscribeMessage('isBlocked')
+  async isBlocked(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
+    try {
+      const bool = await this.blockedService.isBlocked(data.userID, data.recipientID);
+      client.emit('isBlocked', bool);
+    } catch(error){
+      console.error('Error checking if the user is blocked: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
   }
 
-  @SubscribeMessage('updateBlocked')
-  update() {
-  }
-
-  @SubscribeMessage('removeBlocked')
-  remove() {
+  @SubscribeMessage('isBlocking')
+  async isBlocking(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
+    try {
+      const bool = await this.blockedService.isBlocking(data.userID, data.recipientID);
+      client.emit('isBlocking', bool);
+    } catch(error){
+      console.error('Error checking if the user is blocking you: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
   }
 }
