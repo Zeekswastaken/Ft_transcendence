@@ -26,6 +26,7 @@ export class FriendsGateway {
       } catch (error) {
         console.error('Error emitting friendRequest event: ', error.message);
       } 
+      // console.log(request)
       return request;
     } catch (error)
     {
@@ -75,15 +76,17 @@ export class FriendsGateway {
   }
   
   @SubscribeMessage('Unfriend')
-  remove(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
+  async remove(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
       console.log("-------> user ", data.userID); 
       console.log("-------> recipient ", data.recipientID);
-       this.friendsService.removeFriendship(data.userID, data.recipientID);
+      console.log("HERE I AM");
+      await this.friendsService.removeFriendship(data.userID, data.recipientID);
        const message = "Unfriended successfully";
        client.emit('message', message);
     } catch (error)
     {
+      console.log("wa33333333333333333333333333333");
       console.error('Error unfriending the user: ',error.message);
       client.emit('error', error.message);
       throw error;
@@ -111,8 +114,8 @@ export class FriendsGateway {
       console.log("checkPending-------> user ", data.userID); 
       console.log("checkPending-------> recipient ", data.recipientID);
       const isfriend = await this.friendsService.isPending(data.userID, data.recipientID);
-      client.emit('ispending' ,isfriend);
       console.log("ispending: ", isfriend);
+      client.emit('ispending' ,isfriend);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
