@@ -9,7 +9,8 @@ import { Bars3Icon, MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/o
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
-import { deleteCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const MobileLinks = ( {pathname, toGo, value}:any) => {
 	return (
@@ -31,6 +32,22 @@ const Navbar = () => {
 				<></>
 			)
 	else {
+		  // const user = useUserDataContext()
+		  const [user, setUser] = useState<JwtPayload>()
+  
+		  const token = getCookie("accessToken");
+		  useEffect(() => {
+			try {
+			  const user = jwt.decode(token as string) as JwtPayload
+			  if (user)
+			  setUser(user)
+			// setCurrentUsername(jwt.decode(token).username);
+		  } catch (error) {
+			console.error('Error decoding token:');
+		  }
+		}, [token])
+		
+		const currentUsername = user?.username;
 		const isAboveMediumScreens = useMediaQuery("(min-width: 1024px)");
 		const [isMenuToggled, setIsMenuToggled] = useState<boolean>(false);
 		const [mobileSearchtoggle, setMobileSearchtoggle] = useState<boolean>(false);
@@ -136,7 +153,7 @@ const Navbar = () => {
 							{/* CLOSE ICON */}
 								<div className=" w-full rounded-2xl bg-black flex flex-col text-2xl  ">
 									<div className=" grid grid-cols-1 px-10 pt-6  font-Heading tracking-wide duration-300">
-										<Link onClick={() => setIsMenuToggled(!isMenuToggled)} href={"/users/Fouamepp"} className="hover:text-primary-pink-300/[0.9] duration-300">My Profile</Link>
+										<Link onClick={() => setIsMenuToggled(!isMenuToggled)} href={`/users/${currentUsername}`} className="hover:text-primary-pink-300/[0.9] duration-300">My Profile</Link>
 									</div>
 									<div className="divider"></div> 
 									<div className=" grid grid-cols-1 px-10   font-Heading tracking-wide duration-300">

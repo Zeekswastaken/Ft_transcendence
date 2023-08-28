@@ -8,8 +8,7 @@ import { getCookie } from "cookies-next";
 import axios from "axios";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useUserDataContext } from "../../userDataProvider";
-import socket from "@/app/socket";
-import { set } from "date-fns";
+// import socket from "@/app/socket";
 import { io } from "socket.io-client";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
@@ -60,7 +59,6 @@ export default function RootLayout({
   const [currentUserID, setCurrentUserID] = useState<number>(0);
   const Data = useUserDataContext();
   const userData = Data?.user ;
-  // const userData = useAppSelector((state) => state.userDataReducer.value)
   const token = getCookie("accessToken");
   useEffect(() => {
     try {
@@ -69,41 +67,65 @@ export default function RootLayout({
         setCurrentUsername(user.username)
         setCurrentUserID(user.id)
       }
-      // setCurrentUsername(jwt.decode(token).username);
     } catch (error) {
       console.error('Error decoding token:');
     }
   }, [])
 
-  // console.log(userData);
   const isPrivate = !userData?.privacy;
-  const [isFriend, setIsFriend] = useState(false);
+  const [isFriend, setIsFriend] = useState<boolean>();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isClicked, setIsClicked] = React.useState(true);
   const [receiver, setReceiverUsername] = useState("");
 
-  // socket.on("checkFriend" , (data) => {
-  //   console.log(data);
-  // })
-
-  const [check, setCheck] = useState<any>(null);
-
-  useEffect(() => {
-    socket.on("ispending", (data) => {
-      if (!data) {
-        console.log("data = ", data)
-        setIsPending(false)
-      }
-      else {
-        setReceiverUsername(data.receiver_username);
-        setIsPending(data.state);
-        console.log("state = ", isPending)
-      }
-    })
-  },[socket])
-  socket.emit("checkPending", { userID: currentUserID, recipientID: userData?.id });
-
+  const socket = io("http://localhost:3000", {
+  transports: ["websocket"],
+  autoConnect: false,
+  });
+  // Connect the socket when the app initializes
   
+  useEffect(() => {
+  socket.connect();
+  socket.on("ispending", (data) => {
+    if (!data) {
+      setIsPending(false);
+    } else {
+      setReceiverUsername(data.receiver_username);
+      setIsPending(data.state);
+      setIsClicked(data.state);
+    }
+  });
+
+  socket.on("isfriend", (data) => {
+    if(!data) {
+      setIsFriend(false);
+    } else {
+      setIsFriend(data);
+    }
+  })
+
+
+  // Fetch initial state for isClicked from the WebSocket response
+
+  // Emit the initial checkPending event if currentUserID and userData.id are available
+  if (currentUserID && userData?.id) {
+    socket.emit("checkPending", {
+      userID: currentUserID,
+      recipientID: userData.id,
+    });
+
+    socket.emit("checkFriend", {
+      userID: currentUserID,
+      recipientID: userData.id,
+    });
+  }
+
+  // Clean up the socket listener when the component unmounts
+  return () => {
+    socket.off("isfriend")
+    socket.off("ispending");
+  };
+}, [socket, currentUserID, userData, isClicked, isPending, isFriend]);
 
   const SetButtonText: React.FC<ToggleTextButtonProps> =  ( {initialText, newText, styles} ) => {
     const buttonText = isClicked ?  initialText : newText;
@@ -116,21 +138,33 @@ export default function RootLayout({
     </button>
     )
   }
+  const handleCancel = () => {
+      console.log("Cancel Request, ", isPending);
+      socket.emit("Unfriend", { userID: currentUserID, recipientID: userData?.id });
+      setIsPending(false); // Clear the pending status
+      setIsClicked(!isClicked);
+    
+  };
 
   const handleAddFriend = () => {
-    if (isClicked) {
-      console.log("send Friend Request");
+    if (!isPending && isClicked) {
       socket.emit("sendFriendRequest", { userID: currentUserID, recipientID: Data?.user?.id });
-    } else {
-      socket.emit("Unfriend", { userID: currentUserID, recipientID: userData?.id });
-      // console.log("socket " + socket.id);
     }
+    console.log("Add Friend, =", isPending);
     setIsClicked(!isClicked);
   };
+
+  const handleDecline = () => {
+    socket.emit("denyFriendRequest", {userID: currentUserID, recipientID: Data?.user?.id});
+  }
+
+  const handleAccept = () =>{
+    socket.emit("acceptFriendRequest", {userID: currentUserID, recipientID: Data?.user?.id});
+  }
   return (
     <div className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat h-screen overflow-y-scroll no-scrollbar w-full">
         <div className=" 2xl:mt-[270px] lg:mt-[160px] mt-[50px] min-w-[400px] overflow-y-scroll w-full h-[75vh] no-scrollbar ">
-          <div className=" grid grid-cols-1 2xl:grid-cols-3 mb-10">
+          <div className=" grid grid-cols-1 2xl:grid-cols-3 mb-10 gap-y-3">
             {isPrivate && !isFriend && (userData?.username !== currentUsername)  ?  (
               <div className=" 2xl:order-1 order-2 col-span-2  p-20">
                 <div className=" flex items-center place-content-center glass w-full 2xl:h-full">
@@ -140,7 +174,7 @@ export default function RootLayout({
                 </div>
               </div>
             ) : (
-              <div className=" h-auto 2xl:order-1 order-2 col-span-2 lg:mx-20 px-2 min-w-[400px]">
+              <div className=" h-auto 2xl:order-1 order-2 col-span-2 lg:mx-20 px-2 min-w-[400px] ">
                 {children}
               </div>
             )}
@@ -220,8 +254,8 @@ export default function RootLayout({
                     <div className=" mt-10 mb-5 ">
                       {isPending && currentUsername === receiver ? (
                         <div className=" flex space-x-2">
-                          <div><XMarkIcon className=" h-7 w-7 text-red-600"/> </div>
-                          <div><CheckIcon className=" h-7 w-7 text-green-400"/></div>
+                          <div onClick={handleDecline}><XMarkIcon className=" h-7 w-7 text-red-600"/> </div>
+                          <div onClick={handleAccept}><CheckIcon className=" h-7 w-7 text-green-400"/></div>
                         </div>
                       ) : (
                         <>
@@ -230,33 +264,22 @@ export default function RootLayout({
                              {isClicked ? (
                               <button
                                 className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
-                                onClick={handleAddFriend}
-                              >
-                                Add Friend
-                              </button>
-                             ) : (
-                              <button
-                                className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
-                                onClick={handleAddFriend}
+                                onClick={handleCancel}
                               >
                                 Cancel Request
                               </button>
+                             ) : (
+                               <button
+                               className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
+                               onClick={handleAddFriend}
+                               >
+                                Add Friend
+                              </button>
                              )}
                             </>
-                            // <button
-                            //   onClick={handleAddFriend}
-                            //   className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
-                            // >
-                            //   {isClicked ? (
-                            //     <p>Add friend</p>
-                            //     ) : (
-                            //       <p>Cancel Request</p>
-                            //   )}
-
-                            // </button>
                           ) : (
                             <>
-                              {isClicked && !isPending ? (
+                              {isClicked  ? (
                               <button
                                 className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
                                 onClick={handleAddFriend}
@@ -266,21 +289,12 @@ export default function RootLayout({
                              ) : (
                                <button
                                className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
-                               onClick={handleAddFriend}
+                               onClick={handleCancel}
                                >
                                 cancel Request
                               </button>
                              )}
                             </>
-                            // <button
-                            //   onClick={handleAddFriend}
-                            //   className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
-                            // >
-                            //   {isClicked  ? (
-                            //     <p>Add friend</p>
-                            //     ) : (
-                            //     <p>Cancel Request</p>
-                            //     )}
                             // </button>
                           ) }
                         </>

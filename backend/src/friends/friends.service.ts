@@ -79,7 +79,7 @@ export class FriendsService {
   async refuseRequest(userid:Number, recipientid:Number){
     const friendship = await this.userFriendsRepository.findOne({where: {sender: Equal(userid), receiver: Equal(recipientid)}});
     if (!friendship)
-      throw new HttpException("No request to accept", HttpStatus.FORBIDDEN);
+      throw new HttpException("No request to refuse", HttpStatus.FORBIDDEN);
     await this.userFriendsRepository.remove(friendship);
   }
 
@@ -87,8 +87,12 @@ export class FriendsService {
   {
     const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userid), receiver: Equal(recipientid)},{ sender: Equal(recipientid), receiver: Equal(userid)}]});
     if (!friendship)
+    {
+      console.log("HEEEEEREERERERERERERERERER");
       throw new HttpException("No friendship to remove", HttpStatus.FORBIDDEN);
-    await this.userFriendsRepository.remove(friendship);
+
+    }
+      await this.userFriendsRepository.remove(friendship);
   }
 
   async getUserFriends(userid: Number): Promise<User[]> {
