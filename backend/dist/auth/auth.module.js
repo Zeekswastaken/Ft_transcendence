@@ -26,7 +26,7 @@ exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [user_module_1.UserModule, passport_1.PassportModule.register({ defaultStrategy: '42' }), jwt_1.JwtModule.register({
                 secret: "0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
-                signOptions: { expiresIn: '1h' },
+                signOptions: { expiresIn: '24h' },
             })],
         providers: [auth_service_1.AuthService, local_startegy_1.LocalStrategy, user_service_1.UserService, google_startegy_1.GoogleStrategy, _42_strategy_1.fortytwo_Strategy, guards_1.TokenGuard, jwt_service_1.JWToken],
         controllers: [auth_controller_1.AuthController, auth_controller_1.googleController, auth_controller_1.fortytwo_Controller]
