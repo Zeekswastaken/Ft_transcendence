@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, use, useEffect, useState } from "react";
+import React, { FormEvent, MouseEvent, use, useEffect, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import ProfileSvgs from "@/components/tools/ProfileSvgs";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import { useUserDataContext } from "../../userDataProvider";
 // import socket from "@/app/socket";
 import { io } from "socket.io-client";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useSocketContext } from "@/app/socket";
 
 
 interface Props {
@@ -58,6 +59,8 @@ export default function RootLayout({
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [currentUserID, setCurrentUserID] = useState<number>(0);
   const Data = useUserDataContext();
+  const socket = useSocketContext();
+  // console.log("socket", socket?.id);
   const userData = Data?.user ;
   const token = getCookie("accessToken");
   useEffect(() => {
@@ -72,21 +75,23 @@ export default function RootLayout({
     }
   }, [])
 
+  const router = useRouter();
   const isPrivate = !userData?.privacy;
   const [isFriend, setIsFriend] = useState<boolean>();
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isClicked, setIsClicked] = React.useState(true);
   const [receiver, setReceiverUsername] = useState("");
 
-  const socket = io("http://localhost:3000", {
-  transports: ["websocket"],
-  autoConnect: false,
-  });
+  // const socket = io("http://localhost:3000", {
+  // transports: ["websocket"],
+  // autoConnect: false,
+  // });
+
   // Connect the socket when the app initializes
   
-  useEffect(() => {
-  socket.connect();
-  socket.on("ispending", (data) => {
+  // useEffect(() => {
+  // socket?.connect();
+  socket?.on("ispending", (data:any) => {
     if (!data) {
       setIsPending(false);
     } else {
@@ -96,7 +101,7 @@ export default function RootLayout({
     }
   });
 
-  socket.on("isfriend", (data) => {
+  socket?.on("isfriend", (data:any) => {
     if(!data) {
       setIsFriend(false);
     } else {
@@ -109,38 +114,27 @@ export default function RootLayout({
 
   // Emit the initial checkPending event if currentUserID and userData.id are available
   if (currentUserID && userData?.id) {
-    socket.emit("checkPending", {
+    socket?.emit("checkPending", {
       userID: currentUserID,
       recipientID: userData.id,
     });
 
-    socket.emit("checkFriend", {
+    socket?.emit("checkFriend", {
       userID: currentUserID,
       recipientID: userData.id,
     });
   }
 
   // Clean up the socket listener when the component unmounts
-  return () => {
-    socket.off("isfriend")
-    socket.off("ispending");
-  };
-}, [socket, currentUserID, userData, isClicked, isPending, isFriend]);
+//   return () => {
+//     socket?.off("isfriend")
+//     socket?.off("ispending");
+//   };
+// }, [socket, currentUserID, userData, isClicked, isPending, isFriend]);
 
-  const SetButtonText: React.FC<ToggleTextButtonProps> =  ( {initialText, newText, styles} ) => {
-    const buttonText = isClicked ?  initialText : newText;
-    return (
-      <button
-      onClick={handleAddFriend}
-      className={styles}
-    >
-      {buttonText}
-    </button>
-    )
-  }
   const handleCancel = () => {
       console.log("Cancel Request, ", isPending);
-      socket.emit("Unfriend", { userID: currentUserID, recipientID: userData?.id });
+      socket?.emit("Unfriend", { userID: currentUserID, recipientID: userData?.id });
       setIsPending(false); // Clear the pending status
       setIsClicked(!isClicked);
     
@@ -148,18 +142,28 @@ export default function RootLayout({
 
   const handleAddFriend = () => {
     if (!isPending && isClicked) {
-      socket.emit("sendFriendRequest", { userID: currentUserID, recipientID: Data?.user?.id });
+      socket?.emit("sendFriendRequest", { userID: currentUserID, recipientID: Data?.user?.id });
     }
     console.log("Add Friend, =", isPending);
     setIsClicked(!isClicked);
   };
 
-  const handleDecline = () => {
-    socket.emit("denyFriendRequest", {userID: currentUserID, recipientID: Data?.user?.id});
+  const handleDecline = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: Data?.user?.id});
+    router.push(`/users/${Data?.user.username}/`)
   }
-
-  const handleAccept = () =>{
-    socket.emit("acceptFriendRequest", {userID: currentUserID, recipientID: Data?.user?.id});
+  
+  const handleAccept = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    socket?.emit("acceptFriendRequest", {userID: currentUserID, recipientID: Data?.user?.id});
+    router.push(`/users/${Data?.user.username}/`)
+  }
+  
+  const handleUnfriend = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    socket?.emit("Unfriend", {userID: currentUserID, recipientID: Data?.user?.id});
+    router.push(`/users/${Data?.user.username}/`)
   }
   return (
     <div className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat h-screen overflow-y-scroll no-scrollbar w-full">
@@ -178,7 +182,7 @@ export default function RootLayout({
                 {children}
               </div>
             )}
-            <div className=" animate-fade-up mt-20 lg:mt-0 order-1 flex place-content-center">
+            <div className="  mt-20 lg:mt-0 order-1 flex place-content-center">
               <div className="  bg-[#321B38]/[0.7] shadow-2xl rounded-2xl w-[85%]">
                 <div className=" 2xl:mb-0 mt-[50px] grid place-content-center ">
                   <div className=" w-[150px] h-[150px] border-4 border-primary-pink-300 rounded-full">
@@ -217,7 +221,7 @@ export default function RootLayout({
                         <Link href={`/users/${User}`}>
                           <ProfileTabs
                             link={`/users/${User}`}
-                            styles="animate-fade-right animate-delay-[150ms]"
+                            styles=""
                             title="Overview"
                           />
                         </Link>
@@ -226,7 +230,7 @@ export default function RootLayout({
                           <Link href={`/users/${User}/settings`}>
                             <ProfileTabs
                               link={`/users/${User}/settings`}
-                              styles="animate-fade-right animate-delay-[350ms]"
+                              styles=""
                               title="Settings"
                             />
                           </Link>
@@ -236,14 +240,14 @@ export default function RootLayout({
                         <Link href={`/users/${User}/friends`}>
                           <ProfileTabs
                             link={`/users/${User}/friends`}
-                            styles="animate-fade-right animate-delay-[550ms]"
+                            styles=""
                             title="Friends"
                           />
                         </Link>
                         <Link href={`/users/${User}/groups`}>
                           <ProfileTabs
                             link={`/users/${User}/groups`}
-                            styles="animate-fade-right animate-delay-[750ms]"
+                            styles=""
                             title="Channels"
                           />
                         </Link>
@@ -253,9 +257,15 @@ export default function RootLayout({
                   { currentUsername !== User && !isFriend && (
                     <div className=" mt-10 mb-5 ">
                       {isPending && currentUsername === receiver ? (
-                        <div className=" flex space-x-2">
-                          <div onClick={handleDecline}><XMarkIcon className=" h-7 w-7 text-red-600"/> </div>
-                          <div onClick={handleAccept}><CheckIcon className=" h-7 w-7 text-green-400"/></div>
+                        <div className=" flex space-x-4 text-white font-Bomb text-2xl">
+                          <button onClick={handleAccept} className=" rounded-xl bg-green-500 hover:bg-green-500/[0.7] duration-300">
+                            <p className=" py-1 px-2">ACCEPT</p>
+                          </button>
+                          <button onClick={handleDecline} className=" rounded-xl  bg-red-500 hover:bg-red-500/[0.7] duration-300">
+                            <p className=" py-1 px-2">DECLINE</p>
+                          </button>
+                          {/* <div onClick={handleDecline}><XMarkIcon className=" h-7 w-7 text-red-600"/> </div>
+                          <div onClick={handleAccept}><CheckIcon className=" h-7 w-7 text-green-400"/></div> */}
                         </div>
                       ) : (
                         <>
@@ -279,7 +289,7 @@ export default function RootLayout({
                             </>
                           ) : (
                             <>
-                              {isClicked  ? (
+                              {isClicked ? (
                               <button
                                 className="text-white font-Bomb text-2xl px-5 pt-3 pb-2 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300"
                                 onClick={handleAddFriend}
@@ -303,7 +313,10 @@ export default function RootLayout({
                   )}
                   { currentUsername !== User && isFriend ? (
                     <div className=" mt-20 flex space-x-5">
-                      <SetButtonText styles="text-white font-Bomb text-xl px-5 pt-2 pb-1 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300 w-[135px]" initialText="Friends" newText="Add Friend" />
+                      <button onClick={handleUnfriend} className="text-white font-Bomb text-xl px-5 pt-2 pb-1 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300 w-[135px]">
+                        <p className=" py-1 px-2">UnFriend</p>
+                      </button>
+                      {/* <SetButtonText styles="text-white font-Bomb text-xl px-5 pt-2 pb-1 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300 w-[135px]" initialText="Friends" newText="Add Friend" /> */}
                       <button className=" text-white font-Bomb text-xl px-5 pt-3 pb-2 rounded-2xl bg-[#AF0D63] hover:text-gray-100 hover:bg-[#cd237e] shadow-inner duration-300 w-[135px]">
                         Message
                       </button>

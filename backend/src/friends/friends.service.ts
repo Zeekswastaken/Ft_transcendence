@@ -68,7 +68,7 @@ export class FriendsService {
   const position2 = accepting.friendsasreceiver.findIndex(
     (friendship2) => friendship2.id === friendship.id
   );
-  accepting.friendsasreceiver[position].status = 'accepted';
+  accepting.friendsasreceiver[position2].status = 'accepted';
   friendship.status = 'accepted';
   await this.userFriendsRepository.save(friendship);
   await this.userRepository.save([accepting, waiting]);
@@ -77,7 +77,8 @@ export class FriendsService {
   
 
   async refuseRequest(userid:Number, recipientid:Number){
-    const friendship = await this.userFriendsRepository.findOne({where: {sender: Equal(userid), receiver: Equal(recipientid)}});
+    console.log("Zakaria ghalet");
+    const friendship = await this.userFriendsRepository.findOne({where: {sender: Equal(recipientid), receiver: Equal(userid)}});
     if (!friendship)
       throw new HttpException("No request to refuse", HttpStatus.FORBIDDEN);
     await this.userFriendsRepository.remove(friendship);
