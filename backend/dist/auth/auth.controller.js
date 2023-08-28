@@ -35,6 +35,7 @@ let AuthController = class AuthController {
         const id = decode.id;
         await this.userservice.update(Body, id);
         const user = await this.userservice.findById(id);
+        console.log("Body = " + JSON.stringify(Body));
         if (user) {
             console.log(user);
             const cookie_token = await this.authservice.generateToken_2(user);

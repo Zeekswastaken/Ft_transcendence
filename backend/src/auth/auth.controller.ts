@@ -26,7 +26,7 @@ export class AuthController {
         const id = decode.id as number;
         await this.userservice.update(Body,id);
         const user = await this.userservice.findById(id);
-
+        console.log("Body = " +JSON.stringify(Body));
         if (user)
         {
             console.log(user);

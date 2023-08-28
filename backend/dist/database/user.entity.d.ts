@@ -12,6 +12,7 @@ export declare class User {
     password: String;
     gender: String;
     privacy: Boolean;
+    gameSocket: String;
     Bio: String;
     avatar_url: String;
     memberships: ChannelMembership[];
