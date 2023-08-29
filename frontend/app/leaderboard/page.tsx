@@ -82,13 +82,29 @@ const page = () => {
               <LeadersCard tagStyle="bg-[#B08D57]" name="Bernard" level="14" matches="365" score="4 300" image="/robot.jpg" styles="lg:pt-32 pt-0 lg:order-3 order-3" />
             </div>
               
-            <div className="mt-16 lg:mx-20 mx-5 ">
-              	<table className="table  w-full text-center border-separate ">
+            <div className="mt-16 lg:mx-20 mx-5">
+                <div className=" grid grid-cols-5 place-content-center text-center  lg:text-3xl text-sm sm:text-xl font-Bomb text-primary-pink-300 drop-shadow-[6px_5px_0_rgba(0,0,00.15)] p-2">
+                  <p className=" mx-1">place</p>
+                  <p className=" mx-1">name</p>
+                  <p className=" mx-1">matches</p>
+                  <p className=" mx-1">level</p>
+                  <p className=" mx-1">score</p>
+                </div>
+                <div className=" bg-[#501D4E]/[0.9] gap-x-2 sm:text-xl text-sm lg:text-2xl font-Bomb text-white text-center place-content-center grid grid-cols-5 px-2 py-1 rounded-lg">
+                  <div className=" flex space-x-1 place-content-center items-center p-2">
+                    <img className=" lg:h-[25px] h-[20] lg:w-[30px] w-[25px] " src="/whiteTrophy.png" alt="" />
+                    <p className=" lg:text-3xl text-lg">4</p>
+                  </div>
+                  <p className=" p-2">Fouamep</p>
+                  <p className=" p-2">286</p>
+                  <p className=" p-2">13</p>
+                  <p className=" p-2">3931</p>
+                </div>
+              	{/* <table className="table  w-full text-center border-separate ">
 					        <thead className="  lg:text-3xl text-xl font-Bomb">
                     <tr className=" text-primary-pink-300 drop-shadow-[6px_5px_0_rgba(0,0,00.15)]">
                       <th>place</th>
                       <th>username</th>
-                      {/* <th></th> */}
                       <th>matches</th>
                       <th>level</th>
                       <th>score</th>
@@ -102,8 +118,8 @@ const page = () => {
                     <LeadersTable place="7" username="Priscilla" matches="201" level="12" score="3934" />
                     <LeadersTable place="8" username="Esther" matches="185" level="12" score="3934" />
                     <LeadersTable place="9" username="Aubrey" matches="179" level="11" score="3934" />
-                  </tbody>
-                </table>
+                  </tbody> */}
+                {/* </table> */}
             </div>
           </div>
         </div>

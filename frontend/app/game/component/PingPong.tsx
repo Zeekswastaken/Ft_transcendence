@@ -56,7 +56,7 @@ const PingPong = () => {
                 </div>
             </div>
             <div className='border-[2px] border-gray w-fit'>
-                <canvas ref={canvasRef} width={1200} height={600} >
+                <canvas ref={canvasRef} width={1000} height={600} >
 
                 </canvas>
             </div>
