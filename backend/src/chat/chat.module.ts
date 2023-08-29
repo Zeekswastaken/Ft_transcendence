@@ -7,12 +7,14 @@ import { Message } from 'src/database/message.entity';
 import { JWToken } from 'src/auth/jwt.service';
 import { ChannelMembership } from 'src/database/channelMembership.entity';
 import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
+import { UserModule } from 'src/user/user.module';
 
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Channel,Message,ChannelMembership])],
+    imports:[TypeOrmModule.forFeature([Channel,Message,ChannelMembership]),UserModule],
     controllers:[],
-    providers:[ChatService,WebsocketGateway,ChatService,JWToken,JwtService]
+    providers:[ChatService,WebsocketGateway,ChatService,JWToken,JwtService, UserService]
 })
 export class ChatModule {
 

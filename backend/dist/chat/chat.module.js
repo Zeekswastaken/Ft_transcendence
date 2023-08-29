@@ -16,14 +16,16 @@ const message_entity_1 = require("../database/message.entity");
 const jwt_service_1 = require("../auth/jwt.service");
 const channelMembership_entity_1 = require("../database/channelMembership.entity");
 const jwt_1 = require("@nestjs/jwt");
+const user_service_1 = require("../user/user.service");
+const user_module_1 = require("../user/user.module");
 let ChatModule = class ChatModule {
 };
 exports.ChatModule = ChatModule;
 exports.ChatModule = ChatModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([channel_entity_1.Channel, message_entity_1.Message, channelMembership_entity_1.ChannelMembership])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([channel_entity_1.Channel, message_entity_1.Message, channelMembership_entity_1.ChannelMembership]), user_module_1.UserModule],
         controllers: [],
-        providers: [chat_service_1.ChatService, chat_gateway_1.WebsocketGateway, chat_service_1.ChatService, jwt_service_1.JWToken, jwt_1.JwtService]
+        providers: [chat_service_1.ChatService, chat_gateway_1.WebsocketGateway, chat_service_1.ChatService, jwt_service_1.JWToken, jwt_1.JwtService, user_service_1.UserService]
     })
 ], ChatModule);
 //# sourceMappingURL=chat.module.js.map

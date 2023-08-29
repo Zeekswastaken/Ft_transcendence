@@ -15,18 +15,23 @@ const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const chat_service_1 = require("./chat.service");
 const jwt_service_1 = require("../auth/jwt.service");
+const user_service_1 = require("../user/user.service");
 let WebsocketGateway = class WebsocketGateway {
-    constructor(chatservice, jwt) {
+    constructor(chatservice, jwt, userservice) {
         this.chatservice = chatservice;
         this.jwt = jwt;
+        this.userservice = userservice;
     }
-    async handleConnection(client) {
-        const token = client.handshake.query.token;
-        if (await this.jwt.verify(token)) {
-            const user = await this.jwt.decoded(token);
-            const rooms = await this.chatservice.getAllRooms(user.id);
-            rooms.forEach(room => { client.join(room); });
-            console.log(`Client connected: ${client.id}`);
+    async handleConnection(obj) {
+    }
+    async getSocketId(client, obj) {
+        if (await this.jwt.verify(obj.token)) {
+            console.log("token = " + obj.token);
+            const user = await this.jwt.decoded(obj.token);
+            user.gameSocket = client.id;
+            console.log("user = " + JSON.stringify(user));
+            console.log(" id == " + client.id);
+            await this.userservice.update(user, user.id);
         }
     }
     handleDisconnect(client) {
@@ -53,6 +58,12 @@ __decorate([
     __metadata("design:type", socket_io_1.Server)
 ], WebsocketGateway.prototype, "server", void 0);
 __decorate([
+    (0, websockets_1.SubscribeMessage)('getSocketId'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], WebsocketGateway.prototype, "getSocketId", null);
+__decorate([
     (0, websockets_1.SubscribeMessage)('Duo'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
@@ -61,6 +72,6 @@ __decorate([
 exports.WebsocketGateway = WebsocketGateway = __decorate([
     (0, common_1.Injectable)(),
     (0, websockets_1.WebSocketGateway)(),
-    __metadata("design:paramtypes", [chat_service_1.ChatService, jwt_service_1.JWToken])
+    __metadata("design:paramtypes", [chat_service_1.ChatService, jwt_service_1.JWToken, user_service_1.UserService])
 ], WebsocketGateway);
 //# sourceMappingURL=chat.gateway.js.map
