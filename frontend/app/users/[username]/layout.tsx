@@ -59,7 +59,7 @@ export default function RootLayout({
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [currentUserID, setCurrentUserID] = useState<number>(0);
   const Data = useUserDataContext();
-  const socket = useSocketContext();
+  const {socket} = useSocketContext();
   // console.log("socket", socket?.id);
   const userData = Data?.user ;
   const token = getCookie("accessToken");
@@ -89,7 +89,7 @@ export default function RootLayout({
 
   // Connect the socket when the app initializes
   
-  // useEffect(() => {
+  useEffect(() => {
   // socket?.connect();
   socket?.on("ispending", (data:any) => {
     if (!data) {
@@ -126,11 +126,11 @@ export default function RootLayout({
   }
 
   // Clean up the socket listener when the component unmounts
-//   return () => {
-//     socket?.off("isfriend")
-//     socket?.off("ispending");
-//   };
-// }, [socket, currentUserID, userData, isClicked, isPending, isFriend]);
+  return () => {
+    socket?.off("isfriend")
+    socket?.off("ispending");
+  };
+}, [socket, currentUserID, userData, isClicked, isPending, isFriend]);
 
   const handleCancel = () => {
       console.log("Cancel Request, ", isPending);

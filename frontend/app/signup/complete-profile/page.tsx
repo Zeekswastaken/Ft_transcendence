@@ -21,7 +21,7 @@ const completProfile = () => {
     // console.log("avatar_URL = " + avatar_URL);
     const avatar_url = new FormData();
     avatar_url.append("file", avatar.current as File);
-    // console.log(avatar_url);
+    console.log(avatar_url);
 
     e.preventDefault();
     await axios.put("http://localhost:3000/auth/modify-data", {
@@ -35,13 +35,6 @@ const completProfile = () => {
     }}).then(res => {
       setCookie("accessToken", res.data);
     }).catch(err => {});
-    // await axios.post("http://localhost:3000/upload", 
-
-    //   // birthDay,
-    //   formData,
-    //   // gender,
-    //   // cookie
-    // ).then(res => {}).catch(err => {})
   }
 
 
@@ -50,31 +43,24 @@ const completProfile = () => {
     setBirthDay(date);
     
   };
+
+  const [path, setPath] = useState("/profileEx.png")
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       avatar.current = e.target.files[0];
+      try {
+        const path = URL.createObjectURL(avatar.current);
+        console.log('Created URL:', path); // Check the created URL
+        setPath(path);
+      } catch (error) {
+        console.error('Error creating URL:', error);
+      }
     }
-    // setAvatar_URL(e.target.files?.[0]);
-    // const formData = new FormData();
-    // formData.append("avatar", e.target.files);
-    // const file = e.target.files![0];
-    // if (!file) return;
-    // // if (file.size > 1024 * 1024) return;
-    // console.log("formData  " +  file);
-    // // if (file.type !== "image/jpeg" && file.type !== "image/png")
-    // // return
-    // const formData = new FormData();
-    // formData.append("avatar", e.target.files![0]);
-    // setAvatar_URL(formData);
-    // const avataFile = formData;
-
-    // const reader = new FileReader();
-    // reader.onload = () => {
-    //   setAvatar_URL(reader.result as any)
-    // }
-    // reader.readAsDataURL(file);
-    // setAvatar_URL(formData);
   };
+
+  // const imageUpdate = (e: any) => {
+  // }
   // console.log(gender);
   return (
     <div className=" grid place-items-center h-screen ">
@@ -86,7 +72,7 @@ const completProfile = () => {
           </div> 
             <div className="  flex place-content-center mt-4">
               <label htmlFor="uploadImage" className="cursor-pointer flex relative place-content-center">
-                <img src="/profileEx.png" alt="profile" width={130} height={130} />
+                <img src={path} alt="profile" width={130} height={130} className=" rounded-full"/>
                 <img className=" absolute mt-[58px]" src="/camera.svg" alt="icon" width={25} height={20} />
               </label>
               <input onChange={handleImageChange} className="hidden" id="uploadImage" accept="image/*" type="file" name="avatar" /> 
@@ -101,7 +87,7 @@ const completProfile = () => {
               <option className="" value="Female">Female</option>
               <option className="" value="Male">Male</option>
             </select>
-            <button className= " text-center text-xl bg-primary-pink-300 hover:bg-primary-pink-300/[0.8] transition duration-300 hover:border font-Bomb mx-20 mt-14 p-2 rounded-2xl">
+            <button className=" text-center text-xl bg-primary-pink-300 hover:bg-primary-pink-300/[0.8] transition duration-300 hover:border font-Bomb mx-20 mt-14 p-2 rounded-2xl">
               confirm
             </button>
         </div>
