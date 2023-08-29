@@ -43,8 +43,8 @@ interface Net {
 const net: Net = {
     x: 0,
     y: 0, 
-    width: 4,
-    height: 20,
+    width: 6,
+    height: 50,
     color: "#FFFFFF",
 }
 
@@ -54,7 +54,7 @@ const player1 : Player = {
     y: 0,
     width: PLAYER_WIDTH,
     height: PLAYER_HEIGHT,
-    color: "#FF0000",
+    color: "#A0009D",
     score: 0,
 }
 
@@ -64,7 +64,7 @@ const player2 : Player= {
     y: 0,
     width: PLAYER_WIDTH,
     height: PLAYER_HEIGHT,
-    color: "#00FF00",
+    color: "#FF1382",
     score: 0,
 }
 
@@ -75,7 +75,7 @@ const ball : Ball = {
     speed: BALL_START_SPEED,
     vX: 5,
     vY: 5,
-    color: "#FFF000",
+    color: "#FFF",
 
 }
 
@@ -105,7 +105,7 @@ const drawCircle = (context: CanvasRenderingContext2D, x: number, y: number, r: 
 
 const drawNet = (context: CanvasRenderingContext2D) =>
 {
-    for(let i = 0; i < context.canvas.height; i += 30)
+    for(let i = 0; i < context.canvas.height; i += 80)
     {
         drawRectangle(context, net.x, net.y + i, net.width, net.height, net.color);
     }
@@ -124,7 +124,7 @@ export const render = (context: CanvasRenderingContext2D, startGame: boolean, ha
 
 export const initVars = (context: CanvasRenderingContext2D) => {
     net.x = context.canvas.width / 2 - 1;
-    player1.y = context.canvas.height/ 2 - PLAYER_HEIGHT / 2;
+    player1.y = context.canvas.height / 2 - PLAYER_HEIGHT / 2;
     player2.x = context.canvas.width - PLAYER_WIDTH;
     player2.y = context.canvas.height/ 2 - PLAYER_HEIGHT / 2;
     ball.x = context.canvas.width / 2;
