@@ -111,9 +111,9 @@ const drawNet = (context: CanvasRenderingContext2D) =>
     }
 }
 
-export const render = (context: CanvasRenderingContext2D, startGame: boolean, handelScore: any) => {
+export const render = (context: CanvasRenderingContext2D, startGame: boolean, handelScore: any, opponentPosition: number, changeUserPostion: any) => {
     if(startGame)
-        update(context, handelScore);
+        update(context, handelScore, opponentPosition, changeUserPostion);
     drawRectangle(context, 0, 0, context.canvas.width, context.canvas.height, "#000000");
     drawNet(context);
     drawRectangle(context, player1.x, player1.y, player1.width, player1.height, player1.color);
@@ -157,7 +157,7 @@ const resetBall = (context: CanvasRenderingContext2D) => {
     ball.speed = BALL_START_SPEED;
 }
 
-const update = (context: CanvasRenderingContext2D, handelScore: any) => {
+const update = (context: CanvasRenderingContext2D, handelScore: any, opponentPosition: number, changeUserPostion: any) => {
     ball.x += ball.vX * ball.speed;
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
@@ -187,12 +187,16 @@ const update = (context: CanvasRenderingContext2D, handelScore: any) => {
     
     let targetPos: number = ball.y - player2.height / 2;
     let currentPos: number = player2.y;
-    player2.y = lerp(currentPos, targetPos, COM_LEVEL);
 
-    context.canvas.addEventListener("mousemove", (e) => {
-        let rect = context.canvas.getBoundingClientRect();
-        player1.y = e.clientY - rect.top - player1.height / 2;
-    });
+    const updatePlayres = () => {
+        player2.y = opponentPosition;
+        context.canvas.addEventListener("mousemove", (e) => {
+            let rect = context.canvas.getBoundingClientRect();
+            player1.y = e.clientY - rect.top - player1.height / 2;
+            changeUserPostion(player1.y);
+        });
+    }
+    updatePlayres();
 
     if(ball.x - ball.radius < 0)
     {

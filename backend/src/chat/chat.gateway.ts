@@ -14,37 +14,25 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
    server: Server;
    ///@SubscribeMessage('joinDuo')
    async handleConnection(obj : {token,client}) {
-    // const token = client.handshake.query.token;
-     // if (await this.jwt.verify(token))
-     // {
-     //   const user = await this.jwt.decoded(token);
-     //   const rooms  = await this.chatservice.getAllRooms(user.id as number);
-     //   rooms.forEach(room=>{client.join(room)})
-     //   console.log(`Client connected: ${client.id}`);
-     // }
-    // console.log("clinet id = " + obj.client + " token = " + obj.token);
    }
  
    @SubscribeMessage('getSocketId')
    async getSocketId(client:Socket ,obj:{token:string}){
-    // const token = client.handshake.query.token;
      if (await this.jwt.verify(obj.token))
      {
-      console.log("token = " + obj.token);
+      // console.log("token = " + obj.token);
        const user = await this.jwt.decoded( obj.token);
-       user.gameSocket = client.id;
-       console.log("user = " + JSON.stringify(user));
-       console.log(" id == " + client.id)
+       user.Socket = client.id;
+      //  console.log("user = " + JSON.stringify(user));
+       console.log(" chat.id == " + client.id)
        await this.userservice.update(user,user.id as number);
      }
-    // else
-    //    this.server.emit('invalid Token',{coockie:obj.token})
    }
 
   handleDisconnect(client: Socket) {
     const token = client.handshake.query.token;
 
-    console.log(`Client disconnected: ${client.id}`);
+    console.log(`chat.Client disconnected: ${client.id}`);
   }
 
   afterInit(server: Server) {

@@ -21,7 +21,9 @@ export class User{
     @Column({default:true})
     privacy:Boolean;
     @Column({nullable:true})
-    gameSocket:String;
+    PlayerSocket:String;
+    @Column({nullable:true})
+    Socket: String;
     @Column({nullable:true})
     Bio:String;
     @Column({default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZqtgZ2eW2F2HvvFOq9Rs0kVWiWJL7pQbA5g&usqp=CAU"})

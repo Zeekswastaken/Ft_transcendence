@@ -2,6 +2,8 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { render, initVars } from './render';
 import io, {Socket} from 'socket.io-client';
+import { getCookie } from 'cookies-next';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 
 const PingPong = () => {
@@ -12,32 +14,67 @@ const PingPong = () => {
     const [p1Score, setP1Score] = useState<number>(0);
     const [p2Score, setP2Score] = useState<number>(0);
     const [socket, setSocket] = useState<Socket>();
+    const [user, setUser] = useState<JwtPayload>();
+    const [opponent, setOpponent] = useState();
+    const [userPosition, setUserPosition] = useState<number>();
+    const [opponentPosition, setOpponentPosition] = useState<number>();
 
+    //get cookies token
+    const token = getCookie("accessToken");
+    
     const handelScore = (p: number) => {
         p === 1 ? setP1Score((p1Score) => p1Score + 1) : setP2Score(p2Score => p2Score + 1);
     }
 
-
     const handelStartGame = () => {
         setStartGame(!startGame);
-        socket?.emit("Duo", "Hello From Hamza Client");
-        console.log("Start game is Good");
     }
+
+    const changeUserPostion = (position: number) => {
+        setUserPosition((position) => position);
+        socket?.emit("setPositon", {opponent: opponent, pos: position})
+    }
+
+    //get User Information by token
+    useEffect(() => {
+        try {
+          const user = jwt.decode(token as string) as JwtPayload
+          if (user)
+          setUser(user)
+          
+        // setCurrentUsername(jwt.decode(token).username);
+      } catch (error) {
+        console.error('Error decoding token:');
+      }
+    }, [token])
 
     useEffect(() => {
         socket?.on('send', (message) => {
             console.log('Message from server:', message);
         });
+        socket?.on('getOpponent', (opponent) => {
+            setOpponent(opponent);
+        });
+        socket?.on('getOpponentPostion', (pos: number) => {
+            setOpponentPosition(pos);
+        })
     }, [socket]) 
 
     useEffect(() => {
-
         const newSocket = io('http://localhost:3000');
         setSocket(newSocket);
+        if(user?.username === "Hamza")
+        {
+            newSocket.emit('getSocketPlayer', {token: token, username: "Oussama"});
+        }
+        else if(user?.username === "Oussama")
+        {
+            newSocket.emit('getSocketPlayer', {token: token, username: "Hamza"});
+        }
         return () => {
             socket?.disconnect();
         }
-    }, [])
+    }, [user]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -49,17 +86,19 @@ const PingPong = () => {
                 initVars(context);
                 setInitVars(true);
             }
-            const intervalId = setInterval(() => render(context, startGame, handelScore), 1000/ 60);
+            const intervalId = setInterval(() => render(context, startGame, handelScore, opponentPosition, changeUserPostion), 1000/ 60);
             return () => {
                 clearInterval(intervalId);
             };
         }
-    }, [startGame]);
+    }, [startGame, opponentPosition]);
     return (
-        <div className=''>
+        <div>
             <div className='mb-[10px] grid grid-cols-3 justify-between place-content-center'>
                 <div className='flex justify-start space-x-3 items-center'>
-                    <div className="h-[60px] w-[60px] bg-[url('/Spectate.png')] bg-cover bg-center rounded-full border-[3px] border-[#6E4778]"/>
+                    <div className={`h-[60px] w-[60px] bg-cover bg-center overflow-hidden rounded-full border-[3px] border-[#6E4778]`} >
+                        <img src={user?.avatar_url} alt="" className=' relative ' />
+                    </div>
                     <span className='font-Bomb'>You</span>
                 </div>
                 <div className=' flex space-x-5 font-Bomb items-center text-5xl'>
@@ -68,8 +107,9 @@ const PingPong = () => {
                     <span className=''>{p2Score}</span>
                 </div>
                 <div className=' flex justify-start items-center space-x-3'>
-                    <span className=' font-Bomb'>HAMZA</span>
-                    <div className="h-[60px] w-[60px] bg-[url('/Spectate.png')] bg-cover bg-center rounded-full mr-[10px] border-[3px] border-primary-pink-300">
+                    <span className=' font-Bomb'>{opponent?.username}</span>
+                    <div className="h-[60px] w-[60px] bg-cover bg-center overflow-hidden rounded-full mr-[10px] border-[3px] border-primary-pink-300">
+                    <img src={opponent?.avatar_url} alt="" className=' relative ' />
                     </div>
                 </div>
             </div>

@@ -19,8 +19,9 @@ const LeadersCard = ( {name, level, matches, score, image, styles, tagStyle}:Pro
           <img className={` ${tagStyle} rounded-md p-1 absolute z-50 `} src="/lbtrophy.png" alt="" />
           <img className=" rounded-xl  w-[80px] h-[80px]" src={image} width={80} height={80} alt="" />
         </div>
-        {/* <div className={` rounded-xl z-50 w-[80px] h-[80px] ${avatar} bg-cover bg-center`}/> */}
-      </div>
+        {/*     <p className=" p-2">286</p>
+                  <p className=" p-2">13</p>
+                  <p className=" p-2">3931</p>div>
       <p className=" text-white text-center font-Heading tracking-wider text-2xl py-2">{name}</p>
       <div className=" bg-[url('/leaderboardCard.png')] bg-cover bg-center ">
         <p className=" font-Bomb text-2xl text-white text-center pt-3 ">level <span className=" text-[#CA96E5]">{level}</span></p>

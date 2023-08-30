@@ -26,17 +26,15 @@ let WebsocketGateway = class WebsocketGateway {
     }
     async getSocketId(client, obj) {
         if (await this.jwt.verify(obj.token)) {
-            console.log("token = " + obj.token);
             const user = await this.jwt.decoded(obj.token);
-            user.gameSocket = client.id;
-            console.log("user = " + JSON.stringify(user));
-            console.log(" id == " + client.id);
+            user.Socket = client.id;
+            console.log(" chat.id == " + client.id);
             await this.userservice.update(user, user.id);
         }
     }
     handleDisconnect(client) {
         const token = client.handshake.query.token;
-        console.log(`Client disconnected: ${client.id}`);
+        console.log(`chat.Client disconnected: ${client.id}`);
     }
     afterInit(server) {
         console.log('WebSocket gateway initialized');
