@@ -1,4 +1,9 @@
+"use client"
+
+import { getCookie } from "cookies-next"
+import jwt,{ JwtPayload } from "jsonwebtoken"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
 type Props = {
   name:string,
@@ -47,30 +52,45 @@ type tableProps = {
   matches: string,
   level:string,
   score:string
+  styles:string
 }
 
-const LeadersTable = ( {place, username, matches, level, score}:tableProps ) => {
+const LeadersTable = ( {place, username, matches, level, score, styles}:tableProps ) => {
+  let bgColor = "bg-[#501D4E]/[0.9]"
+  let hoverColor = "hover:text-primary-pink-300/[0.8]"
+  if (styles) {
+    bgColor = styles
+    hoverColor = ""
+  }
   return (
-    <tr className=" rounded-xl">
-      <td className="  ">
-        <div className=" flex space-x-1 place-content-center items-center">
-          <img className=" lg:h-[25px] h-[20] lg:w-[30px] w-[25px] " src="/whiteTrophy.png" alt="" />
-          <p className=" lg:text-3xl text-lg">{place}</p>
-        </div>
-      </td>
-      <td className=" font-Heading tracking-wider">{username}</td>
-      {/* <td></td> */}
-      <td>{matches}</td>
-      <td>{level}</td>
-      <td className=" flex place-content-center space-x-2">
-        <p>{score}</p>
-        <img className=" h-[27px] w-[30px]" src="/kwhite.png" alt="" />
-      </td>
-    </tr>
+    <div className={` ${bgColor} rounded-lg gap-x-2 sm:text-xl text-sm lg:text-2xl font-Bomb text-white text-center place-content-center grid grid-cols-5 space-y-3 px-2 py-1 `}>
+      <div className=" flex space-x-1 place-content-center items-center p-2">
+        <img className=" lg:h-[25px] h-[20] lg:w-[30px] w-[25px] " src="/whiteTrophy.png" alt="" />
+        <p className=" lg:text-3xl text-lg">{place}</p>
+      </div>
+      <Link href={`/users/${username}`} className={` p-2 ${hoverColor} duration-300`}>{username}</Link>
+      <p className=" p-2">{matches}</p>
+      <p className=" p-2">{level}</p>
+      <p className=" p-2">{score}</p>
+    </div>
   )
 }
 
 const page = () => {
+
+  const token = getCookie("accessToken");
+  const [currentUsername ,setCurrentUsername] = useState("");
+  useEffect(() => {
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUsername(user.username)
+      }
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  }, [])
+
   return (
     <div className=" flex place-content-center items-center w-full h-screen max-w-[1300px] min-w-[350px] ">
         <div className=" pt-[150px] pb-10 place-content-center w-full mx-1 h-full  ">
@@ -84,43 +104,22 @@ const page = () => {
             </div>
               
             <div className="mt-16 lg:mx-20 mx-5">
-                <div className=" grid grid-cols-5 place-content-center text-center  lg:text-3xl text-sm sm:text-xl font-Bomb text-primary-pink-300 drop-shadow-[6px_5px_0_rgba(0,0,00.15)] p-2">
+                <div className=" grid grid-cols-5 place-content-center text-center  lg:text-3xl text-[15px] sm:text-2xl font-Bomb text-primary-pink-300 drop-shadow-[6px_5px_0_rgba(0,0,00.15)] p-2">
                   <p className=" mx-1">place</p>
                   <p className=" mx-1">name</p>
                   <p className=" mx-1">matches</p>
                   <p className=" mx-1">level</p>
                   <p className=" mx-1">score</p>
                 </div>
-                <div className=" bg-[#501D4E]/[0.9] gap-x-2 sm:text-xl text-sm lg:text-2xl font-Bomb text-white text-center place-content-center grid grid-cols-5 px-2 py-1 rounded-lg">
-                  <div className=" flex space-x-1 place-content-center items-center p-2">
-                    <img className=" lg:h-[25px] h-[20] lg:w-[30px] w-[25px] " src="/whiteTrophy.png" alt="" />
-                    <p className=" lg:text-3xl text-lg">4</p>
-                  </div>
-                  <p className=" p-2">Fouamep</p>
-                  <p className=" p-2">286</p>
-                  <p className=" p-2">13</p>
-                  <p className=" p-2">3931</p>
+                <div className=" space-y-[2px]">
+                  <LeadersTable styles="" place="4" username="soham" matches="311" level="14" score="3934" />
+                  <LeadersTable styles="" place="5" username="Hawkins" matches="286" level="13" score="3934" />
+                  <LeadersTable styles="" place="6" username="lane" matches="225" level="12" score="3934" />
+                  <LeadersTable styles="" place="7" username="Priscilla" matches="201" level="12" score="3934" />
+                  <LeadersTable styles="" place="8" username="Esther" matches="185" level="12" score="3934" />
+                  <LeadersTable styles="" place="9" username="Aubrey" matches="179" level="11" score="3934" />
+                  <LeadersTable styles="bg-primary-pink-300/[0.6]" place="10" username={currentUsername} matches="245" level="13" score="3934" />
                 </div>
-              	{/* <table className="table  w-full text-center border-separate ">
-					        <thead className="  lg:text-3xl text-xl font-Bomb">
-                    <tr className=" text-primary-pink-300 drop-shadow-[6px_5px_0_rgba(0,0,00.15)]">
-                      <th>place</th>
-                      <th>username</th>
-                      <th>matches</th>
-                      <th>level</th>
-                      <th>score</th>
-                    </tr>    
-                  </thead>
-                  <tbody className=" text-xl lg:text-2xl font-Bomb bg-[#501D4E]/[0.9] text-white text-center ">
-                    <LeadersTable place="4" username="soham" matches="311" level="14" score="3934" />
-                    <LeadersTable place="5" username="Hawkins" matches="286" level="13" score="3934" />
-                    <LeadersTable place="10" username="Richards" matches="245" level="13" score="3934" />
-                    <LeadersTable place="6" username="lane" matches="225" level="12" score="3934" />
-                    <LeadersTable place="7" username="Priscilla" matches="201" level="12" score="3934" />
-                    <LeadersTable place="8" username="Esther" matches="185" level="12" score="3934" />
-                    <LeadersTable place="9" username="Aubrey" matches="179" level="11" score="3934" />
-                  </tbody> */}
-                {/* </table> */}
             </div>
           </div>
         </div>
