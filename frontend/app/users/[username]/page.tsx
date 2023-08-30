@@ -13,7 +13,7 @@ interface Props {
   number?: string | number;
 }
 
-const percentage:string = "70%";
+const percentage:string = "0%";
 const level:string = "5";
 
 const progress: CSS.Properties = {

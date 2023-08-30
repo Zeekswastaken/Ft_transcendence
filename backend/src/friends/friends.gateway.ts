@@ -50,7 +50,7 @@ export class FriendsGateway {
       console.log("-------> recipient ", data.recipientID);
       await this.friendsService.acceptRequest(data.userID, data.recipientID);
       const message = "The friend request has been accepted";
-      client.emit('message', message);
+      client.emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
     } catch (error)
     {
       console.error('Error accepting the friend request: ',error.message);
@@ -66,7 +66,7 @@ export class FriendsGateway {
       console.log("-------> recipient ", data.recipientID);
     const test =  await this.friendsService.refuseRequest(data.userID, data.recipientID);
     const message = "The friend request has been refused";
-    client.emit('message', message);
+    client.emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
     }  catch (error)
     {
       console.error('Error refusing the friend request: ',error.message);
@@ -84,6 +84,7 @@ export class FriendsGateway {
       await this.friendsService.removeFriendship(data.userID, data.recipientID);
        const message = "Unfriended successfully";
        client.emit('message', message);
+      // client.emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
     } catch (error)
     {
       console.log("wa33333333333333333333333333333");

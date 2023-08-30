@@ -11,6 +11,7 @@ import Link from "next/link";
 import axios from "axios";
 import { deleteCookie, getCookie } from "cookies-next";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { useSocketContext } from "@/app/socket";
 
 const MobileLinks = ( {pathname, toGo, value}:any) => {
 	return (
@@ -46,6 +47,11 @@ const Navbar = () => {
 			console.error('Error decoding token:');
 		  }
 		}, [token])
+
+		const {socket} = useSocketContext();
+		useEffect(() => {
+			socket?.emit("getSocketId", {token: token})
+		}, [socket])
 		
 		const currentUsername = user?.username;
 		const isAboveMediumScreens = useMediaQuery("(min-width: 1024px)");
