@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useRef } from 'react'
 
 import PingPong from './component/PingPong'
 

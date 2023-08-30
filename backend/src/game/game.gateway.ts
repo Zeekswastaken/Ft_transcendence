@@ -12,12 +12,27 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @WebSocketServer()
   server: Server;
   constructor (private readonly jwt:JWToken,private readonly userservice:UserService){}
-  ///@SubscribeMessage('joinDuo')
   async handleConnection(client: Socket) {
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlcm5hbWUiOiJoYW16YSIsImdlbmRlciI6IkZlbWFsZSIsImJpcnRoRGF5IjoiMjAyMy0wNy0zMVQyMzowMDowMC4wMDBaIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vZW5jcnlwdGVkLXRibjAuZ3N0YXRpYy5jb20vaW1hZ2VzP3E9dGJuOkFOZDlHY1JacXRnWjJlVzJGMkh2dkZPcTlSczBrVldpV0pMN3BRYkE1ZyZ1c3FwPUNBVSIsImlhdCI6MTY5MzE1NTE3NCwiZXhwIjoxNjkzMjQxNTc0fQ.afLRIkTdwhJuR-wzv5WspWWe-p6PgqzYuvjsxx8nFos";
-    if (await this.jwt.verify(token))
+    // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlcm5hbWUiOiJoYW16YSIsImdlbmRlciI6IkZlbWFsZSIsImJpcnRoRGF5IjoiMjAyMy0wNy0zMVQyMzowMDowMC4wMDBaIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vZW5jcnlwdGVkLXRibjAuZ3N0YXRpYy5jb20vaW1hZ2VzP3E9dGJuOkFOZDlHY1JacXRnWjJlVzJGMkh2dkZPcTlSczBrVldpV0pMN3BRYkE1ZyZ1c3FwPUNBVSIsImlhdCI6MTY5MzE1NTE3NCwiZXhwIjoxNjkzMjQxNTc0fQ.afLRIkTdwhJuR-wzv5WspWWe-p6PgqzYuvjsxx8nFos";
+    // if (await this.jwt.verify(token))
+    // {
+    //   const user = await this.jwt.decoded(token);
+    //   user.gameSocket = client.id;
+    //   await this.userservice.update(user,user.id as number);
+    //   const current = await this.userservice.findByName(user.username);
+    //   //console.log("USER = "+ JSON.stringify(current));
+    //   //const rooms  = await this.chatservice.getAllRooms(user.id as number);
+    //   //rooms.forEach(room=>{client.join(room)})
+    //   console.log(`Client connected: ${client.id}`);
+    // }
+    //console.log(`Client connected: ${client.id}`);
+  }
+  @SubscribeMessage('getSockerGame')
+  async getSocketGame(client: Socket,obj:{token:string}) {
+    //const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OSwidXNlcm5hbWUiOiJoYW16YSIsImdlbmRlciI6IkZlbWFsZSIsImJpcnRoRGF5IjoiMjAyMy0wNy0zMVQyMzowMDowMC4wMDBaIiwiYXZhdGFyX3VybCI6Imh0dHBzOi8vZW5jcnlwdGVkLXRibjAuZ3N0YXRpYy5jb20vaW1hZ2VzP3E9dGJuOkFOZDlHY1JacXRnWjJlVzJGMkh2dkZPcTlSczBrVldpV0pMN3BRYkE1ZyZ1c3FwPUNBVSIsImlhdCI6MTY5MzE1NTE3NCwiZXhwIjoxNjkzMjQxNTc0fQ.afLRIkTdwhJuR-wzv5WspWWe-p6PgqzYuvjsxx8nFos";
+    if (await this.jwt.verify(obj.token))
     {
-      const user = await this.jwt.decoded(token);
+      const user = await this.jwt.decoded(obj.token);
       user.gameSocket = client.id;
       await this.userservice.update(user,user.id as number);
       const current = await this.userservice.findByName(user.username);

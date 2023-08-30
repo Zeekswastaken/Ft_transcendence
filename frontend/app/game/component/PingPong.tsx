@@ -5,6 +5,7 @@ import io, {Socket} from 'socket.io-client';
 
 
 const PingPong = () => {
+
     const canvasRef = useRef(null);
     const [startGame, setStartGame] = useState(false);
     const [initVarsStatus, setInitVars] = useState(false);
@@ -12,10 +13,10 @@ const PingPong = () => {
     const [p2Score, setP2Score] = useState<number>(0);
     const [socket, setSocket] = useState<Socket>();
 
-    
     const handelScore = (p: number) => {
         p === 1 ? setP1Score((p1Score) => p1Score + 1) : setP2Score(p2Score => p2Score + 1);
     }
+
 
     const handelStartGame = () => {
         setStartGame(!startGame);
@@ -54,7 +55,6 @@ const PingPong = () => {
             };
         }
     }, [startGame]);
-    
     return (
         <div className=''>
             <div className='mb-[10px] grid grid-cols-3 justify-between place-content-center'>

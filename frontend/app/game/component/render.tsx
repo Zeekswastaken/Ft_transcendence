@@ -162,7 +162,7 @@ const update = (context: CanvasRenderingContext2D, handelScore: any) => {
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
 
-    if(ball.y + ball.radius > context.canvas.height || ball.y -ball.radius < 0)
+    if(ball.y + ball.radius > context.canvas.height || ball.y - ball.radius < 0)
         ball.vY = -ball.vY;
     let selectPlayer = ball.x < context.canvas.width / 2 ? player1 : player2;
     if(collision(ball, selectPlayer))
