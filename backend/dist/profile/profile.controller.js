@@ -19,11 +19,13 @@ const user_service_1 = require("../user/user.service");
 const profile_service_1 = require("./profile.service");
 const passwordChecker_1 = require("../utils/passwordChecker");
 const friends_service_1 = require("../friends/friends.service");
+const blocked_service_1 = require("../blocked/blocked.service");
 let ProfileController = class ProfileController {
-    constructor(userservice, profileService, friendsService, jwt) {
+    constructor(userservice, profileService, friendsService, blockedService, jwt) {
         this.userservice = userservice;
         this.profileService = profileService;
         this.friendsService = friendsService;
+        this.blockedService = blockedService;
         this.jwt = jwt;
     }
     async display(username, res) {
@@ -35,10 +37,13 @@ let ProfileController = class ProfileController {
                 delete user.password;
                 console.log("-------- ", user.id);
                 const details = await this.friendsService.getUserFriends(user.id);
+                const details2 = await this.blockedService.getblocked(user.id);
                 console.log(details);
+                console.log(details2);
                 const info = {
                     user: user,
-                    friends: details
+                    friends: details,
+                    blocked: details2
                 };
                 res.send(info);
             }
@@ -111,6 +116,6 @@ __decorate([
 ], ProfileController.prototype, "update", null);
 exports.ProfileController = ProfileController = __decorate([
     (0, common_1.Controller)('profile'),
-    __metadata("design:paramtypes", [user_service_1.UserService, profile_service_1.ProfileService, friends_service_1.FriendsService, jwt_service_1.JWToken])
+    __metadata("design:paramtypes", [user_service_1.UserService, profile_service_1.ProfileService, friends_service_1.FriendsService, blocked_service_1.BlockedService, jwt_service_1.JWToken])
 ], ProfileController);
 //# sourceMappingURL=profile.controller.js.map

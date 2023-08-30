@@ -87,11 +87,11 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "player2", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => blockedUser_entity_1.BlockedUser, blockedUser => blockedUser.blockedby),
+    (0, typeorm_1.OneToMany)(() => blockedUser_entity_1.BlockedUser, blockedUser => blockedUser.blockeduser),
     __metadata("design:type", Array)
 ], User.prototype, "blockedUsers", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => blockedUser_entity_1.BlockedUser, blockedUser => blockedUser.blockeduser),
+    (0, typeorm_1.OneToMany)(() => blockedUser_entity_1.BlockedUser, blockedUser => blockedUser.blockedby),
     __metadata("design:type", Array)
 ], User.prototype, "usersBlocked", void 0);
 __decorate([

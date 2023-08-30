@@ -20,12 +20,12 @@ __decorate([
     __metadata("design:type", Number)
 ], BlockedUser.prototype, "Blockedid", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.blockedUsers),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.blockedUsers, { eager: true, cascade: true, onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'BlockedById' }),
     __metadata("design:type", user_entity_1.User)
 ], BlockedUser.prototype, "blockedby", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.usersBlocked),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.usersBlocked, { eager: true, cascade: true, onDelete: 'CASCADE' }),
     (0, typeorm_1.JoinColumn)({ name: 'BlockedUserId' }),
     __metadata("design:type", user_entity_1.User)
 ], BlockedUser.prototype, "blockeduser", void 0);

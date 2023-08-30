@@ -65,4 +65,16 @@ export class BlockedGateway {
       throw error;
     }
   }
+  @SubscribeMessage('getBlocked')
+  async getBlocked(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
+    try {
+      console.log("]]]]] ", data.userID);
+      const bool = await this.blockedService.getblocked(data.userID);
+      client.emit('isBlocking', bool);
+    } catch(error){
+      console.error('Error checking if the user is blocking you: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
+  }
 }

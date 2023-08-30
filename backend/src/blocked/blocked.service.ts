@@ -3,6 +3,7 @@ import { BlockedUser } from 'src/database/blockedUser.entity';
 import { User } from 'src/database/user.entity';
 import { UserFriends } from 'src/database/userFriends.entity';
 import { Repository, Not, Equal } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class BlockedService {
@@ -15,9 +16,12 @@ export class BlockedService {
 
   async create(userID: Number, blockedID: Number) {
     const user = await this.userRepository.findOne({where: {id:Equal(userID)}, relations: ['blockedUsers', 'usersBlocked']});
-    const blockedUser = await this.blockedRepository.findOne({where: {id:Equal(blockedID)}, relations: ['blockedUsers', 'usersBlocked']});
-    if (user || !BlockedUser)
+    const blockedUser = await this.userRepository.findOne({where: {id:Equal(blockedID)}, relations: ['blockedUsers', 'usersBlocked']});
+    const block = await this.blockedRepository.findOne({where: [{blockedby: Equal(userID), blockeduser: Equal(blockedID)}]})
+    if (!user || !blockedUser)
       throw new HttpException("The user or the recipient is not found",HttpStatus.FORBIDDEN);
+    if (block)
+    throw new HttpException("This user has already been blocked",HttpStatus.FORBIDDEN);
     const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userID), receiver: Equal(blockedID)},{sender: Equal(blockedID), receiver: Equal(userID)}]});
     if (friendship)
       await this.userFriendsRepository.remove(friendship);
@@ -25,8 +29,9 @@ export class BlockedService {
     blocking.blockedby = user;
     blocking.blockeduser = blockedUser;
     await this.blockedRepository.save(blocking);
-    user.blockedUsers.push(blockedUser);
-    blockedUser.usersBlocked.push(user);
+    console.log("======> ", blocking);
+    user.blockedUsers.push(blocking);
+    blockedUser.usersBlocked.push(blocking);
     await this.userRepository.save([user, blockedUser]);
   }
 
@@ -39,15 +44,17 @@ export class BlockedService {
     const blocked = await this.userRepository.findOne({where:{id:Equal(recipientid)}, relations: ['blockedUsers', 'usersBlocked']});
     if (!user || !blocked)
       throw new HttpException("The current/blocked user doesn't exist", HttpStatus.FORBIDDEN);
+      if (!user || !blocked)
+      throw new HttpException("The current/blocked user doesn't exist", HttpStatus.FORBIDDEN);
     const search = user.blockedUsers.find(block => block.blockeduser.id == recipientid);
     if (!search)
       throw new HttpException("You do not have the right to unblock this user", HttpStatus.FORBIDDEN);
-      await this.blockedRepository.remove(blocked);
+      await this.blockedRepository.remove(search);
   }
 
   async getblocked(userid: Number): Promise<User[]>
   {
-    const user = this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
       relations: ['blockedUsers'],
     });
@@ -55,7 +62,9 @@ export class BlockedService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    const blocked = user.blockedUsers;
+    console.log("++++++++++ ", user.blockedUsers);
+    const blocked = user.blockedUsers.map(blocked=> blocked.blockeduser);
+    console.log("--=-=-> ", blocked);
     return (blocked);
   }
 
@@ -93,13 +102,5 @@ export class BlockedService {
       return true;
     else
      return false;
-  }
-
-  update(id: number) {
-    return `This action updates a #${id} blocked`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} blocked`;
   }
 }
