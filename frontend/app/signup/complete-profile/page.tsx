@@ -9,7 +9,6 @@ import { getCookie, setCookie } from 'cookies-next';
 
 const completProfile = () => {
   const cookie = getCookie('accessToken');
-  // console.log("cookie = ", cookie)
   const [birthDay, setBirthDay] = useState<Date |  null>(null);
   const [gender, setGender] = useState("");
   // const [avatar_URL, setAvatar_URL] = useState<File>();
@@ -21,7 +20,6 @@ const completProfile = () => {
     // console.log("avatar_URL = " + avatar_URL);
     const avatar_url = new FormData();
     avatar_url.append("file", avatar.current as File);
-    console.log(avatar_url);
 
     e.preventDefault();
     await axios.put("http://localhost:3000/auth/modify-data", {
@@ -51,7 +49,6 @@ const completProfile = () => {
       avatar.current = e.target.files[0];
       try {
         const path = URL.createObjectURL(avatar.current);
-        console.log('Created URL:', path); // Check the created URL
         setPath(path);
       } catch (error) {
         console.error('Error creating URL:', error);

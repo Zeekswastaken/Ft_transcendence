@@ -30,6 +30,8 @@ export class ProfileController {
             }
             res.send(info);
         }
+        else
+            res.send({message: "not-found"});
         } catch (error)
         {
             console.error('Error getting the friends of the user: ',error.message);

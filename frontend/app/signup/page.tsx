@@ -23,9 +23,6 @@ const signup = () => {
         repassword
       })
       .then((res) => {
-        // console.log(res.data)
-        
-        
         if (res.data.message === "empty" || res.data.message === "exists") {
           setUserNotFound("Invalid Username, please try again!");
           setPassNotMatch("");
@@ -44,7 +41,6 @@ const signup = () => {
           setUserNotFound("");
           return;
         }
-        // console.log("tokennn = " + res.data);
         setCookie("accessToken", res.data);
         router.push("/signup/complete-profile")
       }).catch(err => {console.log(err)})

@@ -65,7 +65,7 @@ const Navbar = () => {
 		const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
 			e.preventDefault()
 			axios.get(`http://localhost:3000/profile/${searchForUser}`).then(res => {
-				if (!res.data) {
+				if (res.data.message === "not-found") {
 					setUserNotFound("User Not Found")
 					return ;
 				}
@@ -77,7 +77,6 @@ const Navbar = () => {
 				}
 			}).catch(res => {console.log(res)})
 		}
-
 		const handleSignOut = (e: React.MouseEvent<HTMLElement>) => {
 			e.preventDefault()  
 			deleteCookie("accessToken");
@@ -112,7 +111,7 @@ const Navbar = () => {
 											value={searchForUser}
 											type="search" name="q"
 											className="  border-transparent focus:border-transparent focus:ring-0 w-[170px] py-2 text-sm text-[#6E4778] placeholder-[#6E4778] bg-[#411742] rounded-xl pl-10 focus:outline-none focus:bg-primary-dark-500 focus:text-primary-white-200" placeholder="Search..." />
-									{userNotFound && isInputFocused && searchForUser && <p className="text-red-500 absolute text-xs pt-1 text-left">{userNotFound}</p>}
+									{userNotFound && searchForUser && <p className="text-red-500 absolute text-xs pt-1 text-left">{userNotFound}</p>}
 								</div> 
 								) : (
 									<button onClick={() => setMobileSearchtoggle(!mobileSearchtoggle)} className="px-1 mt-1 bg-[#411742] rounded-xl focus:outline-none focus:shadow-outline">
