@@ -6,9 +6,11 @@ import MatchHistory from "../../components/home/MatchHistory";
 import { useSocketContext } from "../socket";
 import { getCookie } from "cookies-next";
 import { io } from "socket.io-client";
+import { useUserDataContext } from "@/app/userDataProvider";
 
 
 export default function Home() {
+
   return (
     <main className="overflow-auto ">
       <div className=" animate-fade-up">
