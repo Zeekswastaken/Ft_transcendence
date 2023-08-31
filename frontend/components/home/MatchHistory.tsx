@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import Row from "../tools/Row";
+import { useEffect, useState } from "react";
+import { useSocketContext } from "@/app/socket";
 
 type TableDataFreind = {
 	avatar: string
@@ -36,6 +38,17 @@ const Friend = ( { avatar, name, state, styles} : TableDataFreind ) => {
 }
 
 const MatchHistory = () => {
+	const [userFriends, setUserFriends] = useState<any>(undefined)
+    const {socket} = useSocketContext()
+
+    useEffect(() => {
+        socket?.io("GetUserStatus", (data:any) => {
+            setUserFriends(data);
+        })
+    }, [userFriends])
+    socket?.emit("UserStatus");
+    
+    console.log(userFriends)
 	return (
 		
 		<div className=" min-w-[350px]  my-16 mx-2 sm:mx-20 grid grid-cols-1 lg:grid-cols-2 lg:max-w-[1400px] ">
