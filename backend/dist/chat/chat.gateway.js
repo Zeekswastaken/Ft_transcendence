@@ -21,20 +21,32 @@ let WebsocketGateway = class WebsocketGateway {
         this.chatservice = chatservice;
         this.jwt = jwt;
         this.userservice = userservice;
+        this.users = new Map();
     }
-    async handleConnection(obj) {
+    async handleConnection(client) {
     }
     async getSocketId(client, obj) {
         if (await this.jwt.verify(obj.token)) {
             const user = await this.jwt.decoded(obj.token);
             user.Socket = client.id;
+            user.status = 'Online';
+            this.users.set(client.id, user);
             console.log(" chat.id == " + client.id);
             await this.userservice.update(user, user.id);
         }
     }
-    handleDisconnect(client) {
-        const token = client.handshake.query.token;
+    async status(client) {
+        const user = this.users.get(client.id);
+        client.emit('GetUserStatus', user);
+    }
+    async handleDisconnect(client) {
+        const user = this.users.get(client.id);
+        user.Socket = null;
+        user.status = 'Offline';
+        await this.userservice.update(user, user.id);
+        console.log("user disconnect ==> " + JSON.stringify(user));
         console.log(`chat.Client disconnected: ${client.id}`);
+        this.users.delete(client.id);
     }
     afterInit(server) {
         console.log('WebSocket gateway initialized');
@@ -61,6 +73,12 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", Promise)
 ], WebsocketGateway.prototype, "getSocketId", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('UserStatus'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], WebsocketGateway.prototype, "status", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('Duo'),
     __metadata("design:type", Function),

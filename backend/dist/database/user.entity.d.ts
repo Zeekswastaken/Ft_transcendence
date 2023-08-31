@@ -8,12 +8,13 @@ import { UserFriends } from "./userFriends.entity";
 export declare class User {
     id: Number;
     username: String;
+    status: String;
     birthDay: Date;
     password: String;
     gender: String;
     privacy: Boolean;
     PlayerSocket: String;
-    Socket: String;
+    Socket: string;
     Bio: String;
     avatar_url: String;
     memberships: ChannelMembership[];

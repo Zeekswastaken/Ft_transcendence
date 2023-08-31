@@ -2,21 +2,21 @@ import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit } from '@nestjs
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { JWToken } from 'src/auth/jwt.service';
+import { User } from 'src/database/user.entity';
 import { UserService } from 'src/user/user.service';
 export declare class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     private readonly chatservice;
     private readonly jwt;
     private readonly userservice;
     constructor(chatservice: ChatService, jwt: JWToken, userservice: UserService);
+    users: Map<string, User>;
     server: Server;
-    handleConnection(obj: {
-        token: any;
-        client: any;
-    }): Promise<void>;
+    handleConnection(client: Socket): Promise<void>;
     getSocketId(client: Socket, obj: {
         token: string;
     }): Promise<void>;
-    handleDisconnect(client: Socket): void;
+    status(client: Socket): Promise<void>;
+    handleDisconnect(client: Socket): Promise<void>;
     afterInit(server: Server): void;
     handleMessage(client: Socket, payload: {
         text: String;
