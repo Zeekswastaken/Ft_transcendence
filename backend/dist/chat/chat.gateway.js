@@ -32,20 +32,23 @@ let WebsocketGateway = class WebsocketGateway {
             user.status = 'Online';
             console.log(" chat.id == " + client.id);
             await this.userservice.update(user, user.id);
-            const newUser = await this.userservice.findByName(user.username);
-            const token = await this.jwt.generateToken_2(user);
-            this.users.set(client.id, token);
-            client.to(client.id).emit('accessToken', token);
+            const user2 = await this.userservice.findByName(user.username);
+            this.users.set(client.id, await this.jwt.generateToken_2(user2));
         }
     }
     async status(client) {
         const token = this.users.get(client.id);
-        client.emit('GetUserStatus', token);
+        if (token) {
+            const user = await this.jwt.decoded(token);
+            console.log("User == >", user);
+            client.emit('GetUserStatus', user);
+        }
     }
     async handleDisconnect(client) {
         const token = this.users.get(client.id);
         if (token) {
             const user = await this.jwt.decoded(token);
+            user.Socket = null;
             user.status = 'Offline';
             await this.userservice.update(user, user.id);
             console.log("user disconnect ==> " + JSON.stringify(user));

@@ -87,6 +87,7 @@ const page = () => {
       console.error('Error decoding token:');
     }
   }, [])
+  
 
   return (
     <div className=" flex place-content-center items-center w-full h-screen max-w-[1300px] min-w-[350px] ">
