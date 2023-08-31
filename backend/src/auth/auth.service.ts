@@ -73,12 +73,20 @@ export class AuthService {
     }
     async create_Oauth(body:UserDto):Promise<boolean | User>
     {
+<<<<<<< HEAD
        const user1 = await this.userservice.findByName(body.username   );
+=======
+       const user1 = await this.userservice.findByName(body.username );
+>>>>>>> e27c463611147e3322d11dbc1f97cac4957c93ef
        if (!user1)
        {
             console.log(body);
             const user = new User();
+<<<<<<< HEAD
             user.username = body.username ;
+=======
+            user.username = body.username  ;
+>>>>>>> e27c463611147e3322d11dbc1f97cac4957c93ef
             user.avatar_url = body.avatar_url;  
             await this.userservice.save(user);
             const stats = new Stats();

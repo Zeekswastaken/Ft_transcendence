@@ -8,15 +8,14 @@ export declare class WebsocketGateway implements OnGatewayInit, OnGatewayConnect
     private readonly jwt;
     private readonly userservice;
     constructor(chatservice: ChatService, jwt: JWToken, userservice: UserService);
+    users: Map<string, string>;
     server: Server;
-    handleConnection(obj: {
-        token: any;
-        client: any;
-    }): Promise<void>;
+    handleConnection(client: Socket): Promise<void>;
     getSocketId(client: Socket, obj: {
         token: string;
     }): Promise<void>;
-    handleDisconnect(client: Socket): void;
+    status(client: Socket): Promise<void>;
+    handleDisconnect(client: Socket): Promise<void>;
     afterInit(server: Server): void;
     handleMessage(client: Socket, payload: {
         text: String;

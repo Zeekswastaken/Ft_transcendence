@@ -34,6 +34,9 @@ let UserService = class UserService {
     async save(Body) {
         await this.userRepo.save(Body);
     }
+    async findBySocket(socketId) {
+        return await this.userRepo.findOne({ where: { Socket: socketId } });
+    }
     async update(Body, id) {
         console.log("id = " + id);
         await this.userRepo.update(id, Body);

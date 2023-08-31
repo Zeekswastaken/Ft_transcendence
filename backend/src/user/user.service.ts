@@ -3,10 +3,11 @@ import * as bcrypt from 'bcrypt';
 
 import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { User } from '../database/user.entity';
 import { UserDto ,MoreInfos, TO_update} from '../Dto/use.Dto';
 import { Stats } from 'src/database/stats.entity';
+import { SocketAddress } from 'net';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,9 @@ export class UserService {
     }
     async save(Body:Partial<User> ){
         await this.userRepo.save(Body);
+    }
+    async findBySocket(socketId:string){
+        return await this.userRepo.findOne({where:{Socket: socketId}});
     }
     async update(Body:Partial<User>,id:number){
        // console.log("\n\n\n\n\body after == "+ Body);
