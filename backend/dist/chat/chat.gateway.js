@@ -30,23 +30,28 @@ let WebsocketGateway = class WebsocketGateway {
             const user = await this.jwt.decoded(obj.token);
             user.Socket = client.id;
             user.status = 'Online';
-            this.users.set(client.id, user);
             console.log(" chat.id == " + client.id);
             await this.userservice.update(user, user.id);
+            const newUser = await this.userservice.findByName(user.username);
+            const token = await this.jwt.generateToken_2(user);
+            this.users.set(client.id, token);
+            client.to(client.id).emit('accessToken', token);
         }
     }
     async status(client) {
-        const user = this.users.get(client.id);
-        client.emit('GetUserStatus', user);
+        const token = this.users.get(client.id);
+        client.emit('GetUserStatus', token);
     }
     async handleDisconnect(client) {
-        const user = this.users.get(client.id);
-        user.Socket = null;
-        user.status = 'Offline';
-        await this.userservice.update(user, user.id);
-        console.log("user disconnect ==> " + JSON.stringify(user));
-        console.log(`chat.Client disconnected: ${client.id}`);
-        this.users.delete(client.id);
+        const token = this.users.get(client.id);
+        if (token) {
+            const user = await this.jwt.decoded(token);
+            user.status = 'Offline';
+            await this.userservice.update(user, user.id);
+            console.log("user disconnect ==> " + JSON.stringify(user));
+            console.log(`chat.Client disconnected: ${client.id}`);
+            this.users.delete(client.id);
+        }
     }
     afterInit(server) {
         console.log('WebSocket gateway initialized');

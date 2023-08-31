@@ -10,7 +10,7 @@ import { UserService } from 'src/user/user.service';
 @WebSocketGateway()
 export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   constructor (private readonly chatservice:ChatService, private readonly jwt:JWToken,private readonly userservice:UserService){}
-  users = new Map<string, User>();
+  users = new Map<string, String>();
    @WebSocketServer()
    server: Server;
    ///@SubscribeMessage('joinDuo')
@@ -25,29 +25,36 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
        const user = await this.jwt.decoded( obj.token);
        user.Socket = client.id;
        user.status = 'Online';
-       this.users.set(client.id,user);
+       
       //  console.log("user = " + JSON.stringify(user));
        console.log(" chat.id == " + client.id)
        await this.userservice.update(user,user.id as number);
+      const newUser = await this.userservice.findByName(user.username);
+      const token = await this.jwt.generateToken_2(user);
+      this.users.set(client.id,token);
+       client.to(client.id).emit('accessToken',token)
      }
    }
    @SubscribeMessage('UserStatus')
    async status(client:Socket){
-    const user = this.users.get(client.id);
-    
-    client.emit('GetUserStatus',user);
+    const token = this.users.get(client.id);
+    client.emit('GetUserStatus',token)
    }
 
   async handleDisconnect(client: Socket) {
     // const token = client.handshake.query.token;
     //const user = await this.userservice.findBySocket(client.id as string);
-    const user = this.users.get(client.id);
-    user.Socket = null;
-    user.status = 'Offline';
-    await this.userservice.update(user,user.id as number);
-    console.log("user disconnect ==> "+JSON.stringify(user));
-    console.log(`chat.Client disconnected: ${client.id}`);
-    this.users.delete(client.id)
+    const token = this.users.get(client.id);
+    if (token)
+    {
+      const user = await this.jwt.decoded(token);
+    // user.Socket = null;
+      user.status = 'Offline';
+      await this.userservice.update(user,user.id as number);
+      console.log("user disconnect ==> "+JSON.stringify(user));
+      console.log(`chat.Client disconnected: ${client.id}`);
+      this.users.delete(client.id)
+    }
   }
 
   afterInit(server: Server) {
