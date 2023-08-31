@@ -50,12 +50,11 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
   // let e: Event
   // e.preventDefault()
   const User = useParams().username;
-  const router = useRouter();
-  const [user, setUser] = useState<userData>({} as userData)
+  const [user, setUser] = useState<userData | undefined>({} as userData)
   useEffect(() => {
     axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
-      if(!res.data){
-        // router.push("/not-found");
+      if(res.data.message === "not-found"){
+        setUser(undefined)
         return;
       }
       setUser(res.data);
@@ -64,10 +63,10 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
     })
     
   }, [User])
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(setUserData(user));
-  }, [dispatch, user]);
+  // const dispatch = useAppDispatch();
+  // useEffect(() => {
+  //   dispatch(setUserData(user));
+  // }, [dispatch, user]);
 
   return (
     <userDataContext.Provider value={user}>

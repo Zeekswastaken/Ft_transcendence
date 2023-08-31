@@ -60,7 +60,6 @@ const Settings = () => {
         Bio: bio
       }).then(res => {
         if (res.data.message === "error") {
-          console.log(res)
           return ;
         }
         else if (res.data.message === "weak"){

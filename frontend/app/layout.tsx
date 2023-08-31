@@ -21,7 +21,7 @@ export default function RootLayout({
   
   return (
     <html lang="en">
-      <body className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat flex justify-center ">
+      <body  className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat flex justify-center ">
         <Providers>
           <UserDataProvider>
             <SocketProvider>
