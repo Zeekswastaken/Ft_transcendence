@@ -42,45 +42,52 @@ const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
 
 const MatchHistory = () => {
 
-	const [User, setUser] = useState<any>()
-	const [userFriends, setUserFriends] = useState<Array<any>>()
+	// const [User, setUser] = useState<any>()
+	// const [userFriends, setUserFriends] = useState<Array<any>>()
 	
-	useEffect(() => {
-		  const token = getCookie("accessToken");
-		  try {
-			const user = jwt.decode(token as string) as JwtPayload
-			if (user)
-			  setUser(user?.username)
-			// setCurrentUsername(jwt.decode(token).username);
-		  } catch (error) {
-			console.error('Error decoding token:');
-		  }
-		axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
-			if(res.data.message === "not-found"){
-			  setUser(undefined)
-			  return;
-			}
-			else{
-				console.log(res.data);
-				setUserFriends(res.data.friends);
-			}
-		  }).catch((err) => {
-			console.log(err);
-		  })
-	  }, [User])
-	// const Data = useUserDataContext()
-	// const userFriends = Data?.friends;
-	// console.log("userFriends = ", userFriends)
-	// const [userFriends, setUserFriends] = useState<any>(undefined)
-	// const {socket} = useSocketContext()
-
+	// const token = getCookie("accessToken");
+	// // useEffect(() => {
+	// 	if(!User) {
+	// 		try {
+	// 		  const user = jwt.decode(token as string) as JwtPayload
+	// 		  if (user)
+	// 			setUser(user?.username)
+	// 		  // setCurrentUsername(jwt.decode(token).username);
+	// 		} catch (error) {
+	// 		  console.error('Error decoding token:', error);
+	// 		}
+	// 	}
+	// // },[])
 	// useEffect(() => {
-	// 	socket?.io("GetUserStatus", (data:any) => {
-	// 		setUserFriends(data);
-	// 	})
-	// 	socket?.emit("UserStatus");
-	// }, [socket])
+	// 	axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
+	// 		if(res.data.message === "not-found"){
+	// 		  setUser(undefined)
+	// 		  return;
+	// 		}
+	// 		else{
+	// 			console.log(res.data);
+	// 			setUserFriends(res.data.friends);
+	// 		}
+	// 	  }).catch((err) => {
+	// 		console.log(err);
+	// 	  })
+	//   }, [User])
+	// const Data = useUserDataContext()
+	// useEffect(() => {
+	// 	setUserFriends(Data?.friends);
+	// }, [Data])
+	// console.log("userFriends = ", userFriends)
+	const [userFriends, setUserFriends] = useState<any>(undefined)
+	const {socket} = useSocketContext()
 
+	useEffect(() => {
+		socket?.io("GetUserStatus", (data:any) => {
+			setUserFriends(data);
+		})
+	}, [userFriends])
+	socket?.emit("UserStatus");
+	
+	console.log(userFriends)
 
 	return (
 		
@@ -107,15 +114,6 @@ const MatchHistory = () => {
 				{userFriends?.map((friend:any) => {
 					return <Friend key={friend.id} avatar={friend.avatar_url} name={friend.username} status={friend.status} styles=""/>
 				})}
-
-				{/* < Friend avatar="/avatars/avatar1.png" name="Hawkins" state="online" styles="animate-fade-up animate-delay-[100ms]"/>
-				< Friend avatar="/avatars/avatar2.png" name="Sofia" state="offline" styles="animate-fade-up animate-delay-[200ms]"/>
-				< Friend avatar="/avatars/avatar3.png" name="Samia" state="online" styles="animate-fade-up danimate-elay-[300ms]"/>
-				< Friend avatar="/avatars/avatar4.png" name="Khalid" state="offline" styles="animate-fade-up animate-delay-[400ms]"/>
-				< Friend avatar="/avatars/avatar5.png" name="Mounir" state="online" styles="animate-fade-up animate-delay-[500ms]"/>
-				< Friend avatar="/avatars/avatar1.png" name="Barak" state="offline" styles="animate-fade-up animate-delay-[600ms]"/>
-				< Friend avatar="/avatars/avatar2.png" name="Wasafi" state="offline" styles="animate-fade-up animate-delay-[700ms]"/>
-				< Friend avatar="/avatars/avatar3.png" name="Criminal" state="offline" styles="animate-fade-up animate-delay-[800ms]"/> */}
 			</div>
 		</div>
 		)
