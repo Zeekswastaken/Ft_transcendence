@@ -22,8 +22,8 @@ export declare class User {
     receivedinvites: GameInvite[];
     player1: Match[];
     player2: Match[];
+    blockingUsers: BlockedUser[];
     blockedUsers: BlockedUser[];
-    usersBlocked: BlockedUser[];
     twofactorsecret: string;
     twofactorenabled: boolean;
     receivednotifications: Notification[];

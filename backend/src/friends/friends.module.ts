@@ -8,13 +8,15 @@ import { Channel } from 'src/database/channel.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { Notification } from 'src/database/notifications.entity';
 import { BlockedUser } from 'src/database/blockedUser.entity';
+import { ChannelService } from 'src/channel/channel.service';
+import { ChannelMembership } from 'src/database/channelMembership.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserFriends, Channel, BlockedUser ,Notification]),JwtModule.register({
+  imports: [TypeOrmModule.forFeature([User, UserFriends, Channel, BlockedUser ,Notification, ChannelMembership]),JwtModule.register({
     secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
     signOptions: { expiresIn: '1h' }, 
   })],
-  providers: [FriendsGateway, FriendsService],
+  providers: [FriendsGateway, FriendsService, ChannelService],
   exports: [TypeOrmModule]
 })
 export class FriendsModule {}

@@ -19,6 +19,7 @@ const blockedUser_entity_1 = require("./blockedUser.entity");
 const notifications_entity_1 = require("./notifications.entity");
 const userFriends_entity_1 = require("./userFriends.entity");
 let User = class User {
+    ;
 };
 exports.User = User;
 __decorate([
@@ -87,13 +88,13 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "player2", void 0);
 __decorate([
+    (0, typeorm_1.OneToMany)(() => blockedUser_entity_1.BlockedUser, blockedUser => blockedUser.blockedby),
+    __metadata("design:type", Array)
+], User.prototype, "blockingUsers", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => blockedUser_entity_1.BlockedUser, blockedUser => blockedUser.blockeduser),
     __metadata("design:type", Array)
 ], User.prototype, "blockedUsers", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => blockedUser_entity_1.BlockedUser, blockedUser => blockedUser.blockedby),
-    __metadata("design:type", Array)
-], User.prototype, "usersBlocked", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

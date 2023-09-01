@@ -18,7 +18,8 @@ export class BlockedGateway {
       console.log("---------> ", data.userID);
       console.log("---------> ", data.recipientID);
       const request = await this.blockedService.create(data.userID, data.recipientID);
-        const message = "The User has been blocked";
+      console.log("REQUEST ====== ", request);  
+      const message = "The User has been blocked";
         client.emit('message', message);
       return request;
     } catch (error)

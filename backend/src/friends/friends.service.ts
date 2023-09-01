@@ -4,6 +4,10 @@ import { UserFriends } from '../database/userFriends.entity';
 import { Notification } from '../database/notifications.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, Equal } from 'typeorm';
+import { Channel } from 'src/database/channel.entity';
+import { ChannelMembership } from 'src/database/channelMembership.entity';
+import { ChannelService } from 'src/channel/channel.service';
+import { channel } from 'diagnostics_channel';
 @Injectable()
 export class FriendsService {
   constructor(
@@ -12,8 +16,12 @@ export class FriendsService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Notification)
-    private readonly notificationsRepository: Repository<Notification>
-  ) {}
+    private readonly notificationsRepository: Repository<Notification>,
+    @InjectRepository(Channel)
+    private readonly channelRepository: Repository<Channel>,
+    @InjectRepository(ChannelMembership)
+    private readonly channelMembershipRepository: Repository<ChannelMembership>
+    ) {}
 
   async create(userid: Number, recipientid: Number) {
     const initiator = await this.userRepository.findOne({where: { id: Equal(userid)}, relations: ['friendsassender', 'friendsasreceiver']});
@@ -33,6 +41,17 @@ export class FriendsService {
     recipient.friendsasreceiver.push(actualFriendship);
     await this.userRepository.save(initiator);
     await this.userRepository.save(recipient);
+    const channel = new Channel();
+    channel.Name = "friend" + initiator.username + recipient.username;
+    channel.Type = "duo";
+    const savedChannel = await this.channelRepository.save(channel);
+    await this.channelRepository.save(savedChannel);
+    const membership = new ChannelMembership();
+    membership.Userid = initiator.id;
+    membership.Channelid = channel.id
+    membership.Type = "friend";
+    await this.channelMembershipRepository.save(membership);
+    // await this.channelservice.joinChannel(savedChannel.id, recipientid, null);
     console.log("--------------------------> ",recipient.friendsasreceiver[0].receiver);
     return actualFriendship;
   }

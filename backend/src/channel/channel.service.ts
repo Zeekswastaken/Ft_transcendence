@@ -18,7 +18,7 @@ export class ChannelService {
         @InjectRepository(ChannelMembership)
         private readonly channelMembershipRepository: Repository<ChannelMembership>,
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
+        private readonly userRepository: Repository<User>
     ){
         console.log('ChannelRepository:', channelRepository);
         console.log('ChannelMembershipRepository:', channelMembershipRepository);
