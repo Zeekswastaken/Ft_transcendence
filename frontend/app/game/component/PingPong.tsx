@@ -49,9 +49,6 @@ const PingPong = () => {
     }, [token])
 
     useEffect(() => {
-        socket?.on('send', (message) => {
-            console.log('Message from server:', message);
-        });
         socket?.on('getOpponent', (opponent) => {
             setOpponent(opponent);
         });
