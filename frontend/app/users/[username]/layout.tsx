@@ -201,15 +201,15 @@ export default function RootLayout({
               <div className="  mt-20 lg:mt-0 order-1 flex place-content-center">
                 <div className="  bg-[#321B38]/[0.7] shadow-2xl rounded-2xl w-[85%]">
                   <div className=" 2xl:mb-0 mt-[50px] grid place-content-center ">
-                    <div className=" w-[150px] h-[150px] flex place-content-center border-4 border-primary-pink-300 rounded-full ">
-                      <div className={` place-content-center items-center w-[70px] h-[30px] ${statusStyle} flex absolute mt-[120px] pt-1 rounded-[26px]`}>
-                       <p className=" text-white/[0.9] tracking-wide font-Bomb ">{Status}</p>
-                      </div>
+                    <div className=" relative w-[150px] h-[150px] flex place-content-center border-4 border-primary-pink-300 rounded-full ">
                       <img
                         src={userData?.avatar_url}
                         alt="avatar"
                         className=" whandleAddFriend-full h-full rounded-full"
                       />
+                      <div className={` mt-[120px] absolute place-content-center items-center w-[70px] h-[30px] ${statusStyle} flex  pt-1 rounded-[26px]`}>
+                        <p className=" text-white/[0.9] tracking-wide font-Bomb ">{Status}</p>
+                      </div>
                     </div>
                     <div className=" text-center pt-4 space-y-2 font-Heading tracking-wider">
                       <p className=" text-3xl text-white overflow-hidden text-ellipsis ">{User}</p>

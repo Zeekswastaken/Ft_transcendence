@@ -79,7 +79,7 @@ const WinRate: React.FC<Props> = ({ styles, title }) => {
 const MatchHistory: React.FC<Props> = ({ styles, title }) => {
   return (
     <div
-      className={` glass animate-fade-right animate-delay-150 no-scrollbar h-[350px] whitespace-wrap overflow-auto ${styles}`}
+      className={` glass animate-fade-right animate-delay-150 no-scrollbar h-auto 2xl:h-[350px] overflow-auto ${styles}`}
     >
       <p className=" p-6 font-Bomb text-3xl text-white">{title}</p>
       <div className=" relative text-white px-8 ">
@@ -126,17 +126,6 @@ const Achievments: React.FC<Props> = ({ styles, title }) => {
           <div className=" h-20 absolute w-2/3 bg-slate-400/[0.2] rounded-xl animate-fade-right animate-ease-in animate-duration-1000 animate-delay-700"/>
         </div>
       </div>
-      {/* <div className="px-2 sm:px-8 md:px-14 xl:px-32 2xl:px-6 space-y-1 ">
-        <div className="w-full h-20 flex rounded-xl bg-[#471D49]/[0.7]">
-          <div className="w-1/5 p-4  h-full flex items-center justify-center">
-            <img src="/Spectate.png" alt="" className=" rounded-lg" />
-          </div>
-          <div className="w-4/5 py-4  h-full flex-1 items-start">
-            <p className="font-Bomb text-white text-lg">Spectate 10 matches</p>
-            <p className=" mb-5 font-Heading text-sm">sdds</p>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
@@ -150,7 +139,7 @@ const Profile = () => {
       </div>
       <div className=" grid grid-cols-1 2xl:grid-cols-3 gap-6 xl:gap-x-6">
         <Achievments title="Achievments" styles="" number="" />
-        <MatchHistory title="Match History" styles="xl:col-span-2  " number="" />
+        <MatchHistory title="Match History" styles="xl:col-span-2 " number="" />
       </div>
     </div>
   );
