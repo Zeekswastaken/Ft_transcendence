@@ -36,12 +36,13 @@ let WebsocketGateway = class WebsocketGateway {
             this.users.set(client.id, await this.jwt.generateToken_2(user2));
         }
     }
-    async status(client) {
-        const token = this.users.get(client.id);
-        if (token) {
-            const user = await this.jwt.decoded(token);
-            console.log("User == >", user);
-            client.emit('GetUserStatus', user);
+    async status(client, obj) {
+        if (obj.username) {
+            const user = await this.userservice.findByName(obj.username);
+            if (user) {
+                console.log("User == >", user);
+                client.emit('GetUserStatus', user);
+            }
         }
     }
     async handleDisconnect(client) {
@@ -84,7 +85,7 @@ __decorate([
 __decorate([
     (0, websockets_1.SubscribeMessage)('UserStatus'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", Promise)
 ], WebsocketGateway.prototype, "status", null);
 __decorate([

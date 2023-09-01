@@ -18,9 +18,9 @@ interface SocketProviderProps {
 
 export function SocketProvider({ children }: SocketProviderProps) {
   const [socket, setSocket] = useState<any | undefined>(undefined); // Initialize socket with undefined
-  const updateSocket = (newSocket:any) => {
-    setSocket(newSocket);
-  };
+  // const updateSocket = (newSocket:any) => {
+  //   setSocket(newSocket);
+  // };
   useEffect(() => {
     // Only create a new socket if it hasn't been created yet
     if (!socket) {
