@@ -17,14 +17,16 @@ const auth_module_1 = require("../auth/auth.module");
 const jwt_1 = require("@nestjs/jwt");
 const friends_module_1 = require("../friends/friends.module");
 const friends_service_1 = require("../friends/friends.service");
+const blocked_service_1 = require("../blocked/blocked.service");
+const blocked_module_1 = require("../blocked/blocked.module");
 let ProfileModule = class ProfileModule {
 };
 exports.ProfileModule = ProfileModule;
 exports.ProfileModule = ProfileModule = __decorate([
     (0, common_1.Module)({
-        imports: [user_module_1.UserModule, auth_module_1.AuthModule, friends_module_1.FriendsModule],
+        imports: [user_module_1.UserModule, auth_module_1.AuthModule, friends_module_1.FriendsModule, blocked_module_1.BlockedModule],
         controllers: [profile_controller_1.ProfileController],
-        providers: [profile_service_1.ProfileService, user_service_1.UserService, jwt_service_1.JWToken, jwt_1.JwtService, friends_service_1.FriendsService]
+        providers: [profile_service_1.ProfileService, user_service_1.UserService, jwt_service_1.JWToken, jwt_1.JwtService, friends_service_1.FriendsService, blocked_service_1.BlockedService]
     })
 ], ProfileModule);
 //# sourceMappingURL=profile.module.js.map
