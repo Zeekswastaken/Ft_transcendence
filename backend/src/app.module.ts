@@ -30,6 +30,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GameModule } from './game/game.module';
 import typeorm from './config/typeorm';
 import { BlockedModule } from './blocked/blocked.module';
+import { NotificationsService } from './notifications/notifications.service';
 
 
 @Module({
@@ -48,7 +49,7 @@ import { BlockedModule } from './blocked/blocked.module';
     }), ChatModule,ProfileModule, GameModule, BlockedModule
   ],
   controllers: [AppController, UserController],
-  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService],
+  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService, NotificationsService],
 })
 export class AppModule {}
 

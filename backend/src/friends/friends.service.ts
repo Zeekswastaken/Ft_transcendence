@@ -11,8 +11,7 @@ export class FriendsService {
     private readonly userFriendsRepository: Repository<UserFriends>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Notification)
-    private readonly notificationsRepository: Repository<Notification>
+    
   ) {}
 
   async create(userid: Number, recipientid: Number) {
