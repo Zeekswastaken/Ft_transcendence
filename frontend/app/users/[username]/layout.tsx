@@ -81,6 +81,7 @@ export default function RootLayout({
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isClicked, setIsClicked] = React.useState(true);
   const [receiver, setReceiverUsername] = useState("");
+  const [Status, setStatus] = useState();
 
   // const socket = io("http://localhost:3000", {
   // transports: ["websocket"],
@@ -90,7 +91,7 @@ export default function RootLayout({
   // Connect the socket when the app initializes
   
   useEffect(() => {
-  // socket?.connect();
+    // socket?.connect();
   socket?.on("ispending", (data:any) => {
     if (!data) {
       setIsPending(false);
@@ -107,6 +108,13 @@ export default function RootLayout({
       setIsFriend(data);
     }
   })
+  
+  socket?.on('GetUserStatus', (data: any) => {
+    if (data) {
+      // console.log('data = ', data)
+      setStatus(data.status);
+    }
+  });
   // Fetch initial state for isClicked from the WebSocket response
 
   // Emit the initial checkPending event if currentUserID and userData.id are available
@@ -116,7 +124,7 @@ export default function RootLayout({
     socket?.off("isfriend")
     socket?.off("ispending");
   };
-}, [socket, currentUserID, userData, isClicked, isPending, isFriend]);
+}, [socket, currentUserID, userData, isClicked, isPending, isFriend, Status]);
 
   if (currentUserID && userData?.id) {
     socket?.emit("checkPending", {
@@ -160,6 +168,17 @@ export default function RootLayout({
     socket?.emit("Unfriend", {userID: currentUserID, recipientID: Data?.user?.id});
     router.push(`/users/${Data?.user.username}/`)
   }
+	socket?.emit('UserStatus', {username:userData?.username});
+  let statusStyle
+  if (Status) {
+    if (Status === "Online")
+      statusStyle = "bg-green-400";
+    else if (Status === "Offline")
+      statusStyle = "bg-red-400";
+    else
+      statusStyle = "bg-blue-400"
+  }
+
   return (
     <>
     { Data ? (
@@ -175,19 +194,22 @@ export default function RootLayout({
                   </div>
                 </div>
               ) : (
-                <div className=" h-auto 2xl:order-1 order-2 col-span-2 lg:mx-20 px-2 min-w-[400px] ">
+                <div className=" h-auto 2xl:order-1 order-2 col-span-2 lg:mx-10 px-2 min-w-[400px] ">
                   {children}
                 </div>
               )}
               <div className="  mt-20 lg:mt-0 order-1 flex place-content-center">
                 <div className="  bg-[#321B38]/[0.7] shadow-2xl rounded-2xl w-[85%]">
                   <div className=" 2xl:mb-0 mt-[50px] grid place-content-center ">
-                    <div className=" w-[150px] h-[150px] border-4 border-primary-pink-300 rounded-full">
+                    <div className=" relative w-[150px] h-[150px] flex place-content-center border-4 border-primary-pink-300 rounded-full ">
                       <img
                         src={userData?.avatar_url}
                         alt="avatar"
                         className=" whandleAddFriend-full h-full rounded-full"
                       />
+                      <div className={` mt-[120px] absolute place-content-center items-center w-[70px] h-[30px] ${statusStyle} flex  pt-1 rounded-[26px]`}>
+                        <p className=" text-white/[0.9] tracking-wide font-Bomb ">{Status}</p>
+                      </div>
                     </div>
                     <div className=" text-center pt-4 space-y-2 font-Heading tracking-wider">
                       <p className=" text-3xl text-white overflow-hidden text-ellipsis ">{User}</p>

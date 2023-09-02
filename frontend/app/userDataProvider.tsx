@@ -8,7 +8,7 @@ import jwt,{ JwtPayload } from "jsonwebtoken";
 import { useParams, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 
-type userData = {
+export type userData = {
   user: {
     id:number
     username: string
@@ -17,6 +17,7 @@ type userData = {
     birthDay:string
     gender:string
     privacy:boolean
+    status:string
     stats:{
       matches_played:number
       losses:number

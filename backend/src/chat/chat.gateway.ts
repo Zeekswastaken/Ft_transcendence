@@ -33,12 +33,16 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
      }
    }
    @SubscribeMessage('UserStatus')
-   async status(client:Socket){
-    const token = this.users.get(client.id);
-    if (token){
-      const user = await this.jwt.decoded(token);
-      console.log("User == >",user);
-      client.emit('GetUserStatus',user);
+   async status(client:Socket,obj:{username:string}){
+    // const token = this.users.get(client.id);
+    if (obj.username){
+      const user = await this.userservice.findByName(obj.username);
+      if(user)
+      {
+        console.log("User == >",user);
+        client.emit('GetUserStatus',user);
+      }
+      // else client.emit('GetUserStatus')
     }
    }
 

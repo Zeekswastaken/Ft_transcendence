@@ -25,6 +25,8 @@ const profile_module_1 = require("./profile/profile.module");
 const config_1 = require("@nestjs/config");
 const game_module_1 = require("./game/game.module");
 const typeorm_2 = require("./config/typeorm");
+const blocked_module_1 = require("./blocked/blocked.module");
+const notifications_service_1 = require("./notifications/notifications.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -42,10 +44,10 @@ exports.AppModule = AppModule = __decorate([
             user_module_1.UserModule, auth_module_1.AuthModule, channel_module_1.ChannelModule, jwt_1.JwtModule.register({
                 secret: "0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
                 signOptions: { expiresIn: '24h' },
-            }), chat_module_1.ChatModule, profile_module_1.ProfileModule, game_module_1.GameModule
+            }), chat_module_1.ChatModule, profile_module_1.ProfileModule, game_module_1.GameModule, blocked_module_1.BlockedModule
         ],
         controllers: [app_controller_1.AppController, user_controller_1.UserController],
-        providers: [app_service_1.AppService, guards_1.TokenGuard, jwt_service_1.JWToken, user_service_1.UserService, channel_service_1.ChannelService],
+        providers: [app_service_1.AppService, guards_1.TokenGuard, jwt_service_1.JWToken, user_service_1.UserService, channel_service_1.ChannelService, notifications_service_1.NotificationsService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
