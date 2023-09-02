@@ -3,11 +3,12 @@
 import { setUserData } from "@/redux/features/userDataSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import axios from "axios";
+import { getCookie } from "cookies-next";
+import jwt,{ JwtPayload } from "jsonwebtoken";
 import { useParams, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
-import { JsxEmit } from "typescript";
 
-type userData = {
+export type userData = {
   user: {
     id:number
     username: string
@@ -16,6 +17,7 @@ type userData = {
     birthDay:string
     gender:string
     privacy:boolean
+    status:string
     stats:{
       matches_played:number
       losses:number
@@ -28,6 +30,7 @@ type userData = {
     id:number
     username: string
     avatar_url: string
+    status : string
   }>
   
 }
@@ -49,25 +52,40 @@ interface userDataProviderProps {
 export function UserDataProvider({ children, }: userDataProviderProps) {
   // let e: Event
   // e.preventDefault()
-  const User = useParams().username;
-  const router = useRouter();
-  const [user, setUser] = useState<userData>({} as userData)
+  let User = useParams().username;
+  // console.log('User =', User )
+  const [user, setUser] = useState<userData | undefined>({} as userData)
   useEffect(() => {
-    axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
-      if(!res.data){
-        // router.push("/not-found");
-        return;
-      }
-      setUser(res.data);
-    }).catch((err) => {
-      console.log(err);
-    })
+    // if (!User)
+    // {
+    //   const token = getCookie("accessToken");
+    //   try {
+    //     const user = jwt.decode(token as string) as JwtPayload
+    //     if (user)
+    //       User = user?.username
+    //     // setCurrentUsername(jwt.decode(token).username);
+    //   } catch (error) {
+    //     console.error('Error decoding token:');
+    //   }
+    // }
+    if (User) {
+      axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
+        if(res.data.message === "not-found"){
+          setUser(undefined)
+          return;
+        }
+        else
+          setUser(res.data);
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
     
   }, [User])
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(setUserData(user));
-  }, [dispatch, user]);
+  // const dispatch = useAppDispatch();
+  // useEffect(() => {
+  //   dispatch(setUserData(user));
+  // }, [dispatch, user]);
 
   return (
     <userDataContext.Provider value={user}>

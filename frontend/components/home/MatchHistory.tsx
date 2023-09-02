@@ -2,21 +2,26 @@
 
 import Link from "next/link";
 import Row from "../tools/Row";
+import { useUserDataContext } from "@/app/userDataProvider";
+import { useSocketContext } from "@/app/socket";
+import { useEffect, useState } from "react";
+import { getCookie } from "cookies-next";
+import jwt,{ JwtPayload } from "jsonwebtoken";
+import axios from "axios";
 
 type TableDataFreind = {
 	avatar: string
 	name: string
-	state: string
+	status: string
 	styles?: string
 }
 
 
-const Friend = ( { avatar, name, state, styles} : TableDataFreind ) => {
-
-	const onOrOffColor = state === "online" ? "text-[#22C55E]" : "text-[#FF4747]";
+const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
+	const onOrOffColor = status === "Online" ? "text-[#22C55E]" : "text-[#FF4747]";
 	return (
 		<Link href={`/users/${name}`}>
-		<ul className={` ${styles} hover:bg-primary-pink-200/[0.6] transition-all duration-500 hover:rounded-3xl hover:drop-shadow-2xl pt-4 lg:pt-6  divide-y divide-gray-200 dark:divide-gray-700 tracking-widest text-[24px] text-white font-Headinglight`}>
+		<ul className={` ${styles} hover:bg-primary-pink-200/[0.6] transition-all duration-500 hover:rounded-3xl hover:drop-shadow-2xl pt-4 lg:pt-6  divide-y divide-gray-200 dark:divide-gray-700 tracking-widest text-[24px] text-white font-Heading`}>
 			<li className="pb-3 sm:pb-4 mx-10 ">
 				<div className="flex items-center space-x-6">
 					{/* <div className="flex"> */}
@@ -26,7 +31,7 @@ const Friend = ( { avatar, name, state, styles} : TableDataFreind ) => {
 						<p className="  duration-300 cursor-pointer truncat ">{name}</p>
 					</div>
 					<div className= {`inline-flex items-center tracking-wider text-lg ${onOrOffColor}`}>
-						{state}
+						{status}
 					</div>
 				</div>
 			</li>
@@ -36,6 +41,95 @@ const Friend = ( { avatar, name, state, styles} : TableDataFreind ) => {
 }
 
 const MatchHistory = () => {
+
+	const [User, setUser] = useState<any>()
+	const [userFriends, setUserFriends] = useState<Array<any>>()
+	
+	const token = getCookie("accessToken");
+	useEffect(() => {
+		if(!User) {
+			try {
+			  const user = jwt.decode(token as string) as JwtPayload
+			  if (user)
+				setUser(user?.username)
+			  // setCurrentUsername(jwt.decode(token).username);
+			} catch (error) {
+			  console.error('Error decoding token:', error);
+			}
+		}
+	},[])
+
+	useEffect(() => {
+		axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
+			if(res.data.message === "not-found"){
+			  setUser(undefined)
+			  return;
+			}
+			else{
+				console.log(res.data);
+				setUserFriends(res.data.friends);
+			}
+		  }).catch((err) => {
+			console.log(err);
+		  })
+	  }, [User])
+	  
+	// const Data = useUserDataContext()
+	// useEffect(() => {
+	// 	setUserFriends(Data?.friends);
+	// }, [Data])
+	// console.log("userFriends = ", userFriends)
+	// const [userFriends, setUserFriends] = useState<any>(undefined)
+	// const {socket} = useSocketContext()
+
+	// useEffect(() => {
+	// 	if (socket) {
+	// 	  socket.on('GetUserStatus', (data:any) => {
+	// 		setUserFriends(data)
+	// 	  });
+	// 	}
+	
+	// 	// Clean up the event listener when the component unmounts
+	// 	return () => {
+	// 	  if (socket) {
+	// 		socket.off('GetUserStatus');
+	// 	  }
+	// 	};
+	//   }, [socket]);
+	// socket?.emit("UserStatus");
+	
+	// console.log(userFriends)
+	// const [userFriends, setUserFriends] = useState<any>(undefined);
+	// const [pendingUserFriends, setPendingUserFriends] = useState<any>(undefined);
+  
+	// useEffect(() => {
+	//   if (socket) {
+	// 	socket.on('GetUserStatus', (data: any) => {
+	// 	  setPendingUserFriends(data);
+	// 	});
+	//   }
+  
+	//   return () => {
+	// 	if (socket) {
+	// 	  socket.off('GetUserStatus');
+	// 	}
+	//   };
+	// }, [socket]);
+  
+	// useEffect(() => {
+	//   if (pendingUserFriends !== undefined) {
+	// 	setUserFriends(pendingUserFriends);
+	//   }
+	// }, [pendingUserFriends]);
+  
+	// useEffect(() => {
+	//   if (socket) {
+	// 	socket.emit('UserStatus');
+	//   }
+	// }, [socket]);
+	
+	// const data = [userFriends]
+	// console.log(userFriends);
 	return (
 		
 		<div className=" min-w-[350px]  my-16 mx-2 sm:mx-20 grid grid-cols-1 lg:grid-cols-2 lg:max-w-[1400px] ">
@@ -57,20 +151,19 @@ const MatchHistory = () => {
 					</tbody>
 				</table>
 			</div>
-			<div className=" animate-fade-up glass no-scrollbar mt-10 lg:mt-0 lg:ml-[100px] overflow-auto max-h-[522px] ">
-				< Friend avatar="/avatars/avatar1.png" name="Hawkins" state="online" styles="animate-fade-up animate-delay-[100ms]"/>
-				< Friend avatar="/avatars/avatar2.png" name="Sofia" state="offline" styles="animate-fade-up animate-delay-[200ms]"/>
-				< Friend avatar="/avatars/avatar3.png" name="Samia" state="online" styles="animate-fade-up danimate-elay-[300ms]"/>
-				< Friend avatar="/avatars/avatar4.png" name="Khalid" state="offline" styles="animate-fade-up animate-delay-[400ms]"/>
-				< Friend avatar="/avatars/avatar5.png" name="Mounir" state="online" styles="animate-fade-up animate-delay-[500ms]"/>
-				< Friend avatar="/avatars/avatar1.png" name="Barak" state="offline" styles="animate-fade-up animate-delay-[600ms]"/>
-				< Friend avatar="/avatars/avatar2.png" name="Wasafi" state="offline" styles="animate-fade-up animate-delay-[700ms]"/>
-				< Friend avatar="/avatars/avatar3.png" name="Criminal" state="offline" styles="animate-fade-up animate-delay-[800ms]"/>
+			<div className="  animate-fade-up glass no-scrollbar mt-10 lg:mt-0 lg:ml-[100px] overflow-auto max-h-[522px] ">
+				{userFriends?.length !== 0 ? userFriends?.map((friend:any) => {
+					return <Friend key={friend?.id as number} avatar={friend?.avatar_url} name={friend?.username} status={friend?.status} styles=""/>
+				}): (
+					<div className=" flex place-content-center items-center w-full h-full">
+						<p className=" font-Bomb text-3xl text-white/[0.8] py-10">No Friends available</p>
+					</div>
+				)}
 			</div>
 		</div>
 		)
 }
 
-export  default MatchHistory
+export default MatchHistory
 
 

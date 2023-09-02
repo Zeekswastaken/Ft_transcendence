@@ -13,6 +13,8 @@ export class User{
     @Column({unique: true})
     username: String;
     @Column({nullable:true})
+    status:String;
+    @Column({nullable:true})
     birthDay: Date;
     @Column({default:'Oauth'})
     password:String;
@@ -23,7 +25,7 @@ export class User{
     @Column({nullable:true})
     PlayerSocket:String;
     @Column({nullable:true})
-    Socket: String;
+    Socket: string;
     @Column({nullable:true})
     Bio:String;
     @Column({default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZqtgZ2eW2F2HvvFOq9Rs0kVWiWJL7pQbA5g&usqp=CAU"})
@@ -47,10 +49,10 @@ export class User{
     @OneToMany(() => Match, (matchHisory) => matchHisory.player2, { cascade: true, onDelete: 'CASCADE' })
     public player2: Match[];
     @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockedby)
-    blockedUsers: BlockedUser[]; //USERS THAT GOT BLOCKED
+    blockingUsers: BlockedUser[]; //USERS THAT GOT BLOCKED
+  
     @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockeduser)
-    usersBlocked: BlockedUser[]; //USERS THAT BLOCKED
-    @Column({ nullable: true })
+    blockedUsers: BlockedUser[];; //USERS THAT BLOCKED    @Column({ nullable: true })
     twofactorsecret: string;
     @Column({ default: false })
     twofactorenabled: boolean;

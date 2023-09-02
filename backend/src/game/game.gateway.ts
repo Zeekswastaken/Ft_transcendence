@@ -17,7 +17,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
   @SubscribeMessage('getSocketPlayer')
   async getSocketGame(client: Socket,obj:{token:string,username:string}) {
-    console.log("token == "+obj.token);
     if (await this.jwt.verify(obj.token))
     {
       const user = await this.jwt.decoded(obj.token);
@@ -39,6 +38,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('setPositon')
   async handleMessage(client: Socket, obj:{opponent: User, pos: number}) {
+    console.log(obj.opponent.username + " position: " + obj.pos + "socket: " + obj.opponent.PlayerSocket);
     this.server.to(obj.opponent.PlayerSocket as string).emit("getOpponentPostion", obj.pos);
   }
 }

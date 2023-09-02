@@ -1,6 +1,7 @@
-import { User } from "./user.entity";
+import { User } from './user.entity';
 export declare class BlockedUser {
-    Blockedid: Number;
+    id: number;
     blockedby: User;
     blockeduser: User;
+    setBlockedRelationship(blockedBy: User, blockedUser: User): void;
 }

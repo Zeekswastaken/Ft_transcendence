@@ -1,5 +1,4 @@
-import { start } from "repl";
-import { couldStartTrivia } from "typescript";
+import { color } from "framer-motion";
 
 const CANVA_WIDTH = 1200;
 const CANVA_HEIGHT = 600;

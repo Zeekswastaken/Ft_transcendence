@@ -8,12 +8,13 @@ import { UserFriends } from "./userFriends.entity";
 export declare class User {
     id: Number;
     username: String;
+    status: String;
     birthDay: Date;
     password: String;
     gender: String;
     privacy: Boolean;
     PlayerSocket: String;
-    Socket: String;
+    Socket: string;
     Bio: String;
     avatar_url: String;
     memberships: ChannelMembership[];
@@ -24,8 +25,8 @@ export declare class User {
     receivedinvites: GameInvite[];
     player1: Match[];
     player2: Match[];
+    blockingUsers: BlockedUser[];
     blockedUsers: BlockedUser[];
-    usersBlocked: BlockedUser[];
     twofactorsecret: string;
     twofactorenabled: boolean;
     receivednotifications: Notification[];

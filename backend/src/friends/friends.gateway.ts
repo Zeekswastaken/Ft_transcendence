@@ -2,6 +2,7 @@ import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, Conne
 import { FriendsService } from './friends.service';
 import { JwtService } from '@nestjs/jwt';
 import { Socket, Server } from 'socket.io';
+import { NotificationsService } from 'src/notifications/notifications.service';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -11,7 +12,8 @@ export class FriendsGateway {
   @WebSocketServer()
   server: Server;
   constructor(private readonly friendsService: FriendsService,
-              private readonly jwtService: JwtService) {}
+              private readonly jwtService: JwtService,
+              private readonly notifService: NotificationsService) {}
 
   @SubscribeMessage('sendFriendRequest')
   async create(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
@@ -19,6 +21,8 @@ export class FriendsGateway {
       console.log("------------> ", data.userID);
       console.log("------------> ", data.recipientID);
       const request = await this.friendsService.create(data.userID, data.recipientID);
+      const notif = await this.notifService.createFriendNotification(data.userID, data.recipientID);
+      client.emit("friend notif", notif);
       console.log("}}}}}}}}}}");
       try {
         const message = "The friend request has been sent";
@@ -35,7 +39,21 @@ export class FriendsGateway {
       throw error;
     }
   }
-
+  @SubscribeMessage('getFriendNotifs')
+  async getNotifs(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
+    try{
+      console.log("------------> ", data.userID);
+      const notif = await this.notifService.getFriendNotifs(data.userID);
+      console.log("--------- ",notif);
+      client.emit("friend notif", notif);
+      // console.log(request)
+    } catch (error)
+    {
+      console.error('Error sending the friend request: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
+  }
 
   // @SubscribeMessage('findOneFriend')
   // findOne(@MessageBody() id: number) {

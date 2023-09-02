@@ -8,6 +8,7 @@ export declare class UserService {
     compare(password: String, hashedone: String): Promise<Boolean>;
     hashpassword(password: String): Promise<String>;
     save(Body: Partial<User>): Promise<void>;
+    findBySocket(socketId: string): Promise<User>;
     update(Body: Partial<User>, id: number): Promise<void>;
     findByName(username: any): Promise<User>;
     findById(id: any): Promise<User>;

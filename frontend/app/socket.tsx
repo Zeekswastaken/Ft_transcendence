@@ -18,11 +18,10 @@ interface SocketProviderProps {
 
 export function SocketProvider({ children }: SocketProviderProps) {
   const [socket, setSocket] = useState<any | undefined>(undefined); // Initialize socket with undefined
-  const updateSocket = (newSocket:any) => {
-    setSocket(newSocket);
-  };
+  // const updateSocket = (newSocket:any) => {
+  //   setSocket(newSocket);
+  // };
   useEffect(() => {
-    // const token = getCookie("accessToken");
     // Only create a new socket if it hasn't been created yet
     if (!socket) {
       const newSocket = io("http://localhost:3000", {
@@ -32,10 +31,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
 
       newSocket.connect(); 
       setSocket(newSocket);
-      // socket?.emit('getSocketId', {token:token});
-      // console.log("token = ", token)
-      // console.log("socket = ", newSocket)
-      // newSocket.emit("getSocketId", {query: token,client: socket})
     }
     // Clean up when the component unmounts
     return () => {
@@ -44,7 +39,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
       }
     };
   }, [socket]);
-  // console.log("newSocket.id = ", socket)
 
   return (
     <socketContext.Provider value={{socket}}>
