@@ -61,6 +61,27 @@ export class ChannelService {
         return savedChannel;
     }
 
+    async createFriendsChannel(userID:Number, recipientID: Number)
+    {
+        const initiator = await this.userRepository.findOne({where: { id: Equal(userID)}, relations: ['friendsassender', 'friendsasreceiver']});
+        const recipient = await this.userRepository.findOne({where: { id: Equal(recipientID)}, relations: ['friendsassender', 'friendsasreceiver']});
+        if (!initiator || !recipient)
+            throw new HttpException("User or Recipient not found",HttpStatus.FORBIDDEN);    
+        const channel = new Channel();
+        channel.Name = Math.random().toString(36).substring(7);
+        channel.Type = "Duo";
+        const savedChannel = await this.channelRepository.save(channel);
+        
+        const membership = new ChannelMembership();
+        membership.Userid = initiator.id;
+        membership.Channelid = savedChannel.id
+        membership.Type = "owner";
+
+        await this.channelMembershipRepository.save(membership);
+        await this.joinChannel(savedChannel.id, recipient.id, null);
+        return (savedChannel);
+    }
+
     async assignAdmin(channelID: Number, userId: Number, initiatorId: Number): Promise<ChannelMembership>
     {
         
@@ -176,17 +197,17 @@ export class ChannelService {
         return true
     }
 
-    async muteUser(channelID: Number, userID: Number, amount: number): Promise<ChannelMembership>
+    async muteUser(channelID: Number, userID: Number,initiatorID: Number ,amount: number): Promise<ChannelMembership>
     {
         const channel = await this.channelRepository.findOne({where: {id: Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
-        if (!channel || !user)
+        const userinit = await this.userRepository.findOne({where: {id: Equal(initiatorID)}});
+        if (!channel || !user || !userinit)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
         
-        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(userID), Type: 'member'}});
+        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member'}});
         if (user2)
             throw new HttpException("This User doesn't have the rights to perform this action", HttpStatus.FORBIDDEN);
-
         const membership = await this.channelMembershipRepository.findOne({
             where: [
               {
@@ -206,6 +227,8 @@ export class ChannelService {
         const normalmembership = await this.channelMembershipRepository.findOne({ where: {
             user: {id: Equal(user.id)}
             , channel:{id:Equal(channel.id)}, isMuted: false}});
+        if (normalmembership.Type === 'owner')
+            throw new HttpException("This User can't perform this action on an owner", HttpStatus.FORBIDDEN);
         normalmembership.isMuted = true;
         //REMIND YOUSSEF TO GIVE YOU THE AMOUNT IN MINUTES
         normalmembership.muteEndDate = new Date();
@@ -213,14 +236,15 @@ export class ChannelService {
         return this.channelMembershipRepository.save(normalmembership);
     }
 
-    async banUser(channelID: Number, userID: Number, amount: number): Promise<ChannelMembership>
+    async banUser(channelID: Number, userID: Number, initiatorID: Number ,amount: number): Promise<ChannelMembership>
     {
+        const userinit = await this.userRepository.findOne({where: {id: Equal(initiatorID)}});
         const channel = await this.channelRepository.findOne({where: {id: Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
         if (!channel || !user)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
         
-        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(userID), Type: 'member'}});
+        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member'}});
         if (user2)
             throw new HttpException("This User doesn't have the rights to perform this action", HttpStatus.FORBIDDEN);
 
@@ -243,7 +267,9 @@ export class ChannelService {
         const normalmembership = await this.channelMembershipRepository.findOne({ where: {
             user: {id: Equal(user.id)}
             , channel:{id:Equal(channel.id)}, isBanned: false}});
-        normalmembership.isBanned = true;
+            if (normalmembership.Type === 'owner')
+            throw new HttpException("This User can't perform this action on an owner", HttpStatus.FORBIDDEN);
+            normalmembership.isBanned = true;
         //REMIND YOUSSEF TO GIVE YOU THE AMOUNT IN MINUTES
         normalmembership.banEndDate = new Date();
         normalmembership.banEndDate.setMinutes(normalmembership.muteEndDate.getMinutes() + amount);
@@ -296,9 +322,63 @@ export class ChannelService {
         return bcrypt.compare(password , pass);
     }
 
+    async unbanUser(channelID: Number, userID: Number): Promise<ChannelMembership>
+    {
+        const channel = await this.channelRepository.findOne({where: {id: Equal(channelID)}});
+        const user = await this.userRepository.findOne({where: {id:Equal(userID)}});
+        if (!channel || !user)
+            throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
+
+        
+         const isbanned = await this.channelMembershipRepository.findOne( { where: {user: {id: Equal(userID)},
+            channel: {id: Equal(channelID)},
+            isBanned: true}});
+        if (!isbanned)
+            throw new HttpException("This User isn't banned", HttpStatus.FORBIDDEN);
+        
+        const membership = await this.channelMembershipRepository.findOne({where:
+        {
+            user: {id: Equal(userID)},
+            channel: {id: Equal(channelID)},
+            isBanned : true
+        }});
+        membership.isBanned = false
+        membership.banEndDate = undefined;
+        return await this.channelMembershipRepository.save(membership);
+    }
 
     async hashPassword(password: String): Promise<String> {
         const saltOrRounds = 10; // The Number of salt rounds (recommended: 10 or higher)
         return await bcrypt.hash(password, saltOrRounds);
-      }
+    }
+
+    private async validateInvitationLink(invitationLink: string): Promise<boolean> {
+        const splitLink = invitationLink.split('-');
+        //Check if link structure is valid
+        if (splitLink.length !== 3)
+            return false;
+        const [channelID, timestamp, randomData] = splitLink;
+        const time = Date.now();
+        const linkTime = +timestamp;
+        const Threshold = 90 * 60 * 1000;
+        //Check if the timestamp is expired/not valid
+        if (isNaN(linkTime) || time - linkTime > Threshold)
+            return false;
+        //Check if the channel Id is actually in the database or not
+            const checkChannel = await this.channelRepository.findOne({where:{ id: Equal(+channelID)}});
+        if (!checkChannel)
+            return false;
+        return true;
+    }
+
+    generateInvitationLink(channelID: number): string {
+    const timestamp = Date.now().toString();
+    const randomData = Math.random().toString(36).substring(7);
+    const token = `${channelID}-${timestamp}-${randomData}`;
+
+    //Construct the full invitation link URL
+    const invitationLink = `https://localhost.com:3001/join-channel?token=${token}`;
+
+    return invitationLink;
+  }
 }
