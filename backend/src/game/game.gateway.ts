@@ -27,8 +27,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
-  handleDisconnect(client: Socket) {
-    
+  handleDisconnect(client: Socket) 
+  { 
     console.log(`Client disconnected: ${client.id}`);
   }
 
@@ -38,7 +38,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('setPositon')
   async handleMessage(client: Socket, obj:{opponent: User, pos: number}) {
-    console.log(obj.opponent.username + " position: " + obj.pos + "socket: " + obj.opponent.PlayerSocket);
+    //console.log(obj.opponent.username + " position: " + obj.pos + "socket: " + obj.opponent.PlayerSocket);
     this.server.to(obj.opponent.PlayerSocket as string).emit("getOpponentPostion", obj.pos);
   }
 }
