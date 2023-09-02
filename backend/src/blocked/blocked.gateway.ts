@@ -33,6 +33,8 @@ export class BlockedGateway {
   @SubscribeMessage('Unblock')
   async cancel(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try {
+      console.log("---------> ", data.userID);
+      console.log("---------> ", data.recipientID);
       await this.blockedService.unblock(data.userID, data.recipientID);
       const message = "The user has been unblocked";
       client.emit('message', message);
@@ -46,8 +48,11 @@ export class BlockedGateway {
   @SubscribeMessage('isBlocked')
   async isBlocked(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try {
+      console.log("---------> ", data.userID);
+      console.log("---------> ", data.recipientID);
       const bool = await this.blockedService.isBlocked(data.userID, data.recipientID);
-      client.emit('isBlocked', bool);
+      console.log("RESULT ======= ", bool);
+      client.emit('isblocked', bool);
     } catch(error){
       console.error('Error checking if the user is blocked: ',error.message);
       client.emit('error', error.message);
@@ -59,7 +64,7 @@ export class BlockedGateway {
   async isBlocking(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try {
       const bool = await this.blockedService.isBlocking(data.userID, data.recipientID);
-      client.emit('isBlocking', bool);
+      client.emit('isblocking', bool);
     } catch(error){
       console.error('Error checking if the user is blocking you: ',error.message);
       client.emit('error', error.message);
@@ -67,13 +72,13 @@ export class BlockedGateway {
     }
   }
   @SubscribeMessage('getBlocked')
-  async getBlocked(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
+  async getBlocked(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
     try {
-      console.log("]]]]] ", data.userID);
-      const bool = await this.blockedService.getblocked(data.userID);
-      client.emit('isBlocking', bool);
+      console.log("=========> ", data.userID);
+      const blockedUsers = await this.blockedService.getblocked(data.userID);
+      client.emit('getblocked', blockedUsers);
     } catch(error){
-      console.error('Error checking if the user is blocking you: ',error.message);
+      console.error('Error getting the blocked users: ',error.message);
       client.emit('error', error.message);
       throw error;
     }

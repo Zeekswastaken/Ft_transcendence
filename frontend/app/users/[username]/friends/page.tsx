@@ -5,24 +5,53 @@ import React, { MouseEvent, useEffect, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { getCookie } from "cookies-next";
 import Link from "next/link";
+import { useSocketContext } from "@/app/socket";
+import { useRouter } from "next/navigation";
 
 type Props = {
   styles: string;
   username: string;
   avatar_url?: string;
+  id: number;
 }
 
-const FriendCard = ( {styles, username, avatar_url}:Props ) => {
+const FriendCard = ( {id, styles, username, avatar_url}:Props ) => {
+  const token = getCookie("accessToken");
+  const [currentUserID, setCurrentUserID] = useState<number>(0);
+  useEffect(() => {
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUserID(user.id)
+      }
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  }, [])
 
+  const {socket} = useSocketContext();
   const [isFriend, setIsFriend] = useState(true);
+  const [visibility, setVisibility] = useState(true);
+  socket?.on("isfriend", (data:any) => {
+    if(!data) {
+      setVisibility(false);
+    } else {
+      setVisibility(data);
+    }
+  })
 
-  // const unFriend = (e: MouseEvent) => {
-  //   setIsFriend(false);
-  // }
+  const unFriend = (e: MouseEvent) => {
+    socket?.emit("Unfriend", {userID: currentUserID, recipientID: id });
+    setIsFriend(false);
+  }
+  const handleBlock = (e: MouseEvent) => {
+    socket?.emit("Block", {userID: currentUserID, recipientID: id });
+    setIsFriend(false);
+  }
 
   return (
     <>
-      {isFriend && (
+      {isFriend && visibility && (
         <div className={` ${styles} bg-[#3A0E3B] drop-shadow-[6px_5px_0_rgba(0,0,00.15)] rounded-2xl px-2 2xl:px-6 py-3 `}>
           <div className=" flex justify-between space-x-2 items-center">
             <div className=" flex space-x-5">
@@ -54,8 +83,8 @@ const FriendCard = ( {styles, username, avatar_url}:Props ) => {
                   />
                 </svg>
               <ul tabIndex={0} className=" text-white dropdown-content top-0 p-2 shadow bg-[#472B4E] rounded-xl w-24">
-                  <li onClick={e => setIsFriend(false)} className=" font-Heading tracking-wide text-center hover:bg-[#321B38] hover:rounded-xl"><a>Unfriend</a></li>
-                  <li onClick={e => setIsFriend(false)} className=" font-Heading tracking-wide text-center hover:bg-[#321B38] hover:rounded-xl"><a>Block</a></li>
+                  <li onClick={unFriend} className=" font-Heading tracking-wide text-center hover:bg-[#321B38] hover:rounded-xl"><a>Unfriend</a></li>
+                  <li onClick={handleBlock} className=" font-Heading tracking-wide text-center hover:bg-[#321B38] hover:rounded-xl"><a>Block</a></li>
               </ul>
             </div>
           </div>
@@ -65,11 +94,30 @@ const FriendCard = ( {styles, username, avatar_url}:Props ) => {
   );
 };
 
-const BlockedCard = () => {
+const BlockedCard = ( {id, username, avatar_url}:Props ) => {
 
+  const {socket} = useSocketContext();
+  const userData = useUserDataContext();
+  const [currentUserID, setCurrentUserID] = useState<number>(0);
+  const router = useRouter();
+  const token = getCookie("accessToken");
+  useEffect(() => {
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUserID(user.id)
+      }
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  },[])
   const [isBlocked, setIsBlocked] = useState(true);
-  const unBlocked = (e: MouseEvent) => {
+  const unBlocked = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("unblocked")
     setIsBlocked(false)
+    socket?.emit("Unblock", {userID: currentUserID, recipientID: id});
+    router.push(`/users/${userData?.user.username}/friends`)
   }
 
   return (
@@ -79,14 +127,14 @@ const BlockedCard = () => {
           <div className=" flex justify-between items-center">
             <div className=" flex space-x-5 items-center">
               <img
-                src="/Spectate.png"
+                src={avatar_url}
                 height={50}
                 width={50}
                 alt="avatar"
                 className=" rounded-2xl"
               />
               <div>
-                <p className=" font-Heading text-[#EEEEEE] text-xl">Dwight</p>
+                <p className=" font-Heading text-[#EEEEEE] text-xl">{username}</p>
               </div>
             </div>
             <button onClick={unBlocked} className=" font-Heading text-[#EEEEEE] tracking-wide text-xs hover:bg-[#321B38] duration-300 rounded-2xl p-2 bg-[#472B4E]">Unblock</button>
@@ -121,20 +169,45 @@ const Friends = () => {
 
   const Data = useUserDataContext();
   const userData = Data?.user;
-  const userFriends = Data?.friends;
-  const [currentUsername, setCurrentUsername] = useState<string>("");
-
+  // const userFriends = Data?.friends;
+  // const userBlocked = Data?.blocked;
+  const [userFriends, setUserFriends] = useState<any>([]);
+  const [userBlocked, setUserBlocked] = useState<any>([]);
+  const [currentUserID, setCurrentUserID] = useState<number>(0);
+  const {socket} = useSocketContext();
+  
   useEffect(() => {
     const token = getCookie("accessToken");
     try {
       const user = jwt.decode(token as string) as JwtPayload
-      if (user)
+      if (user) {
         setCurrentUsername(user.username)
+        setCurrentUserID(user.id)
+      }
       // setCurrentUsername(jwt.decode(token).username);
     } catch (error) {
       console.error('Error decoding token:');
     }
   }, [])
+
+  useEffect(() => {
+    socket?.on("getfriends", (data:any) => {
+      setUserFriends(data);
+    })
+    socket?.on("getblocked", (data:any) => {
+      setUserBlocked(data);
+    })
+  }, [userFriends, userBlocked])
+  useEffect(() => {
+    socket?.emit("getFriends", {userID: userData?.id});
+    socket?.emit("getBlocked", {userID: userData?.id});
+  }, [currentUserID])
+  // console.log("blocked = ", userBlocked)
+  
+  // console.log("friends = ", userFriends)
+  // console.log("blocked = ", userBlocked)
+  const [currentUsername, setCurrentUsername] = useState<string>("");
+
 
   
   return (
@@ -159,15 +232,15 @@ const Friends = () => {
             </div>
             {friends && !blocked ? (
               <div className=" animate-fade-left overflow-y-auto pb-10 no-scrollbar max-h-[450px] rounded-xl mx-2  2xl:mx-10 mt-8 grid  grid-cols-1 xl:grid-cols-2 gap-4 ">
-                {userFriends?.map((friend) => {
-                  return <FriendCard key={friend.id} styles="" username={friend.username} avatar_url={friend.avatar_url} />
+                {userFriends?.map((friend:any) => {
+                  return <FriendCard key={friend.id} id={friend.id} styles="" username={friend.username} avatar_url={friend.avatar_url} />
                 })}
               </div>
             ) : (
               <div className=" animate-fade-right overflow-y-auto no-scrollbar max-h-[450px] rounded-xl mx-2 2xl:mx-10 mt-8 grid  grid-cols-1 xl:grid-cols-2 gap-4 ">
-                <BlockedCard />
-                <BlockedCard />
-                <BlockedCard />
+                {userBlocked?.map((blocked:any) => {
+                  return <BlockedCard key={blocked.id} id={blocked.id} styles="" username={blocked.username} avatar_url={blocked.avatar_url} />
+                })}
               </div>
             )}
           </div>

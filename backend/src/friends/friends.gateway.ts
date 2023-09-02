@@ -124,4 +124,18 @@ export class FriendsGateway {
       throw error;
     }
   }
+  @SubscribeMessage('getFriends')
+  async getFriends(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
+    try{
+      console.log("checkPending-------> user ", data.userID); 
+      const friends = await this.friendsService.getUserFriends(data.userID);
+      console.log("getfriends: ", friends);
+      client.emit('getfriends' ,friends);
+    }catch (error)
+    {
+      console.error('Error getting the friends of the user: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
+  }
 }
