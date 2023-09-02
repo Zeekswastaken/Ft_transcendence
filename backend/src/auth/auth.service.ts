@@ -73,7 +73,7 @@ export class AuthService {
     }
     async create_Oauth(body:UserDto):Promise<boolean | User>
     {
-       const user1 = await this.userservice.findByName(body.username   );
+       const user1 = await this.userservice.findByName(body.username );
        if (!user1)
        {
             console.log(body);

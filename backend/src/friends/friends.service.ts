@@ -11,13 +11,12 @@ export class FriendsService {
     private readonly userFriendsRepository: Repository<UserFriends>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Notification)
-    private readonly notificationsRepository: Repository<Notification>
+    
   ) {}
 
   async create(userid: Number, recipientid: Number) {
     const initiator = await this.userRepository.findOne({where: { id: Equal(userid)}, relations: ['friendsassender', 'friendsasreceiver']});
-    const recipient = await this.userRepository.findOne({where: { id: Equal(recipientid)}, relations: ['friendsassender', 'friendsasreceiver'],});
+    const recipient = await this.userRepository.findOne({where: { id: Equal(recipientid)}, relations: ['friendsassender', 'friendsasreceiver']});
     if (!initiator || !recipient)
       throw new HttpException("User or Recipient not found",HttpStatus.FORBIDDEN);
       const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userid), receiver: Equal(recipientid)},{sender: Equal(recipientid), receiver: Equal(userid)}]});

@@ -30,6 +30,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GameModule } from './game/game.module';
 import typeorm from './config/typeorm';
 import { BlockedModule } from './blocked/blocked.module';
+import { NotificationsService } from './notifications/notifications.service';
+import { NotificationsModule } from './notifications/notifications.module';
 
 
 @Module({
@@ -45,10 +47,10 @@ import { BlockedModule } from './blocked/blocked.module';
     UserModule, AuthModule,ChannelModule,JwtModule.register({
       secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
       signOptions: { expiresIn: '24h' },
-    }), ChatModule,ProfileModule, GameModule, BlockedModule
+    }), ChatModule,ProfileModule, GameModule, BlockedModule, NotificationsModule
   ],
   controllers: [AppController, UserController],
-  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService],
+  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService, NotificationsService],
 })
 export class AppModule {}
 
