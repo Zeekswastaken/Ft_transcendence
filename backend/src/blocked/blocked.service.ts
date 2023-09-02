@@ -65,7 +65,7 @@ export class BlockedService {
   {
     const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
-      relations: ['blockingUsers'],
+      relations: ['blockingUsers', 'blockedUsers'],
     });
 
     if (!user) {
@@ -81,7 +81,7 @@ export class BlockedService {
   {
     const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
-      relations: ['blockedUsers'],
+      relations: ['blockedUsers', 'blockingUsers'],
     });
 
     if (!user) {
@@ -99,7 +99,7 @@ export class BlockedService {
   {
     const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
-      relations: ['blockingUsers'],
+      relations: ['blockingUsers', 'blockedUsers'],
     });
 
     if (!user) {

@@ -46,7 +46,7 @@ export class FriendsGateway {
       console.log("------------> ", data.userID);
       const notif = await this.notifService.getFriendNotifs(data.userID);
       console.log("--------- ",notif);
-      client.emit("friend notif", notif);
+      client.emit ("friend notif", notif);
       // console.log(request)
     } catch (error)
     {
@@ -137,6 +137,20 @@ export class FriendsGateway {
       const isfriend = await this.friendsService.isPending(data.userID, data.recipientID);
       console.log("ispending: ", isfriend);
       client.emit('ispending' ,isfriend);
+    }catch (error)
+    {
+      console.error('Error getting the friends of the user: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
+  }
+  @SubscribeMessage('getFriends')
+  async getFriends(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
+    try{
+      console.log("checkPending-------> user ", data.userID); 
+      const friends = await this.friendsService.getUserFriends(data.userID);
+      console.log("getfriends: ", friends);
+      client.emit('getfriends' ,friends);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);

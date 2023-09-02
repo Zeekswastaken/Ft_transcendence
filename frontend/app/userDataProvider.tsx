@@ -32,7 +32,11 @@ export type userData = {
     avatar_url: string
     status : string
   }>
-  
+  blocked: Array<{
+    id:number
+    username: string
+    avatar_url: string
+  }>
 }
 
 

@@ -79,7 +79,7 @@ const WinRate: React.FC<Props> = ({ styles, title }) => {
 const MatchHistory: React.FC<Props> = ({ styles, title }) => {
   return (
     <div
-      className={` glass animate-fade-right animate-delay-150 no-scrollbar h-auto 2xl:h-[350px] overflow-auto ${styles}`}
+      className={` glass animate-fade-right animate-delay-150 no-scrollbar h-autoData 2xl:h-[350px] overflow-auto ${styles}`}
     >
       <p className=" p-6 font-Bomb text-3xl text-white">{title}</p>
       <div className=" relative text-white px-8 ">
