@@ -49,10 +49,10 @@ export class User{
     @OneToMany(() => Match, (matchHisory) => matchHisory.player2, { cascade: true, onDelete: 'CASCADE' })
     public player2: Match[];
     @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockedby)
-    blockedUsers: BlockedUser[]; //USERS THAT GOT BLOCKED
+    blockingUsers: BlockedUser[]; //USERS THAT GOT BLOCKED
+  
     @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockeduser)
-    usersBlocked: BlockedUser[]; //USERS THAT BLOCKED
-    @Column({ nullable: true })
+    blockedUsers: BlockedUser[];; //USERS THAT BLOCKED    @Column({ nullable: true })
     twofactorsecret: string;
     @Column({ default: false })
     twofactorenabled: boolean;

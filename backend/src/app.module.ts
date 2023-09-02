@@ -29,6 +29,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { GameGateway } from './game/game.gateway';
 import { GameModule } from './game/game.module';
 import typeorm from './config/typeorm';
+import { BlockedModule } from './blocked/blocked.module';
 
 
 @Module({
@@ -44,7 +45,7 @@ import typeorm from './config/typeorm';
     UserModule, AuthModule,ChannelModule,JwtModule.register({
       secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
       signOptions: { expiresIn: '24h' },
-    }), ChatModule,ProfileModule, GameModule
+    }), ChatModule,ProfileModule, GameModule, BlockedModule
   ],
   controllers: [AppController, UserController],
   providers: [AppService,TokenGuard,JWToken,UserService,ChannelService],
