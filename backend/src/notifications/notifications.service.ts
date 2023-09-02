@@ -27,7 +27,7 @@ export class NotificationsService {
         notifs.sender = initiator;
         notifs.recipient = recipient;
         notifs.type = "Friend Request";
-        notifs.message = "You have received a friend request from: ${intiator.username}";
+        notifs.message = `You have received a friend request from: ${initiator.username}`;
         notifs.isRead = false;
         notifs.createdAt = new Date();
         recipient.receivednotifications.push(notifs);

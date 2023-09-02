@@ -45,7 +45,7 @@ export class FriendsGateway {
       console.log("------------> ", data.userID);
       const notif = await this.notifService.getFriendNotifs(data.userID);
       console.log("--------- ",notif);
-      client.emit("friend notif", notif);
+      client.emit ("friend notif", notif);
       // console.log(request)
     } catch (error)
     {

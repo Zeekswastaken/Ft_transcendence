@@ -92,16 +92,22 @@ const  NotificationDropDown = () => {
                                 </h3>
                                 </Link>
                               ) : (
-                                <h3 className="text-sm  leading-5">
-                                  {post.title}
-                                </h3>
-                              )}
-                                {post.isInvite === 0 ? (
-                                  <div className=' flex space-x-1'>
+                                <div className=' flex justify-between space-x-4 w-full'>
+                                  <h3 className="text-sm  leading-5">
+                                    {post.title}
+                                  </h3>
+                                  <div className=' flex space-x-1 items-center'>
                                     <button className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><XMarkIcon className=" h-7 w-7 text-red-600"/></button>
                                     <button className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><CheckIcon className=' h-7 w-7 text-green-400'/></button>
                                   </div>
-                                ) : ("")}
+                                </div>
+                              )}
+                                {/* {post.isInvite === 0 ? ( */}
+                                 {/* "" // <div className=' flex space-x-1'>
+                                  //   <button className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><XMarkIcon className=" h-7 w-7 text-red-600"/></button>
+                                  //   <button className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><CheckIcon className=' h-7 w-7 text-green-400'/></button>
+                                  // </div>
+                                // ) : ("")} */}
                             </div>
                           <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-200">
                           <li>{post.date}</li>
