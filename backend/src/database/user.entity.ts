@@ -56,7 +56,7 @@ export class User{
     twofactorsecret: string;
     @Column({ default: false })
     twofactorenabled: boolean;
-    @OneToMany(() => Notification, notification => notification.recipient)
-  receivednotifications: Notification[];
+    @OneToMany(() => Notification, notification => notification.recipient, {cascade:true, onDelete: 'CASCADE'})
+    receivednotifications: Notification[];
     user: Promise<String>;
 }
