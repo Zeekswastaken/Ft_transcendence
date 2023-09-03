@@ -40,6 +40,7 @@ export class NotificationsService {
        const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications']});
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
+        console.log("-=-=-=-=-=-=-=-= ",user.receivednotifications);
         const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Friend Request").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         console.log(sortedNotifs);
         return sortedNotifs;

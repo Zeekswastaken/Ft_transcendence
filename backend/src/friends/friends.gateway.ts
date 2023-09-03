@@ -39,12 +39,14 @@ export class FriendsGateway {
     try{
       console.log("------------> ", data.userID);
       const friendnotif = await this.notifService.getFriendNotifs(data.userID);
+      console.log("************** lelelelelelel ", friendnotif);
       const gamenotif = await this.notifService.getGameNotifs(data.userID);
       const notif = {
         "friend request": friendnotif,
         "game invite": gamenotif
       };
       console.log("--------- ",notif);
+      console.log("GET FRIEND NOTIFS CALLED");
       client.emit ("friend notif", notif);
       // console.log(request)
     } catch (error)

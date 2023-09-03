@@ -63,18 +63,20 @@ const  NotificationDropDown = () => {
     } catch (error) {
       console.error('Error decoding token:');
     }
-  }, [])
+  }, [currentUserID])
 
   useEffect(() => {
     socket?.on('friend notif', (data:any) => {
       setNotification(data)
+      console.log("here")
     })
   }, [])
 
   useEffect(() => {
     socket?.emit('getFriendNotifs', {userID: currentUserID})
+    console.log("here2")
   }, [currentUserID])
-  // console.log(notification)
+  console.log(notification)
   const handleDecline = (idx:number) => {
     setDecline(true)
     setDecIdx(idx)
@@ -111,7 +113,7 @@ const  NotificationDropDown = () => {
                   ))}
                   </Tab.List>
                   <Tab.Panels className="mt-2">
-                  {Object.values(notification).map((posts:any, idx) => (
+                  {/* {Object.values(notification).map((posts:any, idx) => (
                     <Tab.Panel
                     key={idx}
                     className={classNames(
@@ -120,9 +122,9 @@ const  NotificationDropDown = () => {
                     )}
                     >
                     <ul className=' max-h-96 overflow-auto text-[#EFEFEF] no-scrollbar'>
-                      {posts.map((post:any) => (
+                      {posts?.map((post:any) => (
                       <li
-                        key={post.id}
+                        key={post?.id}
                         className="relative rounded-md grid items-center p-3 hover:bg-primary-purple-800/[0.8] duration-300"
                       >
                             <div className=' space-x-4 flex justify-between'>
@@ -134,10 +136,6 @@ const  NotificationDropDown = () => {
                                 </Link>
                               ) : (
                                 <div className=' flex justify-between space-x-4 w-full'>
-                                  {/* {decline  && idx === decIdx ? (
-                                    <></>
-                                  ) : (
-                                    <> */}
                                       <h3 className="text-sm  leading-5">
                                         {post.message}
                                       </h3>
@@ -145,27 +143,18 @@ const  NotificationDropDown = () => {
                                         <button onClick={e => handleDecline(idx)} className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><XMarkIcon className=" h-7 w-7 text-red-600"/></button>
                                         <button onClick={e => handleAccept()} className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><CheckIcon className=' h-7 w-7 text-green-400'/></button>
                                       </div>
-                                    {/* </>
-
-                                  )} */}
                                 </div>
                               )}
-                                {/* {post.isInvite === 0 ? ( */}
-                                 {/* "" // <div className=' flex space-x-1'>
-                                  //   <button className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><XMarkIcon className=" h-7 w-7 text-red-600"/></button>
-                                  //   <button className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><CheckIcon className=' h-7 w-7 text-green-400'/></button>
-                                  // </div>
-                                // ) : ("")} */}
                             </div>
                           <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-200">
                           <li>{post.createdAt}</li>
                           </ul>
 
                       </li>
-                      ))}
-                    </ul>
-                    </Tab.Panel>
-                  ))}
+                      ))} */}
+                    {/* </ul> */}
+                    {/* </Tab.Panel> */}
+                  {/* ))} */}
                   </Tab.Panels>
                 </Tab.Group>
           </Menu.Items>
