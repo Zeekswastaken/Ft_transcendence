@@ -3,6 +3,7 @@ import { FriendsService } from './friends.service';
 import { JwtService } from '@nestjs/jwt';
 import { Socket, Server } from 'socket.io';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { ChannelService } from 'src/channel/channel.service';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -13,7 +14,8 @@ export class FriendsGateway {
   server: Server;
   constructor(private readonly friendsService: FriendsService,
               private readonly jwtService: JwtService,
-              private readonly notifService: NotificationsService) {}
+              private readonly notifService: NotificationsService,
+              private readonly channelService: ChannelService) {}
 
   @SubscribeMessage('sendFriendRequest')
   async create(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
@@ -23,7 +25,6 @@ export class FriendsGateway {
       const request = await this.friendsService.create(data.userID, data.recipientID);
       const notif = await this.notifService.createFriendNotification(data.userID, data.recipientID);
       client.emit("friend notif", notif);
-      console.log("}}}}}}}}}}");
       try {
         const message = "The friend request has been sent";
         client.emit('message', message);
@@ -43,7 +44,12 @@ export class FriendsGateway {
   async getNotifs(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
     try{
       console.log("------------> ", data.userID);
-      const notif = await this.notifService.getFriendNotifs(data.userID);
+      const friendnotif = await this.notifService.getFriendNotifs(data.userID);
+      const gamenotif = await this.notifService.getGameNotifs(data.userID);
+      const notif = {
+        "friend request": friendnotif,
+        "game invite": gamenotif
+      };
       console.log("--------- ",notif);
       client.emit ("friend notif", notif);
       // console.log(request)
@@ -68,6 +74,7 @@ export class FriendsGateway {
       console.log("-------> recipient ", data.recipientID);
       await this.friendsService.acceptRequest(data.userID, data.recipientID);
       const message = "The friend request has been accepted";
+      await this.channelService.createFriendsChannel(data.userID, data.recipientID);
       client.emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
     } catch (error)
     {

@@ -106,5 +106,66 @@ export class ChannelGateway {
       console.error('Error joining channel: ', error.message);
       throw error;
     }
+  }
+
+  @SubscribeMessage('muteUser')
+  async mute(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
+  {
+    try{
+      const channelID = data.channelID; 
+      const userID = data.userID;
+      const initiatorID = data.initiatorID;
+      const amount = data.amount;
+      return await this.channelService.muteUser(channelID, userID, initiatorID, amount)
+    }
+  catch (error) {
+    console.error('Error muting user: ', error.message);
+    throw error;
+    }
+  }
+
+  @SubscribeMessage('unmuteUser')
+  async unmute(@MessageBody() data: { channelID: Number, userID: Number})
+  {
+    try{
+      const channelID = data.channelID; 
+      const userID = data.userID;
+      return await this.channelService.unmuteUser(channelID, userID)
+    }
+  catch (error) {
+    console.error('Error unmuting user: ', error.message);
+    throw error;
+    }
+  }
+
+  @SubscribeMessage('banUser')
+  async ban(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
+  {
+    try{
+      const channelID = data.channelID; 
+      const userID = data.userID;
+      const initiatorID = data.initiatorID;
+      const amount = data.amount;
+      return await this.channelService.banUser(channelID, userID, initiatorID, amount)
+    }
+  catch (error) {
+    console.error('Error banning user: ', error.message);
+    throw error;
+    }
+  }
+
+
+  @SubscribeMessage('unbanUser')
+  async unban(@MessageBody() data: { channelID: Number, userID: Number})
+  {
+    try{
+      const channelID = data.channelID; 
+      const userID = data.userID;
+      return await this.channelService.unbanUser(channelID, userID)
+    }
+  catch (error) {
+    console.error('Error unmuting user: ', error.message);
+    throw error;
+    }
   }  
 }
