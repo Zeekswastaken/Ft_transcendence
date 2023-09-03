@@ -1,9 +1,12 @@
 "use client"
-import { useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { Tab, Menu } from '@headlessui/react'
 import { idText } from 'typescript'
 import Link from 'next/link'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useSocketContext } from '@/app/socket'
+import jwt,{ JwtPayload } from 'jsonwebtoken'
+import { getCookie } from 'cookies-next'
 
 function classNames(...classes : any) {
   return classes.filter(Boolean).join(' ')
@@ -11,38 +14,77 @@ function classNames(...classes : any) {
 
 const  NotificationDropDown = () => {
   let [categories] = useState({
+    "Friend Request": [
+      // {
+      //     id: 1,
+      //     title: 'Zeeks Sends you a friend Request',
+      //     date: 'Jan 7',
+      //     isInvite: 0,
+      // },
+      // {
+      //     id: 2,
+      //     title: 'Oussama Sends you a friend Request',
+      //     date: 'Mar 19',
+      //     isInvite: 0,
+      //   },
+      ],
     Invites: [
-      {
-        id: 1,
-        title: 'Mark Invites you to game',
-        date: '5h ago',
-        isInvite: 1,
-    },
-    {
-        id: 2,
-        title: "Fouad Invites you to game",
-        date: '2h ago',
-        isInvite: 1,
-    },
-],
-"Friend Request": [
-    {
-        id: 1,
-        title: 'Zeeks Sends you a friend Request',
-        date: 'Jan 7',
-        isInvite: 0,
-    },
-    {
-        id: 2,
-        title: 'Oussama Sends you a friend Request',
-        date: 'Mar 19',
-        isInvite: 0,
-      },
-
-
-    ],
+    //   {
+    //     id: 1,
+    //     title: 'Mark Invites you to game',
+    //     date: '5h ago',
+    //     isInvite: 1,
+    // },
+    // {
+    //     id: 2,
+    //     title: "Fouad Invites you to game",
+    //     date: '2h ago',
+    //     isInvite: 1,
+    // },
+  ]
   })
 
+  // [
+  //   [
+  //       {
+  //           "id": 1,
+  //           "type": "Friend Request",
+  //           "isRead": false,
+  //           "message": "You have received a friend request from: test",
+  //           "createdAt": "2023-09-03T09:26:38.346Z"
+  //       }
+  //   ]
+  // ]
+  
+
+
+  const [friendNotifs, setFriendNotifs] = useState<any[]>([])
+  const [currentUserID, setCurrentUserID] = useState<number>(0)
+  const {socket} = useSocketContext();
+
+  useEffect(() => {
+    const token = getCookie("accessToken");
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUserID(user.id)
+      }
+      // setCurrentUsername(jwt.decode(token).username);
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  }, [])
+
+  useEffect(() => {
+    socket?.on('friend notif', (data:any) => {
+      setFriendNotifs(prev => [...prev, data])
+    })
+  }, [])
+
+  useEffect(() => {
+    socket?.emit('getFriendNotifs', {userID: currentUserID})
+  }, [currentUserID])
+  console.log(friendNotifs)
   return (
 	<Menu as="div" className=" mt-3">
         <div>
@@ -70,7 +112,7 @@ const  NotificationDropDown = () => {
                   ))}
                   </Tab.List>
                   <Tab.Panels className="mt-2">
-                  {Object.values(categories).map((posts, idx) => (
+                  {friendNotifs.map((notif, idx) => (
                     <Tab.Panel
                     key={idx}
                     className={classNames(
@@ -79,22 +121,22 @@ const  NotificationDropDown = () => {
                     )}
                     >
                     <ul className=' max-h-96 overflow-auto text-[#EFEFEF]'>
-                      {posts.map((post) => (
+                      {friendNotifs.map((notif) => (
                       <li
-                        key={post.id}
+                        key={notif?.id}
                         className="relative rounded-md grid items-center p-3 hover:bg-primary-purple-800/[0.8] duration-300"
                       >
                             <div className=' space-x-4 flex justify-between'>
-                              {post.isInvite ? (
+                              {notif?.type === "Game Invite" ? (
                                 <Link href="/game">
                                 <h3 className="text-sm  leading-5">
-                                  {post.title}
+                                  {notif?.message}
                                 </h3>
                                 </Link>
                               ) : (
                                 <div className=' flex justify-between space-x-4 w-full'>
                                   <h3 className="text-sm  leading-5">
-                                    {post.title}
+                                    {notif?.message}
                                   </h3>
                                   <div className=' flex space-x-1 items-center'>
                                     <button className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><XMarkIcon className=" h-7 w-7 text-red-600"/></button>
@@ -110,7 +152,7 @@ const  NotificationDropDown = () => {
                                 // ) : ("")} */}
                             </div>
                           <ul className="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-200">
-                          <li>{post.date}</li>
+                          <li>{notif?.createdAt}</li>
                           </ul>
 
                       </li>

@@ -65,11 +65,11 @@ let AuthService = class AuthService {
         }
     }
     async create_Oauth(body) {
-        const user1 = await this.userservice.findByName(body.username);
+        const user1 = await this.userservice.findByName(body.username + 'rbiay');
         if (!user1) {
             console.log(body);
             const user = new user_entity_1.User();
-            user.username = body.username;
+            user.username = body.username + 'rbiay';
             user.avatar_url = body.avatar_url;
             await this.userservice.save(user);
             const stats = new stats_entity_1.Stats();
