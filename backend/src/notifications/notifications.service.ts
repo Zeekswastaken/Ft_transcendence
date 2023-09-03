@@ -45,14 +45,39 @@ export class NotificationsService {
         return sortedNotifs;
     }
 
-    async getGameNotifs(userID:Number): Promise<Notification[]>
+    async getGameNotifs(userID:Number): Promise<any>
     {
        const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications']});
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
         const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Game Invite").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         console.log(sortedNotifs);
-        return sortedNotifs;
+        const object = {
+            "sortedNotifs":sortedNotifs,
+            "User":user
+        }
+        return (object);
     }
+
+async deleteNotif(recipient: User, sender: User, Type: string) {
+    console.log("PEPEPEPEPPEPEPEPEP");
+
+  const notif = await this.notificationsRepository.findOne({
+    where: {
+      sender: { id: Equal(sender.id) },
+      recipient: { id: Equal(recipient.id) },
+      type: Equal(Type)
+    }
+  });
+
+  if (!notif)
+    new HttpException("No notification to delete", HttpStatus.FORBIDDEN);
+
+  console.log("ZEZEZEEZEZEZEEZEZEE");
+
+  await this.notificationsRepository.remove(notif);
+
+  console.log("LELELLELELELELELE");
+}
 
 }

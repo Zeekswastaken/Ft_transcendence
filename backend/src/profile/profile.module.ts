@@ -10,10 +10,11 @@ import { FriendsModule } from 'src/friends/friends.module';
 import { FriendsService } from 'src/friends/friends.service';
 import { BlockedService } from 'src/blocked/blocked.service';
 import { BlockedModule } from 'src/blocked/blocked.module';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Module({
   imports:[UserModule,AuthModule, FriendsModule, BlockedModule],
   controllers: [ProfileController],
-  providers: [ProfileService,UserService,JWToken,JwtService, FriendsService, BlockedService]
+  providers: [ProfileService,UserService,JWToken,JwtService, FriendsService, BlockedService, NotificationsService]
 })
 export class ProfileModule {}

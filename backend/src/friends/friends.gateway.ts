@@ -22,17 +22,11 @@ export class FriendsGateway {
     try{
       console.log("------------> ", data.userID);
       console.log("------------> ", data.recipientID);
-      const request = await this.friendsService.create(data.userID, data.recipientID);
+      const recipient = await this.friendsService.create(data.userID, data.recipientID);
       const notif = await this.notifService.createFriendNotification(data.userID, data.recipientID);
       client.emit("friend notif", notif);
-      try {
         const message = "The friend request has been sent";
         client.emit('message', message);
-      } catch (error) {
-        console.error('Error emitting friendRequest event: ', error.message);
-      } 
-      // console.log(request)
-      return request;
     } catch (error)
     {
       console.error('Error sending the friend request: ',error.message);
