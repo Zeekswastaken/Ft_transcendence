@@ -41,6 +41,18 @@ export class NotificationsService {
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
         const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Friend Request").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        console.log(sortedNotifs);
         return sortedNotifs;
     }
+
+    async getGameNotifs(userID:Number): Promise<Notification[]>
+    {
+       const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications']});
+       if (!user)
+        throw new HttpException("User not found",HttpStatus.FORBIDDEN);
+        const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Game Invite").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        console.log(sortedNotifs);
+        return sortedNotifs;
+    }
+
 }

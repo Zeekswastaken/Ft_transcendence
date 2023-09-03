@@ -44,7 +44,12 @@ export class FriendsGateway {
   async getNotifs(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
     try{
       console.log("------------> ", data.userID);
-      const notif = await this.notifService.getFriendNotifs(data.userID);
+      const friendnotif = await this.notifService.getFriendNotifs(data.userID);
+      const gamenotif = await this.notifService.getGameNotifs(data.userID);
+      const notif = {
+        "friend request": friendnotif,
+        "game invite": gamenotif
+      };
       console.log("--------- ",notif);
       client.emit ("friend notif", notif);
       // console.log(request)
