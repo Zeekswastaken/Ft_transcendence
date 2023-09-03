@@ -75,7 +75,6 @@ const ball : Ball = {
     vX: 5,
     vY: 5,
     color: "#FFF",
-
 }
 
 function radiansRange (degrees: number)
