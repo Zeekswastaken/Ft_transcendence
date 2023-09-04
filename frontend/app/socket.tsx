@@ -28,7 +28,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
         transports: ["websocket"],
         autoConnect: false,
       });
-
       newSocket.connect(); 
       setSocket(newSocket);
     }

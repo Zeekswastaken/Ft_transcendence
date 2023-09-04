@@ -63,17 +63,24 @@ export class NotificationsService {
 async deleteNotif(recipient: User, sender: User, Type: string) {
     console.log("PEPEPEPEPPEPEPEPEP");
 
-  const notif = await this.notificationsRepository.findOne({
-    where: {
-      sender: { id: Equal(sender.id) },
-      recipient: { id: Equal(recipient.id) },
-      type: Equal(Type)
-    }
-  });
+    const notif = await this.notificationsRepository.findOne({
+      where: [
+        {
+          sender: { id: Equal(sender.id) },
+          recipient: { id: Equal(recipient.id) },
+          type: Equal(Type)
+        },
+        {
+          sender: { id: Equal(recipient.id) },
+          recipient: { id: Equal(sender.id) },
+          type: Equal(Type)
+        }
+      ]
+    });
 
   if (!notif)
-    new HttpException("No notification to delete", HttpStatus.FORBIDDEN);
-
+    throw new HttpException("No notification to delete", HttpStatus.FORBIDDEN);
+  
   console.log("ZEZEZEEZEZEZEEZEZEE");
 
   await this.notificationsRepository.remove(notif);

@@ -26,9 +26,9 @@ export class FriendsGateway {
       console.log("------------> ", data.recipientID);
       const recipient = await this.friendsService.create(data.userID, data.recipientID);
       const notif = await this.notifService.createFriendNotification(data.userID, data.recipientID);
-      client.emit("friend notif", notif);
+      this.server.to(recipient.Socket).emit("friend notif", notif);
         const message = "The friend request has been sent";
-        client.to(recipient.Socket).emit('message', message);
+        this.server.to(recipient.Socket).emit('message', message);
     } catch (error)
     {
       console.error('Error sending the friend request: ',error.message);
@@ -39,27 +39,28 @@ export class FriendsGateway {
   @SubscribeMessage('getFriendNotifs')
   async getNotifs(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
     try{
-      console.log("------------> ", data.userID);
+      // console.log("------------> ", data.userID);
       const friendnotif = await this.notifService.getFriendNotifs(data.userID);
-      console.log("************** lelelelelelel ", friendnotif);
+      // console.log("************** lelelelelelel ", friendnotif);
       const gamenotif = await this.notifService.getGameNotifs(data.userID);
+      console.log("game : ",gamenotif);
       const notif = {
         "friend request": friendnotif,
         "game invite": gamenotif
       };
       const user = await this.userService.findById(data.userID);
-      if (!user)
-        console.log('rah cxxxxx' )
-      console.log("--------->>>>>>> ", user);
-      console.log("--------- ",notif);
-      console.log("khkhkhkkhk = ", user.Socket)
+      // // if (!user)
+      //   // console.log('rah cxxxxx' /)
+      // // console.log("--------->>>>>>> ", user);
+      // console.log("--------- notif waaaaaaaaaa3 ",notif);
+      // console.log("khkhkhkkhk = ", user.Socket)
       // client.to(user.Socket).emit ("friend notif", notif, (acknowledgement) => {
         // if (acknowledgement === 'success') {
         //   console.log('***************Event emitted successfully');
         // } else {
         //   console.log('****************Event emission failed');
         // }});
-        this.server.to(user.Socket).emit('friend notif', notif);
+        this.server.to(client.id).emit('friend notif', notif);
       // console.log(request)
     } catch (error)
     {
@@ -86,8 +87,7 @@ export class FriendsGateway {
       const accepting = await this.userService.findById(data.userID);
       const waiting = await this.userService.findById(data.recipientID);
       this.server.to(accepting.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
-      this.server.to(accepting.Socket).emit('isfriend',  await this.friendsService.isFriend(data.recipientID, data.userID));
-
+      this.server.to(waiting.Socket).emit('isfriend', await this.friendsService.isFriend(data.recipientID, data.userID));
     } catch (error)
     {
       console.error('Error accepting the friend request: ',error.message);
@@ -106,8 +106,6 @@ export class FriendsGateway {
       const waiting = await this.userService.findById(data.recipientID);
       this.server.to(refusing.Socket).emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
       this.server.to(waiting.Socket).emit('ispending', await this.friendsService.isPending(data.recipientID, data.userID));
-
-
     }  catch (error)
     {
       console.error('Error refusing the friend request: ',error.message);
@@ -143,8 +141,7 @@ export class FriendsGateway {
       console.log("-------> recipient ", data.recipientID);
       const isfriend = await this.friendsService.isFriend(data.userID, data.recipientID);
       const user = await this.userService.findById(data.userID);
-      this.server.to(user.Socket).emit('isfriend', isfriend);
-
+      this.server.to(user.Socket).emit('isfriend' ,isfriend);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
@@ -161,8 +158,7 @@ export class FriendsGateway {
       const isfriend = await this.friendsService.isPending(data.userID, data.recipientID);
       console.log("ispending: ", isfriend);
       const user = await this.userService.findById(data.userID);
-      this.server.to(user.Socket).emit('ispending', isfriend);
-
+      this.server.to(user.Socket).emit('ispending' ,isfriend);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
@@ -177,8 +173,7 @@ export class FriendsGateway {
       const friends = await this.friendsService.getUserFriends(data.userID);
       console.log("getfriends: ", friends);
       const user = await this.userService.findById(data.userID);
-      this.server.to(user.Socket).emit('getfriends', friends);
-
+      this.server.to(user.Socket).emit('getfriends' ,friends);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);

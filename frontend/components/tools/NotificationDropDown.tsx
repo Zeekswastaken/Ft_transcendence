@@ -14,6 +14,22 @@ function classNames(...classes : any) {
 
 const  NotificationDropDown = () => {
   let [categories] = useState({
+    "Friend Request": [
+        {
+            id: 1,
+            title: 'Zeeks Sends you a friend Request',
+            date: 'Jan 7',
+            isInvite: 0,
+        },
+        {
+            id: 2,
+            title: 'Oussama Sends you a friend Request',
+            date: 'Mar 19',
+            isInvite: 0,
+          },
+    
+    
+        ],
     Invites: [
       {
         id: 1,
@@ -28,29 +44,15 @@ const  NotificationDropDown = () => {
         isInvite: 1,
     },
 ],
-"Friend Request": [
-    {
-        id: 1,
-        title: 'Zeeks Sends you a friend Request',
-        date: 'Jan 7',
-        isInvite: 0,
-    },
-    {
-        id: 2,
-        title: 'Oussama Sends you a friend Request',
-        date: 'Mar 19',
-        isInvite: 0,
-      },
-
-
-    ],
   })
   
-  const [notification, setNotification] = useState<any>({})
+  const [notification, setNotification] = useState<{}>({})
   const [currentUserID, setCurrentUserID] = useState<number>(0)
   const {socket} = useSocketContext();
   const [decline, setDecline] = useState<boolean>(false)
   const [decIdx, setDecIdx] = useState<number>(-1)
+  const [isClicked , setIsClicked] = useState(false);
+  const [newNotif, setNewNotif] = useState(false);
 
   useEffect(() => {
     const token = getCookie("accessToken");
@@ -65,20 +67,31 @@ const  NotificationDropDown = () => {
     }
   }, [])
 
+  
   useEffect(() => {
-    console.log('here 1')
-    console.log('Socket is connected:', socket);
-    
-    socket?.on('friend notif', (data:any) => {
-      console.log('here 3')
-      setNotification(data)
-    })
-  }, [])
+    console.log(socket)
+    // if (socket) {
+      socket?.on('friend notif', (data:any) => {
+        console.log('Received friend notification:', data);
+        if (!data)
+          setNewNotif(false)
+        setNewNotif(true)
+        setNotification(data)
+      })
+    // }
+    return () => {
+      socket?.off("friend notif");
+    };
+  }, [socket])
 
   useEffect(() => {
     console.log('here 2')
-    socket?.emit('getFriendNotifs', {userID: currentUserID})
-  }, [currentUserID])
+    // if (isClicked)
+      socket?.emit('getFriendNotifs', {userID: currentUserID})
+    // if (socket) {
+    // }
+  }, [isClicked, socket])
+
   console.log(notification)
   const handleDecline = (idx:number) => {
     setDecline(true)
@@ -86,20 +99,22 @@ const  NotificationDropDown = () => {
   }
   const handleAccept = () => {
     setDecline(false)
-    socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: notification.friendRequest[decIdx].senderID});
+    // socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: notification.friendRequest[decIdx].senderID});
     // router.push(`/users/${Data?.user.username}/`)
   }
+
   return (
 	<Menu as="div" className=" mt-3">
         <div>
-          <Menu.Button>
+          <Menu.Button onClick={e => {setIsClicked(!isClicked)}}>
 		        <img src="/notification.svg" alt="notification" width={32} height={32}/>
+            {newNotif && <div className=' w-4 h-4 blur-[2px] ml-4 top-5 absolute rounded-full bg-primary-pink-300 '/>}
           </Menu.Button>
         </div>
           <Menu.Items className=" absolute right-20 mt-2 mr-2 xl:mr-0 sm:w-[400px]  divide-y-1 tracking-wide divide-gray-300 rounded-md  shadow-3xl ">
               <Tab.Group>
                   <Tab.List className="flex space-x-1 rounded-xl bg-primary-purple-800 p-1">
-                  {Object?.keys(notification).map((category) => (
+                  {notification && Object.keys(categories).map((category) => (
                     <Tab
                     key={category}
                     className={({ selected }) =>
@@ -116,7 +131,7 @@ const  NotificationDropDown = () => {
                   ))}
                   </Tab.List>
                   <Tab.Panels className="mt-2">
-                  {Object.values(notification).map((posts:any, idx) => (
+                  {notification && Object.values(notification).map((posts:any, idx) => (
                     <Tab.Panel
                     key={idx}
                     className={classNames(
@@ -125,7 +140,7 @@ const  NotificationDropDown = () => {
                     )}
                     >
                     <ul className=' max-h-96 overflow-auto text-[#EFEFEF] no-scrollbar'>
-                      {/* {posts?.map((post:any) => (
+                      {Array.isArray(posts) && posts?.map((post:any) => (
                       <li
                         key={post?.id}
                         className="relative rounded-md grid items-center p-3 hover:bg-primary-purple-800/[0.8] duration-300"
@@ -154,7 +169,7 @@ const  NotificationDropDown = () => {
                           </ul>
 
                       </li>
-                      ))} */}
+                      ))}
                     </ul>
                     </Tab.Panel>
                   ))}
