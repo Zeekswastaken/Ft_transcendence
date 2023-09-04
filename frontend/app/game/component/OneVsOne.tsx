@@ -5,10 +5,15 @@ import { getCookie } from 'cookies-next';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Ball, Player, Net, User } from './gameInterfaces';
 import { closeSync } from 'fs';
+import { triggerAsyncId } from 'async_hooks';
 
 const OneVsOneSender = () => {
-
-    const [startGame, setStartGame] = useState(false);
+    const CANVA_WIDTH = 1200;
+    const CANVA_HEIGHT = 650;
+    const PLAYER_HEIGHT = CANVA_HEIGHT / 4;
+    const PLAYER_WIDTH = CANVA_WIDTH / 64;
+    
+    const [trigger, settrigger] = useState(false);
     const [p1Score, setP1Score] = useState<number>(0);
     const [p2Score, setP2Score] = useState<number>(0);
     const [socket, setSocket] = useState<Socket>();
@@ -24,6 +29,9 @@ const OneVsOneSender = () => {
         height: typeof window !== 'undefined' ? window.innerHeight : 0,
     });
     
+    const opponentRef = useRef(opponent);
+    const socketRef = useRef(socket);
+    const gameIdRef = useRef(gameId);
     const opponentPositionRef = useRef(opponentPosition);
     const canvasRef = useRef(null);
 
@@ -34,10 +42,6 @@ const OneVsOneSender = () => {
     let  context: CanvasRenderingContext2D;
 
     const token = getCookie("accessToken");
-
-    const handelStartGame = () => {
-        setStartGame(!startGame);
-    }
 
     useEffect(() => {
         const handleResize = () => {
@@ -71,10 +75,6 @@ const OneVsOneSender = () => {
     }, [windowSize]);
 
     useEffect(() => {
-        const CANVA_WIDTH = 1200;
-        const CANVA_HEIGHT = 650;
-        const PLAYER_HEIGHT = CANVA_HEIGHT / 4;
-        const PLAYER_WIDTH = CANVA_WIDTH / 64;
         player1 = {
             x: 10,
             y: CANVA_HEIGHT / 2 - PLAYER_HEIGHT / 2,
@@ -101,15 +101,15 @@ const OneVsOneSender = () => {
             color: "#FFFFFF",
         }
 
-        ball = {
-            x: 0,
-            y: context.canvas.height / 2,
-            radius: (CANVA_WIDTH * CANVA_HEIGHT) / 40000,
-            speed: 0,
-            vX: 5,
-            vY: 5,
-            color: "#FFF",
-        }
+        // ball = {
+        //     x: 0,
+        //     y: context.canvas.height / 2,
+        //     radius: (CANVA_WIDTH * CANVA_HEIGHT) / 40000,
+        //     speed: 0,
+        //     vX: 5,
+        //     vY: 5,
+        //     color: "#FFF",
+        // }
     },[]);
 
     useEffect(() => {
@@ -123,16 +123,27 @@ const OneVsOneSender = () => {
     }, [token])
 
     useEffect(() => {
-        socket?.on('getOpponent', (op: User, id: string) => {
+        socket?.on('getGameData', (op: User, gameId: string) => {
             setOpponent(op);
-            setGameId(id);
+            setGameId(gameId);
+            //socket?.emit("setPositon", {id: gameId, user: user , y: (CANVA_HEIGHT / 2 - PLAYER_HEIGHT / 2)});
         });
         socket?.on('getOpponentPostion', (pos: number) => {
             setOpponentPosition(pos);
         });
-        if(opponent)
-            socket?.emit("setPositon", {opponent: opponent, pos: userPostion});
-    }, [socket, userPostion]);
+        socket?.on("trigger", (tr: boolean) => {
+            console.log("Treger ========== ", tr);
+            settrigger(tr);
+        });
+        
+    }, [socket]);
+
+    useEffect(() => {
+        if(user && gameId)
+        {
+            socket?.emit("setPositon", {id: gameId, user: user, pos: userPostion});
+        }
+    }, [userPostion]);
 
     useEffect(() => { 
         const newSocket = io('http://localhost:3000');
@@ -145,19 +156,34 @@ const OneVsOneSender = () => {
 
     useEffect(() => {
         opponentPositionRef.current = opponentPosition;
-      }, [opponentPosition]);
+    }, [opponentPosition]);
 
+    useEffect(() => {
+        gameIdRef.current = gameId;
+    }, [gameId]);
+
+    useEffect(() => {
+        gameIdRef.current = gameId;
+    }, [gameId]);
+
+    useEffect(() => {
+        socketRef.current = socket;
+    }, [socket]);
+
+    useEffect(() => {
+        opponentRef.current = opponent;
+    }, [opponent]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         context = canvas.getContext('2d');
         const intervalId = setInterval(() => {
-            render(opponentPositionRef.current!);
+            render(socketRef.current!, opponentPositionRef.current!, gameIdRef.current!, opponentRef.current!);
         }, 1000 / 60);
         return () => {
             clearInterval(intervalId);
         };
-    }, [startGame]);
+    }, []);
 
     /** ---------------------- Draw Game ------------------------- */
 
@@ -182,7 +208,11 @@ const OneVsOneSender = () => {
         }
     }
 
-    const updatePlayres = (pos: number) => {
+    const updatePlayres = (socket: Socket, pos: number, id: string, op: User) => {
+        if(id !== undefined && socket !== undefined)
+        {
+            socket?.emit("getOpPosition", {id: id, opponent: op});
+        }
         if(pos !== undefined)
             player2.y = pos;
         context.canvas.addEventListener("mousemove", (e) => {
@@ -196,8 +226,8 @@ const OneVsOneSender = () => {
         });
     }
 
-    const render = (pos: number) => {
-        updatePlayres(pos);
+    const render = (socket: Socket , pos: number, id: string, op: User) => {
+        updatePlayres(socket,pos, id, op);
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         drawRectangle(context, 0, 0, context.canvas.width, context.canvas.height, "#000000");
         drawNet(context);
@@ -235,14 +265,15 @@ const OneVsOneSender = () => {
 
                 </canvas>
             </div>
-            <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
+            {/* <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
                 <div>
-                    <button className='bg-[#6E4778] hover:bg-[#6E4778]/[0.7] duration-300 rounded-[10px] px-3 py-2' onClick={handelStartGame}>Start Game</button>
+                    trigger ? <button className='bg-[#6E4778] hover:bg-[#6E4778]/[0.7] duration-300 rounded-[10px] px-3 py-2' onClick={handeltrigger}>Pause</button>
+                    : <button className='bg-[#6E4778] hover:bg-[#6E4778]/[0.7] duration-300 rounded-[10px] px-3 py-2' onClick={handeltrigger}>Start Game</button>
                 </div>
                 <div className='ml-[20px]'>
                 <button className='bg-primary-pink-300 hover:bg-primary-pink-300/[0.7] duration-300 rounded-[10px] px-[20px] py-[10px]'>Exit</button>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
