@@ -74,8 +74,9 @@ export class FriendsGateway {
       await this.channelService.createFriendsChannel(data.userID, data.recipientID);
       const accepting = await this.userService.findById(data.userID);
       const waiting = await this.userService.findById(data.recipientID);
-      client.to(accepting.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
-      client.to(waiting.Socket).emit('isfriend', await this.friendsService.isFriend(data.recipientID, data.userID));
+      this.server.to(accepting.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
+      this.server.to(accepting.Socket).emit('isfriend',  await this.friendsService.isFriend(data.recipientID, data.userID));
+
     } catch (error)
     {
       console.error('Error accepting the friend request: ',error.message);
@@ -92,8 +93,10 @@ export class FriendsGateway {
       await this.friendsService.refuseRequest(data.userID, data.recipientID);
       const refusing = await this.userService.findById(data.userID);
       const waiting = await this.userService.findById(data.recipientID);
-      client.to(refusing.Socket).emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
-      client.to(waiting.Socket).emit('ispending', await this.friendsService.isPending(data.recipientID, data.userID));
+      this.server.to(refusing.Socket).emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
+      this.server.to(waiting.Socket).emit('ispending', await this.friendsService.isPending(data.recipientID, data.userID));
+
+
     }  catch (error)
     {
       console.error('Error refusing the friend request: ',error.message);
@@ -111,7 +114,7 @@ export class FriendsGateway {
       await this.friendsService.removeFriendship(data.userID, data.recipientID);
       const message = "Unfriended successfully";
       const refusing = await this.userService.findById(data.userID);
-      client.to(refusing.Socket).emit('message', message);
+      this.server.to(refusing.Socket).emit('message', message);
       // client.emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
     } catch (error)
     {
@@ -129,7 +132,8 @@ export class FriendsGateway {
       console.log("-------> recipient ", data.recipientID);
       const isfriend = await this.friendsService.isFriend(data.userID, data.recipientID);
       const user = await this.userService.findById(data.userID);
-      client.to(user.Socket).emit('isfriend' ,isfriend);
+      this.server.to(user.Socket).emit('isfriend', isfriend);
+
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
@@ -146,7 +150,8 @@ export class FriendsGateway {
       const isfriend = await this.friendsService.isPending(data.userID, data.recipientID);
       console.log("ispending: ", isfriend);
       const user = await this.userService.findById(data.userID);
-      client.to(user.Socket).emit('ispending' ,isfriend);
+      this.server.to(user.Socket).emit('ispending', isfriend);
+
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
@@ -161,7 +166,8 @@ export class FriendsGateway {
       const friends = await this.friendsService.getUserFriends(data.userID);
       console.log("getfriends: ", friends);
       const user = await this.userService.findById(data.userID);
-      client.to(user.Socket).emit('getfriends' ,friends);
+      this.server.to(user.Socket).emit('getfriends', friends);
+
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
