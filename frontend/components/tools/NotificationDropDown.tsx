@@ -63,18 +63,21 @@ const  NotificationDropDown = () => {
     } catch (error) {
       console.error('Error decoding token:');
     }
-  }, [currentUserID])
+  }, [])
 
   useEffect(() => {
+    console.log('here 1')
+    console.log('Socket is connected:', socket);
+    
     socket?.on('friend notif', (data:any) => {
+      console.log('here 3')
       setNotification(data)
-      console.log("here")
     })
   }, [])
 
   useEffect(() => {
+    console.log('here 2')
     socket?.emit('getFriendNotifs', {userID: currentUserID})
-    console.log("here2")
   }, [currentUserID])
   console.log(notification)
   const handleDecline = (idx:number) => {
@@ -113,7 +116,7 @@ const  NotificationDropDown = () => {
                   ))}
                   </Tab.List>
                   <Tab.Panels className="mt-2">
-                  {/* {Object.values(notification).map((posts:any, idx) => (
+                  {Object.values(notification).map((posts:any, idx) => (
                     <Tab.Panel
                     key={idx}
                     className={classNames(
@@ -122,7 +125,7 @@ const  NotificationDropDown = () => {
                     )}
                     >
                     <ul className=' max-h-96 overflow-auto text-[#EFEFEF] no-scrollbar'>
-                      {posts?.map((post:any) => (
+                      {/* {posts?.map((post:any) => (
                       <li
                         key={post?.id}
                         className="relative rounded-md grid items-center p-3 hover:bg-primary-purple-800/[0.8] duration-300"
@@ -152,9 +155,9 @@ const  NotificationDropDown = () => {
 
                       </li>
                       ))} */}
-                    {/* </ul> */}
-                    {/* </Tab.Panel> */}
-                  {/* ))} */}
+                    </ul>
+                    </Tab.Panel>
+                  ))}
                   </Tab.Panels>
                 </Tab.Group>
           </Menu.Items>
