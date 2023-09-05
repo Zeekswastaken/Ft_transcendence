@@ -26,7 +26,8 @@ export class FriendsGateway {
       console.log("------------> ", data.recipientID);
       const recipient = await this.friendsService.create(data.userID, data.recipientID);
       const notif = await this.notifService.createFriendNotification(data.userID, data.recipientID);
-      console.log("socket ====== ", recipient.Socket)
+      const friendnotifs = await this.notifService.getFriendNotifs(data.recipientID);
+      console.log("socket ====== ", friendnotifs);
       console.log("notif ====== ", notif)
       this.server.to(recipient.Socket).emit("friend notif", notif);
         const message = "The friend request has been sent";
