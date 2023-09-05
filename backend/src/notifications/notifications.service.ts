@@ -19,7 +19,7 @@ export class NotificationsService {
         const initiator = await this.userRepository.findOne({where: { id: Equal(userID)}});
         const recipient = await this.userRepository.findOne({where: { id: Equal(recipientID)}, relations:['receivednotifications']});
         if (!initiator || !recipient)
-          throw new HttpException("User or Recipient not found",HttpStatus.FORBIDDEN);    
+          throw new HttpException("User or Recipient not found",HttpStatus.FORBIDDEN);
         const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userID), receiver: Equal(recipientID)},{sender: Equal(recipientID), receiver: Equal(userID)}]});
         if(!friendship)
             throw new HttpException("Friend request not found", HttpStatus.FORBIDDEN);
@@ -33,17 +33,18 @@ export class NotificationsService {
         recipient.receivednotifications.push(notifs);
         await this.userRepository.save(recipient);
         await this.notificationsRepository.save(notifs);
+        console.log("RECIPIENT ======== ", recipient.receivednotifications);
         return (notifs);
     }
     
     async getFriendNotifs(userID:Number): Promise<Notification[]>
     {
-       const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications', 'receivednotifications.sender', 'receivednotifications.recipient']});
+       const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications','receivednotifications.sender', 'receivednotifications.recipient']});
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
         console.log("-=-=-=-=-=-=-=-= ",user.receivednotifications);
         const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Friend Request").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        console.log(sortedNotifs);
+        console.log("SORTED      ", sortedNotifs);
         return sortedNotifs;
     }
 
