@@ -34,55 +34,38 @@ const  NotificationDropDown = () => {
       if (user) {
         setCurrentUserID(user.id)
       }
-      // setCurrentUsername(jwt.decode(token).username);
     } catch (error) {
       console.error('Error decoding token:');
     }
   }, [])
 
-  
-  // useEffect(() => {
-  //   socket?.on('friend notif', (data:any) => {
-  //     // Update the notifications state with new data
-  //     console.log('Received friend notification:', data)
-  //     if (data !== null)
-  //       setNotification(data);
-  //   });
-  //   // Subscribe to a socket event for real-time notifications
-
-  //   socket?.emit('getFriendNotifs', { userID: currentUserID }) 
-  //   // Fetch initial notifications when the component mounts
-
-  //   // Clean up the socket subscription when the component unmounts
-  //   return () => {
-  //     socket?.off('friend notif');
-  //   };
-  // }, [socket]);
   useEffect(() => {
-    console.log(socket)
+    // console.log(socket)
     // if (socket) {
       socket?.on('friend notif', (data:any) => {
-        console.log('Received friend notification:', data);
-        setRecipientId(data?.friendRequest[0]?.recipient.id)
-        setSenderId(data?.friendRequest[0]?.sender.id)
+        // console.log('Received friend notification:', data);
+        // console.log("rec = " + data?.friendRequest[0]?.recipient)
+        if (data) {
+          setRecipientId(data?.friendRequest[0]?.recipient.id)
+          setSenderId(data?.friendRequest[0]?.sender.id)
+        }
         if (!data)
           setNewNotif(false)
         else {
           setNewNotif(true)
-          setNotification(data)
         }
+        setNotification(data)
       })
-    // }
     return () => {
       socket?.off("friend notif");
     };
   }, [socket])
 
-  // useEffect(() => {
-    // socket?.emit('getFriendNotifs', {userID: currentUserID})
-  //   if (isClicked)
-  //     setNewNotif(false)
-  // }, [newNotif, socket])
+  useEffect(() => {
+    socket?.emit('getFriendNotifs', {userID: currentUserID})
+    if (isClicked)
+      setNewNotif(false)
+  }, [newNotif, socket])
 
   // console.log(notification)
   const handleDecline = (idx:number) => {

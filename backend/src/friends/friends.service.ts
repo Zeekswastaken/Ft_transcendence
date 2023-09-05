@@ -34,7 +34,6 @@ export class FriendsService {
     recipient.friendsasreceiver.push(actualFriendship);
     await this.userRepository.save(initiator);
     await this.userRepository.save(recipient);
-    console.log("--------------------------> ",recipient.friendsasreceiver[0].receiver);
     return recipient;
   }
 
