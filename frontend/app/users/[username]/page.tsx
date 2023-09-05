@@ -113,9 +113,10 @@ const Achievments: React.FC<Props> = ({ styles, title }) => {
     >
       <p className=" p-6 font-Bomb text-3xl text-white break-all">{title}</p>
 
+        <p className=" flex w-full font-Heading tracking-wider pt-20 text-2xl place-content-center items-center">Coming Soon</p>
       <div className=" grid gap-x-6 gap-y-2 mx-8 2xl:mx-1 grid-cols-1 sm:grid-cols-2 2xl:grid-cols-1 ">
-        <div className="w-full h-20 flex rounded-xl justify-between bg-[#471D49]/[0.7]">
-          <div className=" p-4 top-0 z-50 w-[80px] h-full flex justify-center items-center ">
+        {/* <div className="w-full h-20 flex rounded-xl justify-between bg-[#471D49]/[0.7]"> */}
+          {/* <div className=" p-4 top-0 z-50 w-[80px] h-full flex justify-center items-center ">
             <img src="/Spectate.png" alt="" className=" rounded-lg" />
           </div>
           <div className="py-4 h-full flex-1 items-start">
@@ -123,8 +124,8 @@ const Achievments: React.FC<Props> = ({ styles, title }) => {
             <p className=" mb-5 font-Heading text-sm">played <span className=" font-Bomb">2</span></p>
           </div>
           <p className=" font-Bomb text-white text-sm p-3 2xl:py-2">2/3</p>
-          <div className=" h-20 absolute w-2/3 bg-slate-400/[0.2] rounded-xl animate-fade-right animate-ease-in animate-duration-1000 animate-delay-700"/>
-        </div>
+          <div className=" h-20 absolute w-2/3 bg-slate-400/[0.2] rounded-xl animate-fade-right animate-ease-in animate-duration-1000 animate-delay-700"/> */}
+        {/* </div> */}
       </div>
     </div>
   );

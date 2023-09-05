@@ -26,6 +26,8 @@ export class FriendsGateway {
       console.log("------------> ", data.recipientID);
       const recipient = await this.friendsService.create(data.userID, data.recipientID);
       const notif = await this.notifService.createFriendNotification(data.userID, data.recipientID);
+      console.log("socket ====== ", recipient.Socket)
+      console.log("notif ====== ", notif)
       this.server.to(recipient.Socket).emit("friend notif", notif);
         const message = "The friend request has been sent";
         this.server.to(recipient.Socket).emit('message', message);
@@ -36,39 +38,39 @@ export class FriendsGateway {
       throw error;
     }
   }
-  @SubscribeMessage('getFriendNotifs')
-  async getNotifs(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
-    try{
-      // console.log("------------> ", data.userID);
-      const friendnotif = await this.notifService.getFriendNotifs(data.userID);
-      // console.log("************** lelelelelelel ", friendnotif);
-      const gamenotif = await this.notifService.getGameNotifs(data.userID);
-      console.log("game : ",gamenotif);
-      const notif = {
-        "friend request": friendnotif,
-        "game invite": gamenotif
-      };
-      const user = await this.userService.findById(data.userID);
-      // // if (!user)
-      //   // console.log('rah cxxxxx' /)
-      // // console.log("--------->>>>>>> ", user);
-      // console.log("--------- notif waaaaaaaaaa3 ",notif);
-      // console.log("khkhkhkkhk = ", user.Socket)
-      // client.to(user.Socket).emit ("friend notif", notif, (acknowledgement) => {
-        // if (acknowledgement === 'success') {
-        //   console.log('***************Event emitted successfully');
-        // } else {
-        //   console.log('****************Event emission failed');
-        // }});
-        this.server.to(client.id).emit('friend notif', notif);
-      // console.log(request)
-    } catch (error)
-    {
-      console.error('Error sending the friend request: ',error.message);
-      client.emit('error', error.message);
-      throw error;
-    }
-  }
+  // @SubscribeMessage('getFriendNotifs')
+  // async getNotifs(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
+  //   try{
+  //     // console.log("------------> ", data.userID);
+  //     const friendnotif = await this.notifService.getFriendNotifs(data.userID);
+  //     // console.log("************** lelelelelelel ", friendnotif);
+  //     const gamenotif = await this.notifService.getGameNotifs(data.userID);
+  //     console.log("game : ",gamenotif);
+  //     const notif = {
+  //       "friendRequest": friendnotif,
+  //       "gameInvite": gamenotif
+  //     };
+  //     const user = await this.userService.findById(data.userID);
+  //     // // if (!user)
+  //     //   // console.log('rah cxxxxx' /)
+  //     // // console.log("--------->>>>>>> ", user);
+  //     // console.log("--------- notif waaaaaaaaaa3 ",notif);
+  //     // console.log("khkhkhkkhk = ", user.Socket)
+  //     // client.to(user.Socket).emit ("friend notif", notif, (acknowledgement) => {
+  //       // if (acknowledgement === 'success') {
+  //       //   console.log('***************Event emitted successfully');
+  //       // } else {
+  //       //   console.log('****************Event emission failed');
+  //       // }});
+  //       this.server.to(client.id).emit('friend notif', notif);
+  //     // console.log(request)
+  //   } catch (error)
+  //   {
+  //     console.error('Error sending the friend request: ',error.message);
+  //     client.emit('error', error.message);
+  //     throw error;
+  //   }
+  // }
 
   // @SubscribeMessage('findOneFriend')
   // findOne(@MessageBody() id: number) {

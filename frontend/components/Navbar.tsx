@@ -33,25 +33,37 @@ const Navbar = () => {
 				<></>
 			)
 	else {
-		  // const user = useUserDataContext()
-		  const [user, setUser] = useState<JwtPayload>()
-  
-		  const token = getCookie("accessToken");
-		  useEffect(() => {
+		// const token = getCookie("accessToken");
+		// const [isUserValid, setIsUserValid] = useState<boolean>(false);
+		// const router = useRouter();
+	  
+		// const user = useUserDataContext()
+		const [user, setUser] = useState<JwtPayload>()
+		
+		const token = getCookie("accessToken");
+		axios.post("http://localhost:3000", {
+		token: token
+		}).then(res => {
+		if (res.data.status === "unauthorized")
+			router.push("/login");
+		}).catch(res => (console.log(res)))
+		useEffect(() => {
 			try {
-			  const user = jwt.decode(token as string) as JwtPayload
-			  if (user)
-			  setUser(user)
+				const user = jwt.decode(token as string) as JwtPayload
+				if (user)
+				setUser(user)
 			// setCurrentUsername(jwt.decode(token).username);
 		  } catch (error) {
 			console.error('Error decoding token:');
-		  }
+		}
 		}, [token])
-
+		
 		const {socket} = useSocketContext();
 		useEffect(() => {
 			socket?.emit("getSocketId", {token: token})
 		}, [socket])
+		// useEffect(() => {u
+		//   }, [socket])
 		
 		const currentUsername = user?.username;
 		const isAboveMediumScreens = useMediaQuery("(min-width: 1024px)");
@@ -62,6 +74,7 @@ const Navbar = () => {
 		const router = useRouter()
 		const [isInputFocused, setIsInputFocused] = useState(false);
 
+	
 		const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
 			e.preventDefault()
 			axios.get(`http://localhost:3000/profile/${searchForUser}`).then(res => {
@@ -93,7 +106,7 @@ const Navbar = () => {
 				<nav className="  absolute place-content-center  items-center mt-[30px] mb-[55px] h-auto flex w-full sm:w-[80%] justify-between space-x-5 z-20  p-3 rounded-xl glass">
 					
 					<div className=" flex justify-between">
-						<Link href="/" className="flex">
+						<Link href="/home" className="flex">
 							<p className=" font-Glitch text-pink-200 text-4xl text-justify pr-5 pt-1">Pong</p>
 						</Link>
 						<form onSubmit={handleSearchSubmit} className=" pt-[7px]">
@@ -162,7 +175,7 @@ const Navbar = () => {
 									</div>
 									<div className="divider"></div> 
 									<div className=" grid grid-cols-1 px-10   font-Heading tracking-wide duration-300">
-										<Link onClick={() => setIsMenuToggled(!isMenuToggled)} href="/" >
+										<Link onClick={() => setIsMenuToggled(!isMenuToggled)} href="/home" >
 											<MobileLinks pathname={pathName} toGo="/" value="Home" />
 										</Link >
 										<Link onClick={() => setIsMenuToggled(!isMenuToggled)} href="/chat" >

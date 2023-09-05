@@ -7,44 +7,14 @@ import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useSocketContext } from '@/app/socket'
 import { getCookie } from 'cookies-next'
 import jwt,{ JwtPayload } from 'jsonwebtoken'
+import { useRouter } from 'next/navigation'
 
 function classNames(...classes : any) {
   return classes.filter(Boolean).join(' ')
 }
 
 const  NotificationDropDown = () => {
-  let [categories] = useState({
-    "Friend Request": [
-        {
-            id: 1,
-            title: 'Zeeks Sends you a friend Request',
-            date: 'Jan 7',
-            isInvite: 0,
-        },
-        {
-            id: 2,
-            title: 'Oussama Sends you a friend Request',
-            date: 'Mar 19',
-            isInvite: 0,
-          },
-    
-    
-        ],
-    Invites: [
-      {
-        id: 1,
-        title: 'Mark Invites you to game',
-        date: '5h ago',
-        isInvite: 1,
-    },
-    {
-        id: 2,
-        title: "Fouad Invites you to game",
-        date: '2h ago',
-        isInvite: 1,
-    },
-],
-  })
+  let [categories] = useState({"Friend Request": [],Invites: []})
   
   const [notification, setNotification] = useState<{}>({})
   const [currentUserID, setCurrentUserID] = useState<number>(0)
@@ -52,7 +22,10 @@ const  NotificationDropDown = () => {
   const [decline, setDecline] = useState<boolean>(false)
   const [decIdx, setDecIdx] = useState<number>(-1)
   const [isClicked , setIsClicked] = useState(false);
-  const [newNotif, setNewNotif] = useState(false);
+  const [newNotif, setNewNotif] = useState(true);
+  const [recipientID, setRecipientId] = useState(0);
+  const [senderID, setSenderId] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const token = getCookie("accessToken");
@@ -68,15 +41,36 @@ const  NotificationDropDown = () => {
   }, [])
 
   
+  // useEffect(() => {
+  //   socket?.on('friend notif', (data:any) => {
+  //     // Update the notifications state with new data
+  //     console.log('Received friend notification:', data)
+  //     if (data !== null)
+  //       setNotification(data);
+  //   });
+  //   // Subscribe to a socket event for real-time notifications
+
+  //   socket?.emit('getFriendNotifs', { userID: currentUserID }) 
+  //   // Fetch initial notifications when the component mounts
+
+  //   // Clean up the socket subscription when the component unmounts
+  //   return () => {
+  //     socket?.off('friend notif');
+  //   };
+  // }, [socket]);
   useEffect(() => {
     console.log(socket)
     // if (socket) {
       socket?.on('friend notif', (data:any) => {
         console.log('Received friend notification:', data);
+        setRecipientId(data?.friendRequest[0]?.recipient.id)
+        setSenderId(data?.friendRequest[0]?.sender.id)
         if (!data)
           setNewNotif(false)
-        setNewNotif(true)
-        setNotification(data)
+        else {
+          setNewNotif(true)
+          setNotification(data)
+        }
       })
     // }
     return () => {
@@ -84,31 +78,37 @@ const  NotificationDropDown = () => {
     };
   }, [socket])
 
-  useEffect(() => {
-    console.log('here 2')
-    // if (isClicked)
-      socket?.emit('getFriendNotifs', {userID: currentUserID})
-    // if (socket) {
-    // }
-  }, [isClicked, socket])
+  // useEffect(() => {
+    // socket?.emit('getFriendNotifs', {userID: currentUserID})
+  //   if (isClicked)
+  //     setNewNotif(false)
+  // }, [newNotif, socket])
 
-  console.log(notification)
+  // console.log(notification)
   const handleDecline = (idx:number) => {
     setDecline(true)
     setDecIdx(idx)
+    setNewNotif(false)
+    socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: senderID});
+    // router.push(`/home`)
+    
   }
   const handleAccept = () => {
     setDecline(false)
-    // socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: notification.friendRequest[decIdx].senderID});
-    // router.push(`/users/${Data?.user.username}/`)
+    setNewNotif(false)
+    socket?.emit("acceptFriendRequest", {userID: currentUserID, recipientID: senderID});
+  }
+  const handleNotifClick = (e: React.MouseEvent<HTMLElement>) => {
+    // if (!isClicked)
+      setIsClicked(true)
   }
 
   return (
 	<Menu as="div" className=" mt-3">
         <div>
-          <Menu.Button onClick={e => {setIsClicked(!isClicked)}}>
+          <Menu.Button onClick={handleNotifClick}>
 		        <img src="/notification.svg" alt="notification" width={32} height={32}/>
-            {newNotif && <div className=' w-4 h-4 blur-[2px] ml-4 top-5 absolute rounded-full bg-primary-pink-300 '/>}
+            {newNotif && currentUserID === recipientID && <div className=' w-4 h-4 blur-[2px] ml-4 top-5 absolute rounded-full bg-primary-pink-300 '/>}
           </Menu.Button>
         </div>
           <Menu.Items className=" absolute right-20 mt-2 mr-2 xl:mr-0 sm:w-[400px]  divide-y-1 tracking-wide divide-gray-300 rounded-md  shadow-3xl ">
@@ -146,7 +146,7 @@ const  NotificationDropDown = () => {
                         className="relative rounded-md grid items-center p-3 hover:bg-primary-purple-800/[0.8] duration-300"
                       >
                             <div className=' space-x-4 flex justify-between'>
-                              {post.isInvite ? (
+                              {post.type !== "Friend Request" ? (
                                 <Link href="/game">
                                 <h3 className="text-sm  leading-5">
                                   {post?.message}

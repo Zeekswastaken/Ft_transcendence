@@ -33,6 +33,7 @@ export class NotificationsService {
         recipient.receivednotifications.push(notifs);
         await this.userRepository.save(recipient);
         await this.notificationsRepository.save(notifs);
+        return (notifs);
     }
     
     async getFriendNotifs(userID:Number): Promise<Notification[]>

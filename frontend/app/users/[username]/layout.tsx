@@ -211,7 +211,7 @@ export default function RootLayout({
       <>
         {!isBlocking ? (
           <div className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat h-screen overflow-y-scroll no-scrollbar w-full">
-            <div className=" 2xl:mt-[270px] lg:mt-[160px] mt-[50px] min-w-[400px] overflow-y-scroll w-full h-[75vh] no-scrollbar ">
+            <div className=" 2xl:mt-[270px] lg:mt-[160px] mt-[50px] min-w-[400px] overflow-y-scroll w-full h-[80vh] no-scrollbar ">
               <div className=" grid grid-cols-1 2xl:grid-cols-3 mb-10 gap-y-3">
                 {isPrivate && !isFriend && (userData?.username !== currentUsername)  ?  (
                   <div className=" 2xl:order-1 order-2 col-span-2  p-20">
