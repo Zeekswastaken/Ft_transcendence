@@ -6,11 +6,11 @@ export class Notification   {
   @PrimaryGeneratedColumn()
   id:Number;
   
-  @ManyToOne(() => User)
-  sender: User;
+  @ManyToOne(() => User, user => user.id)
+  sender: Number;
 
-  @ManyToOne(() => User)
-  recipient: User;
+  @ManyToOne(() => User, user=> user.id)
+  recipient: Number;
 
   @Column()
   type: String; // Either a friend request or a game invitation

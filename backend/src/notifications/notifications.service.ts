@@ -24,8 +24,8 @@ export class NotificationsService {
         if(!friendship)
             throw new HttpException("Friend request not found", HttpStatus.FORBIDDEN);
         const notifs = new Notification();
-        notifs.sender = initiator;
-        notifs.recipient = recipient;
+        notifs.sender = initiator.id;
+        notifs.recipient = recipient.id;
         notifs.type = "Friend Request";
         notifs.message = `${initiator.username} sent you a friend request`;
         notifs.isRead = false;
@@ -67,13 +67,13 @@ async deleteNotif(recipient: User, sender: User, Type: string) {
     const notif = await this.notificationsRepository.findOne({
       where: [
         {
-          sender: { id: Equal(sender.id) },
-          recipient: { id: Equal(recipient.id) },
+          sender: Equal(sender.id) ,
+          recipient: Equal(recipient.id) ,
           type: Equal(Type)
         },
         {
-          sender: { id: Equal(recipient.id) },
-          recipient: { id: Equal(sender.id) },
+          sender: Equal(recipient.id) ,
+          recipient: Equal(sender.id) ,
           type: Equal(Type)
         }
       ]
