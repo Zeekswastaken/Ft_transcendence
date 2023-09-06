@@ -8,6 +8,7 @@ import { JWToken } from './jwt.service';
 import { checkPasswordStrength } from 'src/utils/passwordChecker';
 import { Stats } from 'src/database/stats.entity';
 import { exit } from 'process';
+import * as speakeasy from 'speakeasy';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,37 @@ export class AuthService {
     // singup(@Res() res:Response){
     //     res.sendFile('/Users/orbiay/Desktop/App2/app/views/signup.html');
     // }
+
+    async generateSecret(userid:Number): Promise<User> {
+        const user = await this.userservice.findById(userid);
+        user.twofactorsecret = speakeasy.generateSecret().base32;
+        this.userservice.save(user);
+        return (user);
+    }
+
+    async generateQrCodeUri(userid: Number): Promise<string> {
+        const user = await this.userservice.findById(userid);
+        return speakeasy.otpauthURL({
+         secret: user.twofactorsecret,
+         label: user.username,
+         issuer: 'Pong',
+       });
+    }
+
+    async verifyToken(token: string, userid: Number): Promise<boolean> {
+        const user = await this.userservice.findById(userid);
+        if (speakeasy.totp.verify({
+          secret: user.twofactorsecret,
+          encoding: 'base32',
+          token,
+        }))
+        {
+            user.twofactorenabled = true;
+            return true;
+        }
+        return false;
+      }
+
     async check_and_create(body:UserDto):Promise<String | boolean | User>{
         if (!body.username)
             return 'empty';
