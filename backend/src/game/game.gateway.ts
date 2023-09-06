@@ -58,22 +58,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     i++;
     if(i % 2 == 0)
     {
-        await this.connectPlayers({p1Name: "Hamza", p2Name: "Karim"});
-        
-        // await sleep(5000);
-        // const gameData: GameData | undefined = this.GamesData.get("HamzaKarim");
-        // console.log("=====================> GOOOOOOOOOOOOOO ++++++++++++++++");
-        // console.log("Player 1 Data: ===> "+ gameData.player1.username + " " + gameData.player1.PlayerSocket);
-        // console.log("Player 2 Data: ===> "+ gameData.player2.username + " " + gameData.player2.PlayerSocket);
-        // this.server.to(gameData.player1.PlayerSocket as string).emit("trigger", true);
-        // this.server.to(gameData.player2.PlayerSocket as string).emit("trigger", true);
+        await this.connectPlayers({p1Name: "Hamza", p2Name: "Zakaria"});
     }
   }
 
   @SubscribeMessage('connectPlayers')
   async connectPlayers(obj:{p1Name: string, p2Name: string}) {
     const player1 = await this.userservice.findByName("Hamza");
-    const player2 = await this.userservice.findByName("Karim");
+    const player2 = await this.userservice.findByName("Zakaria");
     const initGameData = {player1: {data: player1, y: 300, score: 0}, player2: {data: player2, y: 300, score: 0}};
     const id: string = player1.username.toString() + player2.username.toString();
     this.GamesData.set(id, initGameData);
@@ -81,11 +73,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
   }
 
-  @SubscribeMessage('getOpPosition')
-  async gameControler(client: Socket, obj:{id: string, opponent: User}) {
+  @SubscribeMessage('getBallAndP2Positions')
+  async getBallAndP2Positions(client: Socket, obj:{id: string, opponent: User}) {
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
-    // console.log(obj.id);
-    // console.log(gameData);
     if(gameData)
     {
      
@@ -102,13 +92,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('setPositon')
   async setPosition(client: Socket, obj:{id: string, user: User, pos: number}) {
-    //console.log(obj.opponent.username + " position: " + obj.pos + "socket: " + obj.opponent.PlayerSocket);
-    //this.server.to(obj.opponent.PlayerSocket as string).emit("getOpponentPostion", obj.pos);
-    // console.log("---->" + obj.id);
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
-    // console.log(gameData);
-    // console.log("Player '" + gameData.player1.data.username + "' y = " + gameData.player1.y);
-    // console.log("Player '" + gameData.player2.data.username + "' y = " + gameData.player2.y);
     if(gameData)
     {
       if(gameData.player1.data.username == obj.user.username)
