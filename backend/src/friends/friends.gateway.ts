@@ -148,7 +148,14 @@ export class FriendsGateway {
       console.log("HERE I AM");
       await this.friendsService.removeFriendship(data.userID, data.recipientID);
       const message = "Unfriended successfully";
-      const refusing = await this.userService.findById(data.userID);
+      const refusing = await this.userService.findById(data.recipientID);
+      const friendnotif = await this.notifService.getFriendNotifs(data.recipientID);
+      const gamenotif = await this.notifService.getGameNotifs(data.recipientID);
+      const notif = {
+        "friendRequest": friendnotif,
+        "gameInvite": gamenotif
+      };
+      this.server.to(refusing.Socket).emit("friend notif", notif);
       this.server.to(refusing.Socket).emit('message', message);
       // client.emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
     } catch (error)
