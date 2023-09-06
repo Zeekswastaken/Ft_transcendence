@@ -42,7 +42,7 @@ const ProfileDropDown = () => {
       <Menu as="div">
         <div>
           <Menu.Button>
-            <div className=" w-[60px] h-[60px] rounded-full">
+            <div className=" w-[60px] h-[60px] rounded-full border-[3px] border-primary-pink-300">
               <img src={user?.avatar_url as string} className=' rounded-full w-full h-full' alt="Profile"/>
             </div>
           </Menu.Button>
@@ -84,18 +84,6 @@ const ProfileDropDown = () => {
                   >
                     My Profile
                   </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href='#'
-                    className={`${
-                      active ? 'bg-[#be67d2] duration-300' : ''
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  >
-                    Something
-                  </a>
                 )}
               </Menu.Item>
             </div>

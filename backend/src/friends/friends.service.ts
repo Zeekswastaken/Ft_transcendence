@@ -4,6 +4,7 @@ import { UserFriends } from '../database/userFriends.entity';
 import { Notification } from '../database/notifications.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, Equal } from 'typeorm';
+import { NotificationsService } from 'src/notifications/notifications.service';
 @Injectable()
 export class FriendsService {
   constructor(
@@ -11,13 +12,13 @@ export class FriendsService {
     private readonly userFriendsRepository: Repository<UserFriends>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Notification)
-    private readonly notificationsRepository: Repository<Notification>
+    private readonly notifService: NotificationsService
+    
   ) {}
 
   async create(userid: Number, recipientid: Number) {
     const initiator = await this.userRepository.findOne({where: { id: Equal(userid)}, relations: ['friendsassender', 'friendsasreceiver']});
-    const recipient = await this.userRepository.findOne({where: { id: Equal(recipientid)}, relations: ['friendsassender', 'friendsasreceiver'],});
+    const recipient = await this.userRepository.findOne({where: { id: Equal(recipientid)}, relations: ['friendsassender', 'friendsasreceiver']});
     if (!initiator || !recipient)
       throw new HttpException("User or Recipient not found",HttpStatus.FORBIDDEN);
       const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userid), receiver: Equal(recipientid)},{sender: Equal(recipientid), receiver: Equal(userid)}]});
@@ -33,8 +34,7 @@ export class FriendsService {
     recipient.friendsasreceiver.push(actualFriendship);
     await this.userRepository.save(initiator);
     await this.userRepository.save(recipient);
-    console.log("--------------------------> ",recipient.friendsasreceiver[0].receiver);
-    return actualFriendship;
+    return recipient;
   }
 
   findAll() {
@@ -49,11 +49,11 @@ export class FriendsService {
   }
   const accepting = await this.userRepository.findOne({
       where: { id: Equal(userid) },
-      relations: ['friendsasreceiver']
+      relations: ['friendsasreceiver','receivednotifications']
   });
   const waiting = await this.userRepository.findOne({
     where: { id: Equal(recipientid) },
-    relations: ['friendsassender']
+    relations: ['friendsassender','receivednotifications']
   });
   if (!accepting || !waiting) {
       throw new HttpException("User not found", HttpStatus.FORBIDDEN);
@@ -72,20 +72,45 @@ export class FriendsService {
   friendship.status = 'accepted';
   await this.userFriendsRepository.save(friendship);
   await this.userRepository.save([accepting, waiting]);
+  await this.notifService.deleteNotif(accepting, waiting ,"Friend Request");
 }
 
   
 
-  async refuseRequest(userid:Number, recipientid:Number){
+async refuseRequest(userid:Number, recipientid:Number){
     console.log("Zakaria ghalet");
+    const refusing = await this.userRepository.findOne({
+      where: { id: Equal(userid) },
+      relations: ['friendsasreceiver','receivednotifications']
+  });
+  const waiting = await this.userRepository.findOne({
+    where: { id: Equal(recipientid) },
+    relations: ['friendsassender','receivednotifications']
+  });
+  if (!refusing || !waiting) {
+      throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+  }
     const friendship = await this.userFriendsRepository.findOne({where: {sender: Equal(recipientid), receiver: Equal(userid)}});
     if (!friendship)
       throw new HttpException("No request to refuse", HttpStatus.FORBIDDEN);
     await this.userFriendsRepository.remove(friendship);
+    await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
   }
 
   async removeFriendship(userid:Number, recipientid:Number)
   {
+
+    const refusing = await this.userRepository.findOne({
+      where: { id: Equal(userid) },
+      relations: ['friendsasreceiver','receivednotifications']
+  });
+  const waiting = await this.userRepository.findOne({
+    where: { id: Equal(recipientid) },
+    relations: ['friendsassender', 'receivednotifications']
+  });
+  if (!refusing || !waiting) {
+      throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+  }
     const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userid), receiver: Equal(recipientid)},{ sender: Equal(recipientid), receiver: Equal(userid)}]});
     if (!friendship)
     {
@@ -93,8 +118,11 @@ export class FriendsService {
       throw new HttpException("No friendship to remove", HttpStatus.FORBIDDEN);
 
     }
+    console.log("pepepeppepee");
       await this.userFriendsRepository.remove(friendship);
-  }
+      console.log("leleleleleel");
+      await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
+    }
 
   async getUserFriends(userid: Number): Promise<User[]> {
         const user = await this.userRepository.findOne({

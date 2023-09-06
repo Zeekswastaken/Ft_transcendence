@@ -66,7 +66,7 @@ const MatchHistory = () => {
 			  return;
 			}
 			else{
-				console.log(res.data);
+				// console.log(res.data);
 				setUserFriends(res.data.friends);
 			}
 		  }).catch((err) => {
@@ -142,7 +142,7 @@ const MatchHistory = () => {
 							<th className="p-3">date</th>
 						</tr>
 					</thead>
-					<tbody className=" font-bold text-xl ">
+					<tbody className=" font-bold text-xl  ">
 						<Row opponent="Hawkins" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar1.png "style="animate-fade-up animate-delay-[0ms]" />
 						<Row opponent="Gloria" score="5-2" date="May 30, 2023" result="win" avatar="/avatars/avatar2.png "style="animate-fade-up animate-delay-[200ms]" />
 						<Row opponent="Colleen" score="6-3" date="May 30, 2023" result="win" avatar="/avatars/avatar3.png "style="animate-fade-up animate-delay-[400ms]" />
@@ -151,7 +151,7 @@ const MatchHistory = () => {
 					</tbody>
 				</table>
 			</div>
-			<div className="  animate-fade-up glass no-scrollbar mt-10 lg:mt-0 lg:ml-[100px] overflow-auto max-h-[522px] ">
+			<div className="  animate-fade-up glass no-scrollbar mt-10 lg:mt-0 lg:ml-[100px] overflow-auto h-[522px] ">
 				{userFriends?.length !== 0 ? userFriends?.map((friend:any) => {
 					return <Friend key={friend?.id as number} avatar={friend?.avatar_url} name={friend?.username} status={friend?.status} styles=""/>
 				}): (

@@ -47,7 +47,7 @@ const Nav = () => {
 
   return (
 	<div className=" justify-between px-6 py-5 flex">
-		<Icon link="/" imageSrc="/home-2.svg" imageAlt="Home Page" />
+		<Icon link="/home" imageSrc="/home-2.svg" imageAlt="Home Page" />
 		<Icon link="/chat" imageSrc="/messages-2.svg" imageAlt="Chat Page" />
 		<Icon link="/leaderboard" imageSrc="/ranking.svg" imageAlt="Leaderboard Page" />
 		{/* <Icon link="/game" imageSrc="/gameboy.svg" imageAlt="Game Page" /> */}

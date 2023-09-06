@@ -1,7 +1,6 @@
 'use client'
 import React, { useRef } from 'react'
 
-import PingPong from './component/PingPong'
 import OneVsOne from './component/OneVsOne'
 
 const page = () => {

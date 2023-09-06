@@ -5,6 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, {  ReactDatePickerProps } from 'react-datepicker';
 import axios from "axios";
 import { getCookie, setCookie } from 'cookies-next';
+import { useRouter } from "next/navigation";
 
 
 const completProfile = () => {
@@ -13,7 +14,7 @@ const completProfile = () => {
   const [gender, setGender] = useState("");
   // const [avatar_URL, setAvatar_URL] = useState<File>();
   const avatar = useRef<File | undefined>(undefined);
-
+  const router = useRouter();
 
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -32,6 +33,7 @@ const completProfile = () => {
       "Content-Type": "application/json"
     }}).then(res => {
       setCookie("accessToken", res.data);
+      router.push("/home");
     }).catch(err => {});
   }
 
