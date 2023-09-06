@@ -29,6 +29,7 @@ export class AuthService {
 
     async generateQrCodeUri(userid: Number): Promise<string> {
         const user = await this.userservice.findById(userid);
+        console.log("=----> ",user);
         return speakeasy.otpauthURL({
          secret: user.twofactorsecret,
          label: user.username,

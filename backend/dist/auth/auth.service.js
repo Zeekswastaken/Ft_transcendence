@@ -16,10 +16,38 @@ const user_service_1 = require("../user/user.service");
 const jwt_service_1 = require("./jwt.service");
 const passwordChecker_1 = require("../utils/passwordChecker");
 const stats_entity_1 = require("../database/stats.entity");
+const speakeasy = require("speakeasy");
 let AuthService = class AuthService {
     constructor(userservice, jwtoken) {
         this.userservice = userservice;
         this.jwtoken = jwtoken;
+    }
+    async generateSecret(userid) {
+        const user = await this.userservice.findById(userid);
+        user.twofactorsecret = speakeasy.generateSecret().base32;
+        this.userservice.save(user);
+        return (user);
+    }
+    async generateQrCodeUri(userid) {
+        const user = await this.userservice.findById(userid);
+        console.log("=----> ", user);
+        return speakeasy.otpauthURL({
+            secret: user.twofactorsecret,
+            label: user.username,
+            issuer: 'Pong',
+        });
+    }
+    async verifyToken(token, userid) {
+        const user = await this.userservice.findById(userid);
+        if (speakeasy.totp.verify({
+            secret: user.twofactorsecret,
+            encoding: 'base32',
+            token,
+        })) {
+            user.twofactorenabled = true;
+            return true;
+        }
+        return false;
     }
     async check_and_create(body) {
         if (!body.username)
