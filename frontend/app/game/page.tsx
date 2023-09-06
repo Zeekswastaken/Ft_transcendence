@@ -1,6 +1,3 @@
-'use client'
-import React, { useRef } from 'react'
-
 import OneVsOne from './component/OneVsOne'
 
 const page = () => {
@@ -10,7 +7,7 @@ const page = () => {
           <OneVsOne />
         </div>
     </div>
-  )
+  );
 }
 
 export default page

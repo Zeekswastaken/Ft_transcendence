@@ -1,3 +1,4 @@
+import { Socket } from "socket.io-client";
 export interface Ball {
     x: number;
     y: number;
@@ -9,11 +10,12 @@ export interface Ball {
 }
 
 export interface Player {
-    x: number,
-    y: number,
+    isLeft: boolean;
+    pos: any;
     width: number,
     height: number,
     score: number,
+    velocity: number;
     color: string,
 }
 
@@ -28,4 +30,10 @@ export interface Net {
 export interface User {
     username: string;
     avatar_url: string;
+}
+
+export interface GameProps {
+    sendPosition: any;
+    p2Position: number;
+    getBallAndP2: any;
 }
