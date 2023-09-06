@@ -199,8 +199,8 @@ const Friends = () => {
     })
   }, [userFriends, userBlocked])
   useEffect(() => {
-    socket?.emit("getFriends", {userID: userData?.id});
-    socket?.emit("getBlocked", {userID: userData?.id});
+    socket?.emit("getFriends", {userID: currentUserID});
+    socket?.emit("getBlocked", {userID: currentUserID});
   }, [currentUserID])
   // console.log("blocked = ", userBlocked)
   
