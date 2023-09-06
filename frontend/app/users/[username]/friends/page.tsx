@@ -218,8 +218,8 @@ const Friends = () => {
             friend list
           </h1>
           <div className="  py-8 bg-[#2F0331] rounded-3xl">
-            <div className=" animate-fade-left pt-1 pl-2 2xl:pl-10">
-              <div className=" flex space-x-3 text-white font-Heading text-2xl tracking-wide">
+            <div className=" animate-fade-left pt-1 pl-2 2xl:pl-10 mx-10">
+              <div className=" flex space-x-3 text-white font-Heading  text-2xl tracking-wide">
                 <div className={friendButtonStyle}>
                   <button onClick={handleFriendClickedTab}>Friends</button>
                 </div>
@@ -231,7 +231,7 @@ const Friends = () => {
               </div>
             </div>
             {friends && !blocked ? (
-              <div className=" animate-fade-left overflow-y-auto pb-10 no-scrollbar max-h-[450px] rounded-xl mx-2  2xl:mx-10 mt-8 grid  grid-cols-1 xl:grid-cols-2 gap-4 ">
+              <div className=" animate-fade-left overflow-y-auto pb-10 no-scrollbar max-h-[450px] rounded-xl lg:mx-20 mx-10 mt-8 grid  grid-cols-1 xl:grid-cols-2 gap-4 ">
                 {userFriends?.map((friend:any) => {
                   return <FriendCard key={friend.id} id={friend.id} styles="" username={friend.username} avatar_url={friend.avatar_url} />
                 })}
