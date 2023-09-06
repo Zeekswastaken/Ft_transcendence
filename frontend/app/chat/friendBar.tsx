@@ -31,8 +31,11 @@ const friendBar = (props:any) => {
         </h1>
         <p className=" absolute chat_text_p bottom-3 left-20">judith juanita</p>
         <div className=" float-right mx-4 my-7 h-7 w-7 rounded-full bg-pink-700">
-          <div className=" relative place-content-start h-7 w-7">
-            <p className="  font-Bomb text-xl mx-1 place-content-center">+9</p>
+          <div className=" relative place-content-center items-center h-7 w-7">
+            <p className="  font-bold text-white text-xl place-content-center text-center">
+              <span className=" text-base">+</span>
+              9
+            </p>
           </div>
         </div>
       </div>

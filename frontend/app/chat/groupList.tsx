@@ -12,7 +12,7 @@ function groupList() {
           className="absolute w-[50px] mx-4 max-sm:mx-1 left-0 bottom-1"
         />
         <div className=" chat_text_username absolute bottom-4 left-20">
-          <p className=" font-Bomb text-2xl max-sm:text-lg">Joseph</p>
+          <p className=" font-Heading text-2xl max-sm:text-lg">Joseph</p>
         </div>
 
         <div className=" float-right ">
