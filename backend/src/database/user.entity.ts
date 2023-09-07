@@ -57,6 +57,8 @@ export class User{
     twofactorsecret: string;
     @Column({ default: false })
     twofactorenabled: boolean;
+    @Column({nullable:true})
+    qr_code_url: string;
     @OneToMany(() => Notification, notification => notification.recipient, {cascade:true, onDelete: 'CASCADE'})
     receivednotifications: Notification[];
     user: Promise<String>;

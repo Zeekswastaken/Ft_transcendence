@@ -145,20 +145,12 @@ export class googleController{
 @Controller('auth')
 export class twoFactAuth_Controller{
     constructor(private readonly authservice:AuthService){}
-    @Get('secret')
-    async getSecret(@Req() req, @Res() res) {
-       const id = 1;
-      const secret = await this.authservice.generateSecret(id);
-      
-      res.send({ secret: secret.twofactorsecret});
-    }
   
     @Post('qr-code')
     async generateQrCode(@Body() body: { userid: Number}, @Res() res) {
         const id = 1;
         const qrCodeUri = await this.authservice.generateQrCodeUri(id);
         res.send({ qrCodeUri });
-
     }
   
     @Post('verify')
