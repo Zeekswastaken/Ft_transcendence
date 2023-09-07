@@ -74,18 +74,18 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('getBallAndP2Positions')
-  async getBallAndP2Positions(client: Socket, obj:{id: string, opponent: User}) {
+  async getBallAndP2Positions(client: Socket, obj:{id: string, user: User}) {
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
     if(gameData)
     {
-     
-      if(gameData.player1.data.username === obj.opponent.username)
+      if(gameData.player1.data.username === obj.user.username)
       {
-        client.emit("getOpponentPostion", gameData.player1.y);
+        // console.log(gameData.player2.y);
+        client.emit("getOpponentPostion", gameData.player2.y);
       }
       else
       {
-        client.emit("getOpponentPostion", gameData.player2.y);
+        client.emit("getOpponentPostion", gameData.player1.y);
       }
     }
   }
@@ -97,11 +97,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     {
       if(gameData.player1.data.username == obj.user.username)
       {
-        gameData.player1.y = obj.pos;
+        this.GamesData.get(obj.id).player1.y = obj.pos;
       }
       else
       {
-        gameData.player2.y = obj.pos;
+        this.GamesData.get(obj.id).player2.y = obj.pos;
       }
     }
 

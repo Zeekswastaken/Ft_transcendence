@@ -14,24 +14,18 @@ const OneVsOne = () => {
     const [p2Score, setP2Score] = useState<number>(0);
     const [opponent, setOpponent] = useState<User>();
     const [gameId, setGameId] = useState<string>();
-    const [opponentPosition, setOpponentPosition] = useState<number>();
 
 
 
 
     const token = getCookie("accessToken");
 
-    const sendPosition = (pos: number) =>
-    {
-        socket?.emit("setPositon", {id: gameId, user: user, pos: pos});
-    }
+    // const getP2AndBallPositons = () => {
+    //     socket?.emit("getBallAndP2Positions", {id: gameId, opponent: opponent});
+    //     if(opponentPosition)
+    //         return (opponentPosition);
 
-    const getP2AndBallPositons = () => {
-        socket?.emit("getBallAndP2Positions", {id: gameId, opponent: opponent});
-        if(opponentPosition)
-            return (opponentPosition);
-
-    }
+    // }
 
     useEffect(() => {
         try {
@@ -48,9 +42,10 @@ const OneVsOne = () => {
             setOpponent(op);
             setGameId(gameId);
         });
-        socket?.on('getOpponentPostion', (pos: number) => {
-            setOpponentPosition(pos);
-        });
+        // socket?.on('getOpponentPostion', (pos: number) => {
+        //     console.log(pos);
+        //     setOpponentPosition(pos);
+        // });
     }, [socket]);
 
     useEffect(() => { 
@@ -84,7 +79,7 @@ const OneVsOne = () => {
                 </div>
             </div>
             <div className='border-[2px] border-gray w-fit'>
-                <ReactP5Wrapper sketch={sketch} sendPosition={sendPosition} getBallAndP2={getP2AndBallPositons}/>
+                <ReactP5Wrapper sketch={sketch} socket={socket} gameId={gameId} user={user} opponent={opponent}/>
             </div>
             {/* <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
                 <div>
