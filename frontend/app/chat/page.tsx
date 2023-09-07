@@ -4,8 +4,14 @@ import ChatList from './chatList';
 import ChatListMobil from './chatListMobil';
 import Board from './board';
 import ChatContent from './chatContent';
-
+import { getCookie } from 'cookies-next';
+import { io } from 'socket.io-client';
+import { useSocketContext } from '../socket';
 const page = () => {
+
+  const token = getCookie("accessToken");
+  const {socket} = useSocketContext();
+  socket?.emit("Duo", {token:token,name:'Oussama'});
 
   return (
     <div className=" w-screen h-screen mx-4 max-sm:mx-0 bg-opacity-80 shadow-md">
