@@ -7,8 +7,8 @@ import { UserService } from 'src/user/user.service';
 import { JWToken } from './jwt.service';
 import { checkPasswordStrength } from 'src/utils/passwordChecker';
 import { Stats } from 'src/database/stats.entity';
-import { exit } from 'process';
-
+import * as otplib from 'otplib';
+import * as qrcode from 'qrcode';
 @Injectable()
 export class AuthService {
     constructor(private readonly userservice:UserService,private readonly jwtoken:JWToken){}
@@ -18,6 +18,37 @@ export class AuthService {
     // singup(@Res() res:Response){
     //     res.sendFile('/Users/orbiay/Desktop/App2/app/views/signup.html');
     // }
+
+    async generateSecret(userid:Number): Promise<User> {
+        const user = await this.userservice.findById(userid);
+        user.twofactorsecret = otplib.authenticator.generateSecret();
+        this.userservice.save(user);
+        return (user);
+    }
+
+    async generateQrCodeUri(userid: Number): Promise<string> {
+        const user = await this.userservice.findById(userid);
+        console.log("=----> ",user);
+        const secret = await this.generateSecret(user.id);
+        const otpauthURL = otplib.authenticator.keyuri(secret.username.valueOf(), "Pong", secret.twofactorsecret);
+        const qrCodeDataURL = await qrcode.toDataURL(otpauthURL); 
+        secret.qr_code_url = qrCodeDataURL;
+        await this.userservice.save(secret);
+        return qrCodeDataURL;
+    }
+
+    async verifyToken(token: string, userid: Number): Promise<boolean> {
+        const user = await this.userservice.findById(userid);
+        return otplib.authenticator.check(token, user.twofactorsecret);
+      }
+
+    async enableTwoFact(userid:Number)
+    {
+        const user = await this.userservice.findById(userid);
+        user.twofactorenabled = true;
+        await this.userservice.save(user);
+    }
+
     async check_and_create(body:UserDto):Promise<String | boolean | User>{
         if (!body.username)
             return 'empty';

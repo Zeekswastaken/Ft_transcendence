@@ -53,9 +53,12 @@ export class User{
   
     @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockeduser)
     blockedUsers: BlockedUser[];; //USERS THAT BLOCKED    @Column({ nullable: true })
+    @Column({nullable:true})
     twofactorsecret: string;
     @Column({ default: false })
     twofactorenabled: boolean;
+    @Column({nullable:true})
+    qr_code_url: string;
     @OneToMany(() => Notification, notification => notification.recipient, {cascade:true, onDelete: 'CASCADE'})
     receivednotifications: Notification[];
     user: Promise<String>;

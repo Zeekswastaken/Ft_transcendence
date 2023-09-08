@@ -143,6 +143,24 @@ export class googleController{
 }
 
 @Controller('auth')
+export class twoFactAuth_Controller{
+    constructor(private readonly authservice:AuthService){}
+  
+    @Post('qr-code')
+    async generateQrCode(@Body() body: { userid: Number}, @Res() res) {
+        const id = 1;
+        const qrCodeUri = await this.authservice.generateQrCodeUri(id);
+        res.send({ qrCodeUri });
+    }
+  
+    @Post('verify')
+    verifyToken(@Body() body: {token: string, userid: Number }) {
+      const isValid = this.authservice.verifyToken(body.token, body.userid);
+      return { isValid };
+    }
+}
+
+@Controller('auth')
 export class fortytwo_Controller{
     constructor(private readonly authservice:AuthService,private readonly usersrvice:UserService){}
     @Get('42')

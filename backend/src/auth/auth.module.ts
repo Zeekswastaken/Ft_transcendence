@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthController, fortytwo_Controller, googleController } from './auth.controller';
+import { AuthController, fortytwo_Controller, googleController, twoFactAuth_Controller } from './auth.controller';
 import { LocalStrategy } from './local.startegy';
 import { UserService } from 'src/user/user.service';
 import { UserModule } from 'src/user/user.module';
@@ -19,6 +19,6 @@ import { JwtService } from '@nestjs/jwt';
     signOptions: { expiresIn: '24h' }, 
   })],
   providers: [AuthService,LocalStrategy,UserService,GoogleStrategy,fortytwo_Strategy,TokenGuard,JWToken],
-  controllers: [AuthController,googleController,fortytwo_Controller]
+  controllers: [AuthController,googleController,fortytwo_Controller, twoFactAuth_Controller]
 })
 export class AuthModule {}
