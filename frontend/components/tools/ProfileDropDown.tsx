@@ -86,17 +86,6 @@ const ProfileDropDown = () => {
                   </button>
                 )}
               </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? 'bg-[#be67d2] duration-300' : ''
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  >
-                    My Profile
-                  </button>
-                )}
-              </Menu.Item>
             </div>
             <div className="px-1 py-2 font-semibold">
               <Menu.Item>

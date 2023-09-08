@@ -30,6 +30,7 @@ const Settings = () => {
       const user = jwt.decode(token as string) as JwtPayload
       if (user)
       setUser(user)
+      setIsEnable(user?.twofactorenabled)
     // setCurrentUsername(jwt.decode(token).username);
   } catch (error) {
     console.error('Error decoding token:');
@@ -57,7 +58,8 @@ const Settings = () => {
         privacy: pr,
         username: username,
         password: password,
-        Bio: bio
+        Bio: bio,
+        twofactorenabled: isEnable
       }).then(res => {
         if (res.data.message === "error") {
           return ;
@@ -83,7 +85,6 @@ const Settings = () => {
         }
     }).catch(res => {console.log(res)});
   }
-  
   const [canSee, setCanSee] = useState<boolean>(false)
   const [inputType, setInputType] = useState("password");
   const handleEyeclicked = (e: MouseEvent<HTMLButtonElement>) => {
@@ -99,7 +100,13 @@ const Settings = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [bio, setBio] = useState("");
+  const [isEnable, setIsEnable] = useState<boolean | undefined>(undefined)
   const userData = useUserDataContext()?.user;
+
+  console.log("2fa = ", isEnable)
+  const handle2fa = (e: MouseEvent<HTMLInputElement>) => {
+    setIsEnable(!isEnable)
+  }
 
   return (
     <div className=" border-2 mt-10 border-primary-pink-300 rounded-[20px]">
@@ -210,6 +217,19 @@ const Settings = () => {
                     {passwordError && <p className="text-red-500 text-xs pt-1 text-left">{passwordError}</p>}
                   </div>
                 </div>
+                <label
+                    htmlFor=""
+                    className=" text-lg tracking-wide font-Heading text-[#D4D4D4] "
+                    >
+                      <span className=" font-Bomb text-xl">2</span>FA
+                  </label>
+                <div className=" items-center flex ">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input onClick={handle2fa} type="checkbox" value="" className="sr-only peer" checked={isEnable}/>
+                    <div className="w-14 h-7 bg-gray-200  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+                    <span className="ml-3 text-base text-white font-Bomb pt-1 dark:text-gray-300">{isEnable ? ("Disable 2FA") : ("Enable 2FA")}</span>
+                  </label>
+                </div>
               </div>
               <div className="animate-fade-left animate-delay-[500ms] flex space-x-5 my-5 place-content-center items-center">
                   {/* <button onClick={handleCancel} className=" text-white font-Heading text-xl tracking-wide hover:text-primary-pink-300 duration-300">Cancel</button> */}
@@ -218,7 +238,14 @@ const Settings = () => {
                     <button onClick={handleApply} className=" py-1 px-2 text-white font-Heading text-xl tracking-wide duration-300">Apply</button>
                   </div>
               </div>
-            </div>
+                {/* <div className=" place-content-center items-center flex">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input onClick={handle2fa} type="checkbox" value="" className="sr-only peer" checked={user?.twofactorenabled || isEnable}/>
+                    <div className="w-14 h-7 bg-gray-200  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
+                    <span className="ml-3 text-base text-white font-Bomb pt-1 dark:text-gray-300">Enable 2FA</span>
+                  </label>
+                </div> */}
+              </div>
           </div>
         </div>
       </div>
