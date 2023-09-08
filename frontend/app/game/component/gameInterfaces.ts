@@ -37,6 +37,7 @@ export interface GameProps {
     user: any;
     opponent: any;
     gameId: string;
+    opponentPos: number
 }
 
 export interface net {
