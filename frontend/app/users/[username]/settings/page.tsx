@@ -53,7 +53,7 @@ const Settings = () => {
         pr = true
       else
         pr = null
-      await axios.put(`http://localhost:3000/profile/update/${user?.id}`, {
+      await axios.put(`http://10.14.2.9:3000/profile/update/${user?.id}`, {
         privacy: pr,
         username: username,
         password: password,

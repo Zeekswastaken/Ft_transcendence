@@ -148,14 +148,15 @@ export class twoFactAuth_Controller{
   
     @Post('qr-code')
     async generateQrCode(@Body() body: { userid: Number}, @Res() res) {
-        const id = 1;
-        const qrCodeUri = await this.authservice.generateQrCodeUri(id);
+        // const id = 1;
+        const qrCodeUri = await this.authservice.generateQrCodeUri(body.userid);
         res.send({ qrCodeUri });
     }
   
     @Post('verify')
-    verifyToken(@Body() body: {token: string, userid: Number }) {
-      const isValid = this.authservice.verifyToken(body.token, body.userid);
+   async verifyToken(@Body() body: {token: string, userid: Number }) {
+      const isValid = await this.authservice.verifyToken(body.token, body.userid);
+      console.log("isvalid ", isValid)
       return { isValid };
     }
 }
