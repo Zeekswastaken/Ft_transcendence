@@ -19,8 +19,9 @@ const page = () => {
     e.preventDefault()
     const router = useRouter();
     console.log("QRCode", QRCode);
-    axios.post("http://10.14.2.9:3000/auth/verify", {
-      QRCode
+    axios.post("http://localhost:3000/auth/verify", {
+      QRCode,
+      currentUserID
     }).then(res => {
       console.log(res.data);
       if (res.data.isValid)
@@ -41,7 +42,7 @@ const page = () => {
     }
   }, [])
   useEffect(() => {
-    axios.post("http://10.14.2.9:3000/auth/qr-code", {
+    axios.post("http://localhost:3000/auth/qr-code", {
       currentUserID
     }).then(res => {
       console.log(res.data.qrCodeUri);

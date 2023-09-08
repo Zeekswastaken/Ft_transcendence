@@ -73,7 +73,7 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
     //   }
     // }
     if (User) {
-      axios.get(`http://10.14.2.9:3000/profile/${User}`).then((res) =>{
+      axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
         if(res.data.message === "not-found"){
           setUser(undefined)
           return;
