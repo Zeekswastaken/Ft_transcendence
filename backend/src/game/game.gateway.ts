@@ -25,6 +25,46 @@ interface GameData {
 @WebSocketGateway()
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   GamesData: Map<string, GameData> = new Map();
+  // update = (handelScore: any, opponentPosition: number, changeUserPostion: any) => {
+  //   ball.x += ball.vX * ball.speed;
+  //   ball.y += ball.vY * ball.speed;
+  //   var rad = radiansRange(45);
+  
+  //   if(ball.y + ball.radius > context.canvas.height || ball.y - ball.radius < 0)
+  //       ball.vY = -ball.vY;
+  //   let selectPlayer = ball.x < context.canvas.width / 2 ? player1 : player2;
+  //   if(collision(ball, selectPlayer))
+  //   {
+  //       if(selectPlayer == player1)
+  //       {
+  //           var diff = ball.y - selectPlayer.y;
+  //           var angle = mapRange(diff, 0, selectPlayer.height, -rad, rad);
+  //           ball.vX = 5 * Math.cos(angle);
+  //           ball.vY = 5 * Math.sin(angle);
+  //       }
+  //       else
+  //       {
+  //           var diff = ball.y - selectPlayer.y;
+  //           var angle = mapRange(diff, 0, selectPlayer.height, -rad, rad);
+  //           ball.vX = (5 * Math.cos(angle)) * -1; 
+  //           ball.vY = 5 * Math.sin(angle); 
+  //       }
+  //       ball.speed += BALL_DELTA_SPEED;
+  //       console.log(ball.speed);
+  //   }
+  
+  //   if(ball.x - ball.radius < 0)
+  //   {
+  //       player2.score++;
+  //       console.log("Player 1: " + player1.score + " Player 2: " + player2.score);
+  //       // resetBall(context);
+  //   } else  if(ball.x + ball.radius > context.canvas.width)
+  //   {
+  //       player1.score++;
+  //       console.log("Player 1: " + player1.score + " Player 2: " + player2.score);
+  //       // resetBall(context);
+  //   }
+  // }
   @WebSocketServer()
   server: Server;
   constructor (private readonly jwt:JWToken,private readonly userservice:UserService){}
@@ -74,18 +114,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('getBallAndP2Positions')
-  async getBallAndP2Positions(client: Socket, obj:{id: string, opponent: User}) {
+  async getBallAndP2Positions(client: Socket, obj:{id: string, user: User}) {
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
     if(gameData)
     {
-     
-      if(gameData.player1.data.username === obj.opponent.username)
+      if(gameData.player1.data.username === obj.user.username)
       {
-        client.emit("getOpponentPostion", gameData.player1.y);
+        client.emit("getOpponentPostion", gameData.player2.y);
       }
       else
       {
-        client.emit("getOpponentPostion", gameData.player2.y);
+        client.emit("getOpponentPostion", gameData.player1.y);
       }
     }
   }
@@ -95,13 +134,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
     if(gameData)
     {
+      //console.log("User : " + obj.user.username + " Pos : " + obj.pos + " id = " + obj.id);
       if(gameData.player1.data.username == obj.user.username)
       {
-        gameData.player1.y = obj.pos;
+        this.GamesData.get(obj.id).player1.y = obj.pos;
       }
       else
       {
-        gameData.player2.y = obj.pos;
+        this.GamesData.get(obj.id).player2.y = obj.pos;
       }
     }
 

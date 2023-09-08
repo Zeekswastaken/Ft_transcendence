@@ -1,6 +1,5 @@
-import { couldStartTrivia } from "typescript";
 import { Socket } from "socket.io-client";
-import { Player } from "./gameInterfaces";
+import { Player, User } from "./gameInterfaces";
 import { P5CanvasInstance } from "@p5-wrapper/react";
 
 export default class Paddel implements Player{
@@ -8,38 +7,43 @@ export default class Paddel implements Player{
     pos: any;
     width: number;
     height: number;
-    velocity: number;
+    gap: number;
     score: number;
     color: string;
-    sendPosition: any;
 
-    constructor(p5: P5CanvasInstance, isLeft: boolean, sendPosition: any) {
-        this.sendPosition = sendPosition;
+    constructor(p5: P5CanvasInstance, isLeft: boolean) {
         this.isLeft = isLeft;
         this.width = p5.width / 64;
-        this.height = p5.height / 3.333;
-        this.velocity = this.height / 10;
+        this.height = p5.height / 4;
+        this.gap = this.width / 2;
         this.score = 0;
         this.pos = p5. createVector(0, (p5.height / 2) - (this.height / 2));
+        
         if(this.isLeft) {
-            this.color = "#FF0000";
-            this.pos.x = 2;
+            this.color = "#A0009D";
+            this.pos.x = this.gap;
         }
         else
         {
-            this.color = "#00FF00";
-            this.pos.x = p5.width - this.width - 2;
+            this.color = "#FF1382";
+            this.pos.x = p5.width - this.width - this.gap;
         }
     }
 
-    drow (p5: P5CanvasInstance, position: number) {
-        if(!this.isLeft){
-            this.pos.y = position;
-        }
+    drow (p5: P5CanvasInstance, pos: number) {
+    
         p5.fill(this.color);
         if(this.isLeft)
-            p5.rect(this.pos.x, this.pos.y, this.width, this.height);
-        this.update(p5);
+        {
+            p5.rect(this.pos.x, this.pos.y, this.width, this.height, this.width);
+        }
+        else {
+            if(pos != undefined){
+                p5.rect(this.pos.x, pos, this.width, this.height, this.width);
+            } else {
+                p5.rect(this.pos.x, this.pos.y, this.width, this.height, this.width);
+            }
+        }
     }
 
     update(p5: P5CanvasInstance)
@@ -47,13 +51,8 @@ export default class Paddel implements Player{
         if(this.isLeft){
             if(p5.mouseY <  (p5.height - this.height / 2) && p5.mouseY > 0 - this.height / 2){
                 this.pos.y = p5.mouseY;
-                this.sendPosition(this.pos.y);
+                return (this.pos.y);
             }
         }
-        else {
-        }
     }
-
-    
-
 }

@@ -15,7 +15,7 @@ export interface Player {
     width: number,
     height: number,
     score: number,
-    velocity: number;
+    gap: number;
     color: string,
 }
 
@@ -33,7 +33,14 @@ export interface User {
 }
 
 export interface GameProps {
-    sendPosition: any;
-    p2Position: number;
-    getBallAndP2: any;
+    socket : Socket;
+    user: any;
+    opponent: any;
+    gameId: string;
+    opponentPos: number
+}
+
+export interface net {
+    height: number;
+    width: number;
 }

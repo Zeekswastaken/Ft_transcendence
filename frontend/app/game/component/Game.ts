@@ -1,53 +1,46 @@
 import { P5CanvasInstance } from "@p5-wrapper/react";
 import { Socket } from "socket.io-client";
 import Paddel from "./Player";
-import { GameProps } from "./gameInterfaces";
+import Net from "./Net";
+import { GameProps, User } from "./gameInterfaces";
+
 
 
 export default function sketch(p5: P5CanvasInstance) {
     let player1: Paddel;
     let player2: Paddel;
-    let sendPosition: any;
-    let getBallAndP2: any;
+    let net    : Net;
+    let socket : Socket;
+    let user: User;
+    let opponentPos: number;
+    let myPosition: number;
+    let gameId: string;
   
     p5.setup = () => {
-      // let width = p5.windowWidth / 1.2;
-      // if(width > 1200) {
-      //   width = 1200;
-      //   p5.createCanvas(width, width / 1.9)
-      // } else {
-      //   p5.createCanvas(width, width / 1.9);
-      // }
       p5.createCanvas(1200, 650);
-      player1 = new Paddel(p5, true, sendPosition);
-      player2 = new Paddel(p5, false, sendPosition);
+      net =     new Net(p5);
+      player1 = new Paddel(p5, true);
+      player2 = new Paddel(p5, false);
     }
     
     p5.draw = () => {
-      let data = getBallAndP2;
-      console.log("data = " + data);
+      socket?.emit("getBallAndP2Positions", {id: gameId, user: user});
       p5.background(0);
+      net.drow(p5);
       player1.drow(p5, 0);
-      player2.drow(p5, data);
+      player2.drow(p5, opponentPos);
+      let next = player1.update(p5);
+      if(next != undefined && next != opponentPos){
+        socket?.emit("setPositon", {id: gameId, user: user, pos: (next * 100 / p5.height)});
+      }
     };
 
-    // p5.windowResized = () => {
-    //   const width = p5.windowWidth / 1.2;
-    //   if(width < 1200)
-    //   {
-    //     p5.resizeCanvas(width, width / 1.9);
-    //     player1 = new Paddel(p5, true);
-    //     player2 = new Paddel(p5, false);
-    //   }
-    // }
-
     p5.updateWithProps = (props: GameProps) => {
-      if (props.sendPosition) {
-        sendPosition = props.sendPosition;
-      }
-      if(getBallAndP2)
-      {
-        getBallAndP2 = props.getBallAndP2;
-      }
+        socket = props.socket;
+        user = props.user;
+        gameId = props.gameId;
+        if(props.opponentPos){
+          opponentPos = (props.opponentPos * p5.height / 100);
+        }
     };
 }
