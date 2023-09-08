@@ -14,13 +14,15 @@ const page = () => {
   const [QRCode, setQRCode] = useState("");
   const token = getCookie("accessToken");
   const [unValidCode, setUnvalidCode] = useState(false)
+  const router = useRouter();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const router = useRouter();
+    console.log(currentUserID)
     console.log("QRCode", QRCode);
-    axios.post("http://10.14.2.9:3000/auth/verify", {
-      QRCode
+    await axios.post("http://10.14.2.9:3000/auth/verify", {
+      QRCode,
+      currentUserID
     }).then(res => {
       console.log(res.data);
       if (res.data.isValid)
@@ -42,7 +44,7 @@ const page = () => {
   }, [])
   useEffect(() => {
     axios.post("http://10.14.2.9:3000/auth/qr-code", {
-      currentUserID
+      currentUserID,
     }).then(res => {
       console.log(res.data.qrCodeUri);
       setQRcodeUrl(res.data.qrCodeUri)

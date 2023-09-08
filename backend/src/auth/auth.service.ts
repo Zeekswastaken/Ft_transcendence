@@ -30,6 +30,7 @@ export class AuthService {
         const user = await this.userservice.findById(userid);
         console.log("=----> ",user);
         const secret = await this.generateSecret(user.id);
+        console.log("SECRET ==== ", secret.twofactorsecret);
         const otpauthURL = otplib.authenticator.keyuri(secret.username.valueOf(), "Pong", secret.twofactorsecret);
         const qrCodeDataURL = await qrcode.toDataURL(otpauthURL); 
         secret.qr_code_url = qrCodeDataURL;
@@ -39,6 +40,7 @@ export class AuthService {
 
     async verifyToken(token: string, userid: Number): Promise<boolean> {
         const user = await this.userservice.findById(userid);
+        console.log("HERE ======> ", user.twofactorsecret);
         return otplib.authenticator.check(token, user.twofactorsecret);
       }
 

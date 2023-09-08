@@ -154,8 +154,9 @@ export class twoFactAuth_Controller{
     }
   
     @Post('verify')
-   async verifyToken(@Body() body: {token: string, userid: Number }) {
-      const isValid = await this.authservice.verifyToken(body.token, body.userid);
+   async verifyToken(@Body() body: {QRCode: string, currentUserID: Number }) {
+    console.log("BODY.TOKEN -==== ", body.QRCode, " BODY.USERNAME ==== ", body.currentUserID);
+      const isValid = await this.authservice.verifyToken(body.QRCode, body.currentUserID);
       console.log("isvalid ", isValid)
       return { isValid };
     }

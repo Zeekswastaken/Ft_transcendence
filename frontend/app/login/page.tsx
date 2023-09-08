@@ -34,7 +34,7 @@ const login = ({response}:any) => {
         return
       }
       setCookie("accessToken", res.data.token);
-      router.push("/home")
+      router.push("/login/2fa")
       return
     })
   };
