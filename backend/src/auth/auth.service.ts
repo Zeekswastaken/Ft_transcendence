@@ -22,27 +22,42 @@ export class AuthService {
     async generateSecret(userid:Number): Promise<User> {
         const user = await this.userservice.findById(userid);
         user.twofactorsecret = otplib.authenticator.generateSecret();
-        this.userservice.save(user);
+        await this.userservice.save(user);
         return (user);
     }
 
     async generateQrCodeUri(userid: Number): Promise<string> {
-        const user = await this.userservice.findById(userid);
-        console.log("=----> ",user);
-        const secret = await this.generateSecret(user.id);
-        console.log("SECRET ==== ", secret.twofactorsecret);
-        const otpauthURL = otplib.authenticator.keyuri(secret.username.valueOf(), "Pong", secret.twofactorsecret);
-        const qrCodeDataURL = await qrcode.toDataURL(otpauthURL); 
-        secret.qr_code_url = qrCodeDataURL;
-        await this.userservice.save(secret);
+        let user = await this.userservice.findById(userid);
+        console.log("=----> ", user);
+        user = await this.generateSecret(user.id); // Await the secret generation
+        console.log("SECRET ==== ", user.twofactorsecret);
+        const otpauthURL = otplib.authenticator.keyuri(
+            user.username.valueOf(),
+            "Pong",
+            user.twofactorsecret
+        );
+        const qrCodeDataURL = await qrcode.toDataURL(otpauthURL);
+        user.qr_code_url = qrCodeDataURL;
+        await this.userservice.save(user);
         return qrCodeDataURL;
     }
 
-    async verifyToken(token: string, userid: Number): Promise<boolean> {
+    async verifyToken(token: string, userid: number): Promise<boolean> {
         const user = await this.userservice.findById(userid);
-        console.log("HERE ======> ", user.twofactorsecret);
-        return otplib.authenticator.check(token, user.twofactorsecret);
-      }
+        console.log("------------");
+        // console.log("HERE ======> ", user.twofactorsecret);
+        console.log("*****", user.twofactorsecret, "********");
+        console.log("*****+", token,"********");
+        const secret = user.twofactorsecret;
+        const isValid = otplib.authenticator.verify({ token, secret });
+        
+        if (isValid) {
+            return true;
+        } else {
+            console.log('Invalid token');
+            return false;
+        }
+    }
 
     async enableTwoFact(userid:Number)
     {

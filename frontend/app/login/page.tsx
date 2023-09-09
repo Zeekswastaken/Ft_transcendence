@@ -14,7 +14,7 @@ const login = ({response}:any) => {
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission behavior
-    await axios.post("http://10.14.2.9:3000/auth/login", {
+    await axios.post("http://localhost:3000/auth/login", {
       password,
       username,
     }).then(res => {
@@ -42,8 +42,8 @@ const login = ({response}:any) => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  const link_42 = "http://10.14.2.9:3000/auth/42";
-  const link_google = "http://10.14.2.9:3000/auth/google"
+  const link_42 = "http://localhost:3000/auth/42";
+  const link_google = "http://localhost:3000/auth/google"
 
   return (
     <div className=" grid place-items-center h-screen ">

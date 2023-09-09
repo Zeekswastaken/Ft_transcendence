@@ -23,7 +23,7 @@ const completProfile = () => {
     avatar_url.append("file", avatar.current as File);
 
     e.preventDefault();
-    await axios.put("http://10.14.2.9:3000/auth/modify-data", {
+    await axios.put("http://localhost:3000/auth/modify-data", {
     
       birthDay: birthDay,
       gender: gender,

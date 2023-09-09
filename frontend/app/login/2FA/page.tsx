@@ -20,17 +20,19 @@ const page = () => {
     e.preventDefault()
     console.log(currentUserID)
     console.log("QRCode", QRCode);
-    await axios.post("http://10.14.2.9:3000/auth/verify", {
-      QRCode,
-      currentUserID
-    }).then(res => {
-      console.log(res.data);
-      if (res.data.isValid)
-        router.push(`/home`);
-      else
-        setUnvalidCode(true)
-
-    }).catch(err => console.log(err));
+     if (currentUserID != 0) {
+       await axios.post("http://localhost:3000/auth/verify", {
+         QRCode,
+         currentUserID
+       }).then(res => {
+         console.log(res.data);
+         if (res.data.isValid)
+           router.push(`/home`);
+         else
+           setUnvalidCode(true)
+   
+       }).catch(err => console.log(err));
+     }
   }
   useEffect(() => {
     try {
@@ -43,7 +45,7 @@ const page = () => {
     }
   }, [])
   useEffect(() => {
-    axios.post("http://10.14.2.9:3000/auth/qr-code", {
+    axios.post("http://localhost:3000/auth/qr-code", {
       currentUserID,
     }).then(res => {
       console.log(res.data.qrCodeUri);
