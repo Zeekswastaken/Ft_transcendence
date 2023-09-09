@@ -10,12 +10,9 @@ services:
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: mydb
     volumes:
-      - ../../../Desktop/pgdata:/var/lib/postgresql/data
-    networks:
-      - app-network
+      - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
 
-networks:
-  app-network:
-    driver: bridge
+volumes:
+  pgdata:
