@@ -1,7 +1,7 @@
 "use client"
 import React, { FormEvent, useEffect, useState } from 'react'
 import axios from 'axios'
-import { getCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useRouter } from "next/navigation";
 
@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 const page = () => {
 
   // qr-code
-  const [currentUserID, setCurrentUserID] = useState<number>();
+  const [currentUserID, setCurrentUserID] = useState<Number>();
   const [QRcodeUrl, setQRcodeUrl] = useState("");
   const [QRCode, setQRCode] = useState("");
   const token = getCookie("accessToken");
@@ -25,20 +25,23 @@ const page = () => {
          QRCode,
          currentUserID
        }).then(res => {
-         console.log(res.data);
-         if (res.data.isValid)
+         console.log("res = ", res.data.isValid);
+         if (res.data.isValid) {
+           setCookie("accessToken", res.data.token)
            router.push(`/home`);
-         else
-           setUnvalidCode(true);
-   
-       }).catch(err => console.log(err));
-     }
+          }
+          else
+          setUnvalidCode(true);
+        
+      }).catch(err => console.log(err));
+    }
   }
   useEffect(() => {
     try {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
         setCurrentUserID(user.id)
+        deleteCookie("accessToken");
       }
     } catch (error) {
       console.error('Error decoding token:');
@@ -51,10 +54,11 @@ const page = () => {
       }).then(res => {
         console.log(res.data.qrCodeUri);
         // if (res.data.qrCodeUri)
-          setQRcodeUrl(res.data.qrCodeUri)
+        // console.log("res = ", res.data); 
+        setQRcodeUrl(res.data.qrCodeUri)
       }).catch(err => console.log(err))
     }
-  },[])
+  },[currentUserID])
   return (
     <div className=" grid place-items-center h-screen ">
       <div className=" bg-[#1B071C]/[0.8] min-w-[300px] overflow-auto h-[600px] w-[500px] rounded-2xl border-[#D16ACE] border">

@@ -144,19 +144,27 @@ export class googleController{
 
 @Controller('auth')
 export class twoFactAuth_Controller{
-    constructor(private readonly authservice:AuthService){}
+    constructor(private readonly authservice:AuthService, private readonly jwtservice:JWToken){}
   
     @Post('qr-code')
     async generateQrCode(@Body() body: { currentUserID: Number}, @Res() res) {
         // const id = 1;
+        console.log("++++++++++++++++++++++++++++", body.currentUserID);
         const qrCodeUri = await this.authservice.generateQrCodeUri(body.currentUserID);
         res.send({ qrCodeUri });
     }
   
     @Post('verify')
-   async verifyToken(@Body() body: {QRCode: string, currentUserID: number }) {
+   async verifyToken(@Body() body: {QRCode: string, currentUserID: number }, @Res() res) {
     console.log("BODY.TOKEN -==== ", body.QRCode, " BODY.USERNAME ==== ", body.currentUserID)
       const isValid = await this.authservice.verifyToken(body.QRCode, body.currentUserID);
+      if (isValid.isValid)
+      {
+        console.log("----------------------<", isValid.user);
+        const cookie_token = await this.authservice.generateToken_2(isValid.user);
+            const user2 = await this.jwtservice.decoded(cookie_token);
+            res.send({message:'success',token:cookie_token,user:user2,isValid:isValid.isValid});
+      }
       console.log("isvalid ", isValid)
       return { isValid };
     }

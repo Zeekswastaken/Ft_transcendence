@@ -43,7 +43,7 @@ export class AuthService {
         return qrCodeDataURL;
     }
 
-    async verifyToken(token: string, userid: number): Promise<boolean> {
+    async verifyToken(token: string, userid: number): Promise<any> {
         const user = await this.userservice.findById(userid);
         console.log("------------");
         // console.log("HERE ======> ", user.twofactorsecret);
@@ -51,12 +51,15 @@ export class AuthService {
         console.log("*****+", token,"********");
         const secret = user.twofactorsecret;
         const isValid = otplib.authenticator.verify({ token, secret });
-        
+        const obj = {
+            user:user,
+            isValid:isValid
+        }
         if (isValid) {
-            return true;
+            return obj;
         } else {
             console.log('Invalid token');
-            return false;
+            return obj;
         }
     }
 
