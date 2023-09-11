@@ -27,6 +27,7 @@ export class AuthService {
     }
 
     async generateQrCodeUri(userid: Number): Promise<string> {
+        console.log("******************************************", userid);
         let user = await this.userservice.findById(userid);
         console.log("=----> ", user);
         user = await this.generateSecret(user.id); // Await the secret generation

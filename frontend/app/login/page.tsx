@@ -29,12 +29,12 @@ const login = ({response}:any) => {
         return;
       }
       console.log("user = " , res.data.user)
+      setCookie("accessToken", res.data.token);
       if (res.data.user.twofactorenabled) {
         router.push("/login/2fa");
-        return
+        return;
       }
-      setCookie("accessToken", res.data.token);
-      router.push("/login/2fa")
+      router.push("/home")
       return
     })
   };

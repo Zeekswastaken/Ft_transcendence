@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 const page = () => {
 
   // qr-code
-  const [currentUserID, setCurrentUserID] = useState<number>(0);
+  const [currentUserID, setCurrentUserID] = useState<number>();
   const [QRcodeUrl, setQRcodeUrl] = useState("");
   const [QRCode, setQRCode] = useState("");
   const token = getCookie("accessToken");
@@ -29,7 +29,7 @@ const page = () => {
          if (res.data.isValid)
            router.push(`/home`);
          else
-           setUnvalidCode(true)
+           setUnvalidCode(true);
    
        }).catch(err => console.log(err));
      }
@@ -45,12 +45,15 @@ const page = () => {
     }
   }, [])
   useEffect(() => {
-    axios.post("http://localhost:3000/auth/qr-code", {
-      currentUserID,
-    }).then(res => {
-      console.log(res.data.qrCodeUri);
-      setQRcodeUrl(res.data.qrCodeUri)
-    }).catch(err => console.log(err))
+    if (currentUserID != 0) {
+      axios.post("http://localhost:3000/auth/qr-code", {
+        currentUserID,
+      }).then(res => {
+        console.log(res.data.qrCodeUri);
+        // if (res.data.qrCodeUri)
+          setQRcodeUrl(res.data.qrCodeUri)
+      }).catch(err => console.log(err))
+    }
   },[])
   return (
     <div className=" grid place-items-center h-screen ">

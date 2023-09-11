@@ -147,9 +147,9 @@ export class twoFactAuth_Controller{
     constructor(private readonly authservice:AuthService){}
   
     @Post('qr-code')
-    async generateQrCode(@Body() body: { userid: Number}, @Res() res) {
+    async generateQrCode(@Body() body: { currentUserID: Number}, @Res() res) {
         // const id = 1;
-        const qrCodeUri = await this.authservice.generateQrCodeUri(body.userid);
+        const qrCodeUri = await this.authservice.generateQrCodeUri(body.currentUserID);
         res.send({ qrCodeUri });
     }
   
