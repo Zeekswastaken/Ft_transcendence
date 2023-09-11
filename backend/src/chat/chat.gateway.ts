@@ -66,19 +66,16 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   }
 
   @SubscribeMessage('Duo')
-  async handleMessage(client: Socket, obj: {token:String,name:string}) {
-    console.log("kkkk");
+  async handleMessage(client: Socket, obj: {token:String,username:string,message:String}) {
     console.log(obj.token);
-    console.log("else");
+
     // const token = client.handshake.query.token;
-    // if (await this.jwt.verify(token)){
-    //   const user = await this.jwt.decoded(token);
-    //   if (this.chatservice.isMatched(payload.channelName,user.id as number))
-    //   {
-    //     client.to(payload.channelName).emit(payload.token  as string);
-    //     await this.chatservice.saveMsg({text:payload.token as string});
-    //   }
-    // }
+    if (await this.jwt.verify(obj.token)){
+      const recuser = await this.userservice.findByName(obj.username);
+      const user = await this.jwt.decoded(obj.token);
+        client.to(recuser.Socket).emit(obj.message  as string);
+        await this.chatservice.saveMsg({text:obj.message as string});
+    }
     //check if channel added in db
     // client.to(payload.channelId).emit(payload.message);
   }
