@@ -16,7 +16,7 @@ function chatMembers() {
           htmlFor="my-drawer-4"
           className="drawer-button absolute mx-4 my-4 right-2 bottom-full pb-2 max-sm:pb-5"
         >
-          <img src="/vector.svg" alt="icon" className="w-[40px] max-sm:w-[30px]" />
+          <img src="/avatars/avatar1.png" alt="icon" className="w-[40px] max-sm:w-[30px]" />
         </label>
       </div>
       <div className="drawer-side flex flex-col absolute h-[95%] w-full px-4 z-30">
@@ -26,7 +26,7 @@ function chatMembers() {
             <div className="grid grid-cols-3 grid-rows-3 h-full mx-4 w-full max-sm:mx-0">
               <div className=" row-span-2 h-full place-content-center flex items-center justify-center">
                 <img
-                  src="/Ellipse.png"
+                  src="/avatars/avatar1.png"
                   alt="icon"
                   className=" h-[100px] max-sm:h-[80%] rounded-full "
                 />

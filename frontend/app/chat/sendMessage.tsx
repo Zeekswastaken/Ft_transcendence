@@ -45,7 +45,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
             className="p-2 text-gray-500 rounded-lg cursor-pointer hover:bg-[#2D0130]"
           >
             <Image
-              src="/imogi.png"
+              src="/avatars/avatar1.png"
               width={35}
               height={35}
               alt="icon"

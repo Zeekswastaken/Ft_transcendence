@@ -20,7 +20,7 @@ const friendBar = (props:any) => {
         {/* <Image src="/vector.svg" width={40} height={40} alt="icon" className="absolute mx-4 right-2 bottom-8" /> */}
         {/* <Image src="/icons.png" width={40} height={40} alt="icon" className="absolute mx-4 right-2 bottom-8" /> */}
         <Image
-          src="/Ellipse.png"
+          src={props.img}
           width={50}
           height={50}
           alt="pic"
