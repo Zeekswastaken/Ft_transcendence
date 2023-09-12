@@ -24,7 +24,7 @@ export class ProfileController {
             console.log(user.stats);
             delete user.password;
             console.log("-------- ", user.id);
-            const details = await this.friendsService.getUserFriends(user.id);
+            const details = await this.friendsService.getUserFriends(user.username);
             const details2 = await this.blockedService.getblocked(user.id);
             console.log(details);
             console.log("**************************");

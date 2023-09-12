@@ -6,7 +6,7 @@ import { createChannelDto } from './dto/createChannel.dto';
 import { ChannelMembership } from '../database/channelMembership.entity';
 import { User } from '../database/user.entity';
 import * as bcrypt from 'bcrypt';
-import { Equal } from 'typeorm';
+import { Equal, In } from 'typeorm';
 
 console.log("HEETEe");
 
@@ -304,10 +304,13 @@ export class ChannelService {
     {
         return this.channelRepository.find({
             where: {
-                Type: Not("private")
+                Type: Not(In(["private","Duo"])) 
             },
+            
         });
     }
+
+
 
     async  getChannel(channelID: Number): Promise<Channel>
     {
@@ -381,4 +384,12 @@ export class ChannelService {
 
     return invitationLink;
   }
+
+//   async getChannelsJoined(userid : Number): Promise<Channel[]>
+//   {
+//     const user = await this.userRepository.findOne({where:{id: Equal(userid)}, relations:["memberships"]});
+//     if (!user)
+//         throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+//     const array = user.memberships.map(memberships =>)
+//     }
 }
