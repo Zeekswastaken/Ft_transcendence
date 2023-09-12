@@ -27,6 +27,7 @@ export class AuthService {
     }
 
     async generateQrCodeUri(userid: Number): Promise<string> {
+        console.log("******************************************", userid);
         let user = await this.userservice.findById(userid);
         console.log("=----> ", user);
         user = await this.generateSecret(user.id); // Await the secret generation
@@ -42,7 +43,7 @@ export class AuthService {
         return qrCodeDataURL;
     }
 
-    async verifyToken(token: string, userid: number): Promise<boolean> {
+    async verifyToken(token: string, userid: number): Promise<any> {
         const user = await this.userservice.findById(userid);
         console.log("------------");
         // console.log("HERE ======> ", user.twofactorsecret);
@@ -50,14 +51,30 @@ export class AuthService {
         console.log("*****+", token,"********");
         const secret = user.twofactorsecret;
         const isValid = otplib.authenticator.verify({ token, secret });
-        
+        const obj = {
+            user:user,
+            isValid:isValid
+        }
         if (isValid) {
-            return true;
+            return obj;
         } else {
             console.log('Invalid token');
-            return false;
+            return obj;
         }
     }
+
+    async toggleTwoFact(userid:Number)
+    {
+        const user = await this.userservice.findById(userid);
+        if (user)
+        {
+            if (user.twofactorenabled == true)
+                user.twofactorenabled = false;
+            else
+                user.twofactorenabled = true;
+            await this.userservice.save(user);
+        }
+    } 
 
     async enableTwoFact(userid:Number)
     {
@@ -121,12 +138,12 @@ export class AuthService {
     }
     async create_Oauth(body:UserDto):Promise<boolean | User>
     {
-       const user1 = await this.userservice.findByName(body.username );
+       const user1 = await this.userservice.findByName(body.username);
        if (!user1)
        {
             console.log(body);
             const user = new User();
-            user.username = body.username ;
+            user.username = body.username;
             user.avatar_url = body.avatar_url;  
             await this.userservice.save(user);
             const stats = new Stats();

@@ -5,6 +5,7 @@ import { Socket, Server } from 'socket.io';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { ChannelService } from 'src/channel/channel.service';
 import { UserService } from 'src/user/user.service';
+import { exit } from 'process';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -200,13 +201,16 @@ export class FriendsGateway {
     }
   }
   @SubscribeMessage('getFriends')
-  async getFriends(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
+  async getFriends(@MessageBody() data: { user: any}, @ConnectedSocket() client: Socket) {
     try{
-      console.log("checkPending-------> user ", data.userID); 
-      const friends = await this.friendsService.getUserFriends(data.userID);
+      console.log("check-------> user ", data.user); 
+      const friends = await this.friendsService.getUserFriends(data.user);
       console.log("getfriends: ", friends);
-      const user = await this.userService.findById(data.userID);
-      this.server.to(user.Socket).emit('getfriends' ,friends);
+      // exit(1);
+
+      const user = await this.userService.findByName(data.user);
+      // console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
+      this.server.to(client.id).emit('getfriends' ,friends);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
