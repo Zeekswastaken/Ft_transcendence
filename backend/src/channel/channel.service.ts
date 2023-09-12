@@ -53,10 +53,13 @@ export class ChannelService {
         
         const membership = new ChannelMembership();
         membership.Userid = owner;
-        membership.Channelid = channel.id
         membership.Type = "owner";
-        channel.memberships.push(membership)
+        channel.memberships = [];
+        console.log("----- ", membership);
         const savedChannel = await this.channelRepository.save(channel);
+        membership.Channelid = savedChannel.id
+        console.log("------->", savedChannel)
+        channel.memberships.push(membership)
         await this.channelMembershipRepository.save(membership);
         return savedChannel;
     }
@@ -385,11 +388,17 @@ export class ChannelService {
     return invitationLink;
   }
 
-//   async getChannelsJoined(userid : Number): Promise<Channel[]>
-//   {
-//     const user = await this.userRepository.findOne({where:{id: Equal(userid)}, relations:["memberships"]});
-//     if (!user)
-//         throw new HttpException("User not found", HttpStatus.FORBIDDEN);
-//     const array = user.memberships.map(memberships =>)
-//     }
+  async getChannelsJoined(userid : Number): Promise<Channel[]>
+  {
+    const channelmemberships = await this.channelMembershipRepository.find({
+        where:{
+            Userid: Equal(userid)
+        },
+            relations: ['channel']
+    });
+    const filtered = channelmemberships.filter((membership) => membership.channel.Type != 'Duo');
+    const channelIds = filtered.map((membership)=> membership.channel);
+    console.log("================= ", channelIds);
+    return channelIds;
+}
 }

@@ -20,7 +20,7 @@ export class ChannelGateway {
   @SubscribeMessage('createChannel')
   async create(@MessageBody() createChannelDto: createChannelDto, @ConnectedSocket() client: Socket) {
     try{
-      const userid = 1;
+      const userid = 3;
     // console.log("====> ", client.id);xxxxx
       // console.log("it kinda worked");
       // const token = client.handshake.query.token;
@@ -44,10 +44,10 @@ export class ChannelGateway {
   @SubscribeMessage('JoinChannel')
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }){
     try {
-      const channelID = 4; 
+      const channelID = 8; 
       const userID = data.userID;
       const Pass = data.Pass;
-    const userid = 2;
+    const userid = 1;
     return await this.channelService.joinChannel(channelID, userid, Pass);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
@@ -154,7 +154,6 @@ export class ChannelGateway {
     }
   }
 
-
   @SubscribeMessage('unbanUser')
   async unban(@MessageBody() data: { channelID: Number, userID: Number})
   {
@@ -164,8 +163,19 @@ export class ChannelGateway {
       return await this.channelService.unbanUser(channelID, userID)
     }
   catch (error) {
-    console.error('Error unmuting user: ', error.message);
+    console.error('Error unbanning user: ', error.message);
     throw error;
     }
-  }  
+  }
+  @SubscribeMessage('getChannelsJoined')
+  async getting(@MessageBody() data: { userID: Number})
+  {
+    try{
+      return await this.channelService.getChannelsJoined(data.userID)
+    }
+  catch (error) {
+    console.error('Error getting the channels joined by the user: ', error.message);
+    throw error;
+    }
+  }
 }
