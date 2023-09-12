@@ -147,19 +147,28 @@ export class twoFactAuth_Controller{
     constructor(private readonly authservice:AuthService){}
   
     @Post('qr-code')
-    async generateQrCode(@Body() body: { userid: Number}, @Res() res) {
+    async generateQrCode(@Body() body: { currentUserID: Number}, @Res() res) {
         // const id = 1;
-        const qrCodeUri = await this.authservice.generateQrCodeUri(body.userid);
+        console.log("USERID--------- ", body.currentUserID);
+        const qrCodeUri = await this.authservice.generateQrCodeUri(body.currentUserID);
         res.send({ qrCodeUri });
     }
   
     @Post('verify')
-   async verifyToken(@Body() body: {token: string, userid: Number }) {
-    console.log("Body.token === ", body.token, " Body.userid====== ", body.userid);
-      const isValid = await this.authservice.verifyToken(body.token, body.userid);
+   async verifyToken(@Body() body: {QRCode: string, currentUserID: Number }) {
+    console.log("BODY.TOKEN -==== ", body.QRCode, " BODY.USERNAME ==== ", body.currentUserID);
+      const isValid = await this.authservice.verifyToken(body.QRCode, body.currentUserID);
       console.log("isvalid ", isValid)
       return { isValid };
     }
+
+    @Post('toggletwofact')
+    async Toggle(@Body() body: {currentUserID: Number }) {
+     console.log("BODY.TOKEN -==== ", " BODY.USERNAME ==== ", body.currentUserID);
+       const isValid = await this.authservice.toggleTwoFact(body.currentUserID);
+       console.log("isvalid ", isValid)
+       return { isValid };
+     }
 }
 
 @Controller('auth')

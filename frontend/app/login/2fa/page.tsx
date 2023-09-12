@@ -14,12 +14,12 @@ const page = () => {
   const [QRCode, setQRCode] = useState("");
   const token = getCookie("accessToken");
   const [unValidCode, setUnvalidCode] = useState(false)
+  const router = useRouter();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit =  (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const router = useRouter();
     console.log("QRCode", QRCode);
-    axios.post("http://localhost:3000/auth/verify", {
+     axios.post("http://localhost:3000/auth/verify", {
       QRCode,
       currentUserID
     }).then(res => {
@@ -42,13 +42,16 @@ const page = () => {
     }
   }, [])
   useEffect(() => {
-    axios.post("http://localhost:3000/auth/qr-code", {
-      currentUserID
-    }).then(res => {
-      console.log(res.data.qrCodeUri);
-      setQRcodeUrl(res.data.qrCodeUri)
-    }).catch(err => console.log(err))
-  },[])
+    if (currentUserID != 0) {
+      console.log("currentUserID = ",currentUserID)
+      axios.post("http://localhost:3000/auth/qr-code", {
+        currentUserID
+      }).then(res => {
+        console.log(res.data.qrCodeUri);
+        setQRcodeUrl(res.data.qrCodeUri)
+      }).catch(err => console.log(err))
+    }
+  },[currentUserID])
   return (
     <div className=" grid place-items-center h-screen ">
       <div className=" bg-[#1B071C]/[0.8] min-w-[300px] overflow-auto h-[600px] w-[500px] rounded-2xl border-[#D16ACE] border">

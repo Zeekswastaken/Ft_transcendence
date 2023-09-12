@@ -30,6 +30,7 @@ const login = ({response}:any) => {
       }
       console.log("user = " , res.data.user)
       if (res.data.user.twofactorenabled) {
+        setCookie("accessToken", res.data.token);
         router.push("/login/2fa");
         return
       }

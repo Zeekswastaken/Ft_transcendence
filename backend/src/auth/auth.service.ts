@@ -21,26 +21,55 @@ export class AuthService {
 
     async generateSecret(userid:Number): Promise<User> {
         const user = await this.userservice.findById(userid);
-        user.twofactorsecret = otplib.authenticator.generateSecret();
-        this.userservice.save(user);
+        user.twofactorsecret = otplib.authenticator.generateSecret(1);
+        console.log("GENERATED SECRET  ", user.twofactorsecret);
+        await this.userservice.save(user);
         return (user);
     }
 
     async generateQrCodeUri(userid: Number): Promise<string> {
         const user = await this.userservice.findById(userid);
-        console.log("=----> ",user);
-        const secret = await this.generateSecret(user.id);
-        const otpauthURL = otplib.authenticator.keyuri(secret.username.valueOf(), "Pong", secret.twofactorsecret);
+        console.log("=----> ",user.id);
+        // const secret = await this.generateSecret(user.id);
+        user.twofactorsecret = otplib.authenticator.generateSecret();
+        console.log("SECRET ==== ", user.id," ====== ", user.twofactorsecret);
+        const otpauthURL = otplib.authenticator.keyuri(user.username.valueOf(), "Pong", user.twofactorsecret);
         const qrCodeDataURL = await qrcode.toDataURL(otpauthURL); 
-        secret.qr_code_url = qrCodeDataURL;
-        await this.userservice.save(secret);
+        // secret.qr_code_url = qrCodeDataURL;
+        await this.userservice.save(user);
         return qrCodeDataURL;
     }
 
     async verifyToken(token: string, userid: Number): Promise<boolean> {
-        const user = await this.userservice.findById(userid);
-        return otplib.authenticator.check(token, user.twofactorsecret);
+        try {
+          const user = await this.userservice.findById(userid);
+          console.log("======> ", user.twofactorsecret);
+          const isValid = otplib.authenticator.check(token, 'PNYTQSRRB5YAU6KH');
+          
+          if (isValid) {
+            return true;
+          } else {
+            console.log('Invalid token');
+            return false;
+          }
+        } catch (error) {
+          console.error('Error during token verification:', error);
+          return false;
+        }
       }
+
+    async toggleTwoFact(userid:Number)
+    {
+        const user = await this.userservice.findById(userid);
+        if (user)
+        {
+            if (user.twofactorenabled == true)
+                user.twofactorenabled = false;
+            else
+                user.twofactorenabled = true;
+            await this.userservice.save(user);
+        }
+    } 
 
     async enableTwoFact(userid:Number)
     {
