@@ -7,6 +7,7 @@ import { ChannelMembership } from '../database/channelMembership.entity';
 import { User } from '../database/user.entity';
 import * as bcrypt from 'bcrypt';
 import { Equal, In } from 'typeorm';
+import { equal } from 'assert';
 
 console.log("HEETEe");
 
@@ -84,7 +85,10 @@ export class ChannelService {
         await this.joinChannel(savedChannel.id, recipient.id, null);
         return (savedChannel);
     }
-
+    async findById(channelID:number)
+    {
+        return await this.channelRepository.findOne({where:{ id: Equal(channelID)}});
+    }
     async assignAdmin(channelID: Number, userId: Number, initiatorId: Number): Promise<ChannelMembership>
     {
         
