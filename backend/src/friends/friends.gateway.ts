@@ -200,12 +200,12 @@ export class FriendsGateway {
     }
   }
   @SubscribeMessage('getFriends')
-  async getFriends(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
+  async getFriends(@MessageBody() data: { user: String}, @ConnectedSocket() client: Socket) {
     try{
-      console.log("checkPending-------> user ", data.userID); 
-      const friends = await this.friendsService.getUserFriends(data.userID);
+      console.log("checkPending-------> user ", data.user); 
+      const friends = await this.friendsService.getUserFriends(data.user);
       console.log("getfriends: ", friends);
-      const user = await this.userService.findById(data.userID);
+      const user = await this.userService.findByName(data.user);
       this.server.to(user.Socket).emit('getfriends' ,friends);
     }catch (error)
     {

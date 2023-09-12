@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { getCookie } from "cookies-next";
 import Link from "next/link";
 import { useSocketContext } from "@/app/socket";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 type Props = {
   styles: string;
@@ -189,7 +189,8 @@ const Friends = () => {
       console.error('Error decoding token:');
     }
   }, [])
-
+  const User = useParams().username;
+  console.log("User Id = ", User)
   useEffect(() => {
     socket?.on("getfriends", (data:any) => {
       setUserFriends(data);
@@ -199,8 +200,10 @@ const Friends = () => {
     })
   }, [userFriends, userBlocked])
   useEffect(() => {
-    socket?.emit("getFriends", {userID: currentUserID});
-    socket?.emit("getBlocked", {userID: currentUserID});
+    // socket?.emit("getFriends", {userID: currentUserID});
+    // socket?.emit("getBlocked", {userID: currentUserID});
+    socket?.emit("getFriends", {userID: User});
+    socket?.emit("getBlocked", {userID: User});
   }, [currentUserID])
   // console.log("blocked = ", userBlocked)
   

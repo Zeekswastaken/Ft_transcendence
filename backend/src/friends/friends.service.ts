@@ -124,9 +124,10 @@ async refuseRequest(userid:Number, recipientid:Number){
       await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
     }
 
-  async getUserFriends(userid: Number): Promise<User[]> {
+  async getUserFriends(userid: String): Promise<User[]> {
+    console.log("---------->DDDDDDDDDD ", userid);
         const user = await this.userRepository.findOne({
-        where: { id: Equal(userid) },
+        where: { username: Equal(userid) },
         relations: ['friendsassender', 'friendsasreceiver'],
       });
     
@@ -138,7 +139,7 @@ async refuseRequest(userid:Number, recipientid:Number){
         .concat(user.friendsassender)
         .filter(friendship =>
           friendship.status === 'accepted')
-        .map(friendship => friendship.sender.id != userid ? friendship.sender : friendship.receiver);
+        .map(friendship => friendship.sender.username != userid ? friendship.sender : friendship.receiver);
       
       return friends; 
   }
