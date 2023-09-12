@@ -8,6 +8,7 @@ interface GroupInfoStatesProps {
     image: string;
     members: number;
     type: string;
+    id: number
 }
 
 interface GroupInfosStatesProps
@@ -18,7 +19,7 @@ interface GroupInfosStatesProps
 
 const FindGroup = ({groupsInfos, search}: GroupInfosStatesProps) => {
     return (
-        <div className=' rounded-xl h-[800px] bg-[#A1216C] px-[3rem] pt-[3rem] mb-[100px] overflow-auto no-scrollbar'>               
+        <div className=' rounded-xl h-[800px] bg-[#670647] px-1 sm:px-5 pt-[3rem] overflow-auto no-scrollbar mt-10'>               
             <div>
                 {
                     groupsInfos.filter((group) => {
@@ -28,7 +29,9 @@ const FindGroup = ({groupsInfos, search}: GroupInfosStatesProps) => {
                                 : group.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
                         );
                     }).map((group) => (
-                        <GroupInfos name={group.name} 
+                        <GroupInfos 
+                                    key={group.id}
+                                    name={group.name} 
                                     image={group.image} 
                                     members={group.members} 
                                     type={group.type}
