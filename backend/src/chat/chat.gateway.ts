@@ -1,4 +1,4 @@
-// src/websocket-gateway/websocket-gateway.gateway.ts
+
 import { Inject, Injectable } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
@@ -6,10 +6,12 @@ import { ChatService } from './chat.service';
 import { JWToken } from 'src/auth/jwt.service';
 import { User } from 'src/database/user.entity';
 import { UserService } from 'src/user/user.service';
+import { channel } from 'diagnostics_channel';
+import { ChannelService } from 'src/channel/channel.service';
 @Injectable()
 @WebSocketGateway()
 export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  constructor (private readonly chatservice:ChatService, private readonly jwt:JWToken,private readonly userservice:UserService){}
+  constructor (private readonly chatservice:ChatService, private readonly jwt:JWToken,private readonly userservice:UserService,private readonly ChannelService:ChannelService ){}
   users = new Map<string, string>();
    @WebSocketServer()
    server: Server;
@@ -65,6 +67,33 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     console.log('WebSocket gateway initialized')
   }
 
+  @SubscribeMessage('JoinRoom')
+  async joinroom(client:Socket,payload : {token:String}){
+    if (await this.jwt.verify(payload.token))
+    {
+      const user = await this.jwt.decoded(payload.token);
+      const channels = await this.ChannelService.getChannelsJoined(user.id);
+      channels.forEach((room)=>{
+        client.join(room.Name);
+      })
+      return ({status:"Success Joining"});
+    }
+    return ({status:"Invalid Token"});
+  }
+
+  @SubscribeMessage('LeaveRoom')
+  async Leaveroom(client:Socket,payload : {token:String}){
+    if (await this.jwt.verify(payload.token))
+    {
+      const user = await this.jwt.decoded(payload.token);
+      const channels = await this.ChannelService.getChannelsJoined(user.id);
+      channels.forEach((room)=>{
+        client.leave(room.Name);
+      })
+      return ({status:"Success leaving"});
+    }
+    return ({status:"Invalid Token"});
+  }
   @SubscribeMessage('Duo')
   async handleMessage(client: Socket, obj: {token:String,username:string,message:String, receiver:string, channelid:Number}) {
     console.log(obj.token);

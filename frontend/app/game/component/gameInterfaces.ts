@@ -37,10 +37,16 @@ export interface GameProps {
     user: any;
     opponent: any;
     gameId: string;
-    opponentPos: number
+    opponentPos: number;
+    ballCoordinates: BallCoordinates
 }
 
 export interface net {
     height: number;
     width: number;
+}
+
+export interface BallCoordinates {
+    x: number;
+    y: number;
 }
