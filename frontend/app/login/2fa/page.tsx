@@ -1,7 +1,7 @@
 "use client"
 import React, { FormEvent, useEffect, useState } from 'react'
 import axios from 'axios'
-import { getCookie } from "cookies-next";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useRouter } from "next/navigation";
 
@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 const page = () => {
 
   // qr-code
-  const [currentUserID, setCurrentUserID] = useState<number>(0);
+  const [currentUserID, setCurrentUserID] = useState<Number>();
   const [QRcodeUrl, setQRcodeUrl] = useState("");
   const [QRCode, setQRCode] = useState("");
   const token = getCookie("accessToken");
@@ -19,23 +19,28 @@ const page = () => {
   const handleSubmit =  (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log("QRCode", QRCode);
-     axios.post("http://localhost:3000/auth/verify", {
-      QRCode,
-      currentUserID
-    }).then(res => {
-      console.log(res.data);
-      if (res.data.isValid)
-        router.push(`/home`);
-      else
-        setUnvalidCode(true)
-
-    }).catch(err => console.log(err));
+     if (currentUserID != 0) {
+       await axios.post("http://localhost:3000/auth/verify", {
+         QRCode,
+         currentUserID
+       }).then(res => {
+         console.log("res = ", res.data.isValid);
+         if (res.data.isValid) {
+           setCookie("accessToken", res.data.token)
+           router.push(`/home`);
+          }
+          else
+          setUnvalidCode(true);
+        
+      }).catch(err => console.log(err));
+    }
   }
   useEffect(() => {
     try {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
         setCurrentUserID(user.id)
+        deleteCookie("accessToken");
       }
     } catch (error) {
       console.error('Error decoding token:');
@@ -43,11 +48,12 @@ const page = () => {
   }, [])
   useEffect(() => {
     if (currentUserID != 0) {
-      console.log("currentUserID = ",currentUserID)
       axios.post("http://localhost:3000/auth/qr-code", {
-        currentUserID
+        currentUserID,
       }).then(res => {
         console.log(res.data.qrCodeUri);
+        // if (res.data.qrCodeUri)
+        // console.log("res = ", res.data); 
         setQRcodeUrl(res.data.qrCodeUri)
       }).catch(err => console.log(err))
     }

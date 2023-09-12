@@ -21,42 +21,47 @@ export class AuthService {
 
     async generateSecret(userid:Number): Promise<User> {
         const user = await this.userservice.findById(userid);
-        user.twofactorsecret = otplib.authenticator.generateSecret(1);
-        console.log("GENERATED SECRET  ", user.twofactorsecret);
+        user.twofactorsecret = otplib.authenticator.generateSecret();
         await this.userservice.save(user);
         return (user);
     }
 
     async generateQrCodeUri(userid: Number): Promise<string> {
-        const user = await this.userservice.findById(userid);
-        console.log("=----> ",user.id);
-        // const secret = await this.generateSecret(user.id);
-        user.twofactorsecret = otplib.authenticator.generateSecret();
-        console.log("SECRET ==== ", user.id," ====== ", user.twofactorsecret);
-        const otpauthURL = otplib.authenticator.keyuri(user.username.valueOf(), "Pong", user.twofactorsecret);
-        const qrCodeDataURL = await qrcode.toDataURL(otpauthURL); 
-        // secret.qr_code_url = qrCodeDataURL;
+        console.log("******************************************", userid);
+        let user = await this.userservice.findById(userid);
+        console.log("=----> ", user);
+        user = await this.generateSecret(user.id); // Await the secret generation
+        console.log("SECRET ==== ", user.twofactorsecret);
+        const otpauthURL = otplib.authenticator.keyuri(
+            user.username.valueOf(),
+            "Pong",
+            user.twofactorsecret
+        );
+        const qrCodeDataURL = await qrcode.toDataURL(otpauthURL);
+        user.qr_code_url = qrCodeDataURL;
         await this.userservice.save(user);
         return qrCodeDataURL;
     }
 
-    async verifyToken(token: string, userid: Number): Promise<boolean> {
-        try {
-          const user = await this.userservice.findById(userid);
-          console.log("======> ", user.twofactorsecret);
-          const isValid = otplib.authenticator.check(token, 'PNYTQSRRB5YAU6KH');
-          
-          if (isValid) {
-            return true;
-          } else {
-            console.log('Invalid token');
-            return false;
-          }
-        } catch (error) {
-          console.error('Error during token verification:', error);
-          return false;
+    async verifyToken(token: string, userid: number): Promise<any> {
+        const user = await this.userservice.findById(userid);
+        console.log("------------");
+        // console.log("HERE ======> ", user.twofactorsecret);
+        console.log("*****", user.twofactorsecret, "********");
+        console.log("*****+", token,"********");
+        const secret = user.twofactorsecret;
+        const isValid = otplib.authenticator.verify({ token, secret });
+        const obj = {
+            user:user,
+            isValid:isValid
         }
-      }
+        if (isValid) {
+            return obj;
+        } else {
+            console.log('Invalid token');
+            return obj;
+        }
+    }
 
     async toggleTwoFact(userid:Number)
     {
@@ -133,12 +138,12 @@ export class AuthService {
     }
     async create_Oauth(body:UserDto):Promise<boolean | User>
     {
-       const user1 = await this.userservice.findByName(body.username );
+       const user1 = await this.userservice.findByName(body.username + 'Rbiay');
        if (!user1)
        {
             console.log(body);
             const user = new User();
-            user.username = body.username ;
+            user.username = body.username  + 'Rbiay';
             user.avatar_url = body.avatar_url;  
             await this.userservice.save(user);
             const stats = new Stats();

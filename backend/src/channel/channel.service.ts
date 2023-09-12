@@ -50,13 +50,13 @@ export class ChannelService {
         // {
                 //TRY TO THINK OF A WAY FOR INVITATION LINKS TO WORK HERE/// FRIEND LIST
         // }
-        const savedChannel = await this.channelRepository.save(channel);
         
         const membership = new ChannelMembership();
         membership.Userid = owner;
-        membership.Channelid = savedChannel.id
+        membership.Channelid = channel.id
         membership.Type = "owner";
-
+        channel.memberships.push(membership)
+        const savedChannel = await this.channelRepository.save(channel);
         await this.channelMembershipRepository.save(membership);
         return savedChannel;
     }
@@ -70,13 +70,13 @@ export class ChannelService {
         const channel = new Channel();
         channel.Name = Math.random().toString(36).substring(7);
         channel.Type = "Duo";
-        const savedChannel = await this.channelRepository.save(channel);
         
         const membership = new ChannelMembership();
         membership.Userid = initiator.id;
-        membership.Channelid = savedChannel.id
+        membership.Channelid = channel.id
         membership.Type = "owner";
-
+        channel.memberships.push(membership);
+        const savedChannel = await this.channelRepository.save(channel);
         await this.channelMembershipRepository.save(membership);
         await this.joinChannel(savedChannel.id, recipient.id, null);
         return (savedChannel);
