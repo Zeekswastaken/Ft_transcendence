@@ -11,10 +11,11 @@ import { FriendsService } from 'src/friends/friends.service';
 import { BlockedService } from 'src/blocked/blocked.service';
 import { BlockedModule } from 'src/blocked/blocked.module';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { ChannelService } from 'src/channel/channel.service';
 
 @Module({
   imports:[UserModule,AuthModule, FriendsModule, BlockedModule],
   controllers: [ProfileController],
-  providers: [ProfileService,UserService,JWToken,JwtService, FriendsService, BlockedService, NotificationsService]
+  providers: [ProfileService,UserService,JWToken,JwtService, FriendsService, BlockedService, NotificationsService, ChannelService]
 })
 export class ProfileModule {}
