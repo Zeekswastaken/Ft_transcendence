@@ -219,5 +219,22 @@ export class FriendsGateway {
       throw error;
     }
   }
-  
+  @SubscribeMessage('getFriendsWithChannels')
+  async getChannelFriends(@MessageBody() data: { user: any}, @ConnectedSocket() client: Socket) {
+    try{
+      console.log("check-------> user ", data.user);
+      const friends = await this.friendsService.getChannelUserFriends(data.user);
+      console.log("getfriends: ", friends);
+      // exit(1);
+
+      const user = await this.userService.findByName(data.user);
+      console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
+      this.server.to(client.id).emit('getfriends' ,friends);
+    }catch (error)
+    {
+      console.error('Error getting the friends of the user: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
+  }
 }

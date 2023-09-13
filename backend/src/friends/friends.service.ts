@@ -132,7 +132,27 @@ async refuseRequest(userid:Number, recipientid:Number){
       await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
     }
 
-  async getUserFriends(userid: any): Promise<{ user: User; channelid: Number; }[]> {
+  async getUserFriends(userid: any): Promise<User[]> {
+    console.log("---------->DDDDDDDDDD ", userid);
+        const user = await this.userRepository.findOne({
+        where: { username: userid },
+        relations: ['friendsassender', 'friendsasreceiver'],
+      });
+    
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      console.log("---------->DDDDDDDDDD here", user.friendsasreceiver[0]);
+      const friends = user.friendsasreceiver
+        .concat(user.friendsassender)
+        .filter(friendship =>
+          friendship.status === 'accepted')
+        .map(friendship => friendship.sender.username != userid ? friendship.sender : friendship.receiver);
+      
+      return friends; 
+  }
+
+  async getChannelUserFriends(userid: any): Promise<{ user: User; channelid: Number; }[]> {
     console.log("---------->DDDDDDDDDD ", userid);
     const user = await this.userRepository.findOne({
       where: { username: userid },
