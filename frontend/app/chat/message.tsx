@@ -8,9 +8,9 @@ interface messageElements
 const message = ({message} : messageElements) => { 
   return (
     <div className="p-1 m-4 flex flex-col">
-      {/* <div className="chat chat-start">
+      <div className="chat chat-start">
         <div className="chat-image avatar">
-          <div className="w-10 rounded-full">
+          <div className="w-12 rounded-full">
             <img src="/Ellipse-1.png" />
           </div>
         </div>
@@ -18,16 +18,16 @@ const message = ({message} : messageElements) => {
           Obi-Wan Kenobi
           <time className="text-xs opacity-50">12:45</time>
         </div>
-        <div className="chat-bubble bg-yellow-700  break-words">
+        <div className=" h-12 max-w-fit px-4 rounded-2xl bg-[#360d36] flex items-center justify-center  break-words text-2xl text-white">
           {message.text}
         </div>
-        <div className="chat-footer opacity-50">
+        {/* <div className="chat-footer opacity-50">
         Delivered
         </div> */}
-    {/* </div> */}
+    </div>
     <div className="chat chat-end">
       <div className="chat-image avatar">
-        <div className="w-10 rounded-full">
+        <div className="w-12  rounded-full">
           <img src="/Ellipse-2.png" />
         </div>
       </div>
@@ -35,12 +35,12 @@ const message = ({message} : messageElements) => {
         Anakin
         <time className="text-xs opacity-50">12:46</time>
       </div>
-      <div className="chat-bubble bg-blue-700 break-words">
+      <div className="h-12 max-w-fit px-4 rounded-2xl bg-[#4A3A61] flex items-center justify-center  break-words text-2xl text-white">
       {message.text}
         </div>
-      <div className="chat-footer opacity-50">
+      {/* <div className="chat-footer opacity-50">
         Seen at 12:46
-      </div>
+      </div> */}
     </div>
   </div>
   )

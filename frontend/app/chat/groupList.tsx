@@ -7,7 +7,7 @@ function groupList() {
     <li className=" p-2 rounded-xl place-items-center">
       <div className="relative h-[60px] flex-shrink-0 rounded-2xl bg-[#673E6A] space-x-4 max-sm:space-x-0 ">
         <img
-          src="/Ellipse.png"
+          src="/avatars/avatar1.png"
           alt="pic"
           className="absolute w-[50px] mx-4 max-sm:mx-1 left-0 bottom-1"
         />
