@@ -77,10 +77,14 @@ export class ChannelService {
         
         const membership = new ChannelMembership();
         membership.Userid = initiator.id;
-        membership.Channelid = channel.id
         membership.Type = "owner";
-        channel.memberships.push(membership);
+        channel.memberships = [];
+
         const savedChannel = await this.channelRepository.save(channel);
+        membership.Channelid = savedChannel.id
+        console.log("--------------------------", membership);
+        channel.memberships.push(membership);
+
         await this.channelMembershipRepository.save(membership);
         await this.joinChannel(savedChannel.id, recipient.id, null);
         return (savedChannel);

@@ -1,5 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity';
+import { Channel } from './channel.entity';
 
 @Entity({ name: 'user_friends' })
 export class UserFriends {
@@ -16,4 +17,7 @@ export class UserFriends {
   @ManyToOne(() => User, user => user.friendsasreceiver, { eager: true, cascade: true, onDelete: 'CASCADE'  })
   @JoinColumn({ name: 'receiverid' })
   receiver: User;
+
+  @Column({nullable: true})
+  channelid: Number;
 }

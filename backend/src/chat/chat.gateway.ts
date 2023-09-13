@@ -41,7 +41,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       const user = await this.userservice.findByName(obj.username);
       if(user)
       {
-        console.log("User == >",user);
+        // console.log("User == >",user);
         client.emit('GetUserStatus',user);
       }
       // else client.emit('GetUserStatus')

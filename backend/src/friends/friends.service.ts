@@ -5,6 +5,7 @@ import { Notification } from '../database/notifications.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, Equal } from 'typeorm';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { ChannelService } from 'src/channel/channel.service';
 @Injectable()
 export class FriendsService {
   constructor(
@@ -12,8 +13,8 @@ export class FriendsService {
     private readonly userFriendsRepository: Repository<UserFriends>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly notifService: NotificationsService
-    
+    private readonly notifService: NotificationsService,
+    private readonly channelService: ChannelService
   ) {}
 
   async create(userid: Number, recipientid: Number) {
@@ -65,14 +66,21 @@ export class FriendsService {
     (friendship2) => friendship2.id === friendship.id
   );
   waiting.friendsassender[position].status = 'accepted';
+  const channel = await this.channelService.createFriendsChannel(userid,recipientid);
+  friendship.channelid = channel.id;
+  await this.userFriendsRepository.save(friendship);
+  waiting.friendsassender[position].channelid = friendship.channelid;
   const position2 = accepting.friendsasreceiver.findIndex(
     (friendship2) => friendship2.id === friendship.id
   );
+
   accepting.friendsasreceiver[position2].status = 'accepted';
+  accepting.friendsasreceiver[position2].channelid = friendship.channelid;
   friendship.status = 'accepted';
   await this.userFriendsRepository.save(friendship);
   await this.userRepository.save([accepting, waiting]);
   await this.notifService.deleteNotif(accepting, waiting ,"Friend Request");
+  console.log("---==========> ", accepting.friendsasreceiver[position2].channelid);
 }
 
   
@@ -124,24 +132,30 @@ async refuseRequest(userid:Number, recipientid:Number){
       await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
     }
 
-  async getUserFriends(userid: any): Promise<User[]> {
+  async getUserFriends(userid: any): Promise<{ user: User; channelid: Number; }[]> {
     console.log("---------->DDDDDDDDDD ", userid);
-        const user = await this.userRepository.findOne({
-        where: { username: userid },
-        relations: ['friendsassender', 'friendsasreceiver'],
+    const user = await this.userRepository.findOne({
+      where: { username: userid },
+      relations: ['friendsassender', 'friendsasreceiver'],
+    });
+  
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    
+    console.log("---------->DDDDDDDDDD here", user.friendsasreceiver[0]);
+    
+    const friendsWithChannels = user.friendsasreceiver
+      .concat(user.friendsassender)
+      .filter(friendship => friendship.status === 'accepted')
+      .map(friendship => {
+        const friend = friendship.sender.username != userid ? friendship.sender : friendship.receiver;
+        const channelid = friendship.channelid ? friendship.channelid : null; // Get the channel ID if available
+        
+        return { user: friend, channelid: channelid };
       });
-    
-      if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-    
-      const friends = user.friendsasreceiver
-        .concat(user.friendsassender)
-        .filter(friendship =>
-          friendship.status === 'accepted')
-        .map(friendship => friendship.sender.username != userid ? friendship.sender : friendship.receiver);
       
-      return friends; 
+    return friendsWithChannels;
   }
 async isFriend(userid: Number, recipientid: Number): Promise<boolean>
 {

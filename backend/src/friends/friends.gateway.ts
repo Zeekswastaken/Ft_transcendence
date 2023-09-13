@@ -94,9 +94,8 @@ export class FriendsGateway {
       console.log("-------> user ");
       console.log("-------> user ", data.userID); 
       console.log("-------> recipient ", data.recipientID);
-      await this.friendsService.acceptRequest(data.userID, data.recipientID);
+      const test = await this.friendsService.acceptRequest(data.userID, data.recipientID);
       const message = "The friend request has been accepted";
-      await this.channelService.createFriendsChannel(data.userID, data.recipientID);
       const accepting = await this.userService.findById(data.userID);
       const waiting = await this.userService.findById(data.recipientID);
       const friendnotif = await this.notifService.getFriendNotifs(data.recipientID);
@@ -108,6 +107,8 @@ export class FriendsGateway {
       this.server.to(accepting.Socket).emit("friend notif", notif);
       this.server.to(accepting.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
       this.server.to(waiting.Socket).emit('isfriend', await this.friendsService.isFriend(data.recipientID, data.userID));
+      console.log("--*-*-*-*-*-*- ", test);
+
     } catch (error)
     {
       console.error('Error accepting the friend request: ',error.message);
@@ -203,13 +204,13 @@ export class FriendsGateway {
   @SubscribeMessage('getFriends')
   async getFriends(@MessageBody() data: { user: any}, @ConnectedSocket() client: Socket) {
     try{
-      console.log("check-------> user ", data.user); 
+      console.log("check-------> user ", data.user);
       const friends = await this.friendsService.getUserFriends(data.user);
       console.log("getfriends: ", friends);
       // exit(1);
 
       const user = await this.userService.findByName(data.user);
-      // console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
+      console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
       this.server.to(client.id).emit('getfriends' ,friends);
     }catch (error)
     {
@@ -218,4 +219,5 @@ export class FriendsGateway {
       throw error;
     }
   }
+  
 }
