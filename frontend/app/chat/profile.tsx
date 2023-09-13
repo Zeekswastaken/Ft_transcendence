@@ -1,4 +1,4 @@
-import reaact from "react"
+import reaact, { MouseEvent, MouseEventHandler } from "react"
 import { useMyStore } from "./state";
 
 
@@ -13,11 +13,16 @@ type profileProps =
 
 const profile = ({friend}:any) =>
 {
-  const {setMyBoolean , myBoolean} = useMyStore();
-  console.log("usename" + friend.username);
+
+  const {setMyBoolean , setUserData} = useMyStore();
+  const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
+    e.preventDefault();
+    setMyBoolean(true);
+    setUserData(friend);
+  }
     return (
         <li className=" items-center space-y-1">
-          <button onClick={() =>setMyBoolean(true)}>
+          <button onClick={setMyStore}>
 
         <div className=' relative bg-[#321B38] p-1 rounded-full'>
 

@@ -13,9 +13,14 @@ import { useMyStore } from "./state";
 // }
 
 const friendBar = ({friend}:any) => {
-  const {setMyBoolean , myBoolean} = useMyStore();
+  const {setMyBoolean , setUserData} = useMyStore();
+  const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
+    e.preventDefault();
+    setMyBoolean(true);
+    setUserData(friend);
+  }
   return (
-    <button onClick={() =>setMyBoolean(true)}>
+    <button onClick={setMyStore}>
       <div className="relative h-[80px] flex-shrink-0 rounded-xl rounded-br-0 bg-[#2D0130] hover:bg-primary-purple-100 ">
         {/* <Image src="/vector.svg" width={40} height={40} alt="icon" className="absolute mx-4 right-2 bottom-8" /> */}
         {/* <Image src="/icons.png" width={40} height={40} alt="icon" className="absolute mx-4 right-2 bottom-8" /> */}

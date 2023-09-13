@@ -28,7 +28,7 @@ function chatMembers() {
                 <img
                   src="/avatars/avatar1.png"
                   alt="icon"
-                  className=" h-[100px] max-sm:h-[80%] rounded-full "
+                  className=" h-full max-sm:h-[80%] rounded-full "
                 />
               </div>
               <div className=" col-span-2 row-span-2 rounded-2xl flex items-center  w-full h-full">
