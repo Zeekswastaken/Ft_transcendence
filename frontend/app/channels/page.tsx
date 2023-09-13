@@ -139,7 +139,7 @@ const page = () => {
             <div className='flex justify-between space-x-1'> 
                 <div className='flex space-x-1 sm:space-x-4'>
                     <GroupButton name='Find Group' bt_state={group} onClick={handleClick}></GroupButton>
-                    <GroupButton name='Creact Group' bt_state={!group} onClick={handleClick}></GroupButton>
+                    <GroupButton name='Create Group' bt_state={!group} onClick={handleClick}></GroupButton>
                 </div>
                 <div>
                   {group ? <GroupFrom handleOnChangeSearch={handleOnChangeSearch} 
