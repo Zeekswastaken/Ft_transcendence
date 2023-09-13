@@ -23,7 +23,15 @@ export default function sketch(p5: P5CanvasInstance) {
     };
   
     p5.setup = () => {
-      p5.createCanvas(1200, 650);
+      if(p5.windowWidth > 1500)
+      {
+        p5.createCanvas(1300, 700);
+      }else if(p5.windowWidth <= 350 ) {
+          p5.createCanvas(300, 150);
+      }
+      else {
+        p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
+      }
       net     = new Net(p5);
       ball    = new Ball(p5);
       player1 = new Paddel(p5, true);
@@ -43,6 +51,20 @@ export default function sketch(p5: P5CanvasInstance) {
       }
       pos = next;
     };
+
+    p5.windowResized = () => {
+      //console.log(p5.windowWidth);
+      if(p5.windowWidth < 1500 && p5.windowWidth > 350)
+      {
+        p5.resizeCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
+      } else if(p5.windowWidth <= 350 ) {
+        p5.createCanvas(300, 150);
+      }
+      player1.resize(p5, true);
+      player2.resize(p5, false);
+      net.resize(p5);
+      ball.resize(p5);
+    }
 
     p5.updateWithProps = (props: GameProps) => {
         socket = props.socket;

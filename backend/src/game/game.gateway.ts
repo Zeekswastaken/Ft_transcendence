@@ -94,50 +94,13 @@ const  collision = (ball: Ball, player: Player) => {
   return (b.right > p.left && b.bottom > p.top && b.left < p.right && b.top < p.bottom );
 }
 
-const update = (ball: Ball, player1: Player, player2: Player) => {
-  ball.x += ball.vX * ball.speed;
-  ball.y += ball.vY * ball.speed;
-  var rad = radiansRange(45);
-  if(ball.y + ball.radius > 100 || ball.y - ball.radius < 0){
-    ball.vY = -ball.vY;
-  }
-  let selectPlayer = ball.x < 100 / 2 ? player1 : player2;
-  if(collision(ball, selectPlayer))
-  {
-      if(selectPlayer == player1)
-      {
-          var diff = ball.y - selectPlayer.y;
-          var angle = mapRange(diff, 0, 25, -rad, rad);
-          ball.vX = 0.5 * Math.cos(angle);
-          ball.vY = 0.5 * Math.sin(angle);
-      }
-      else
-      {
-          var diff = ball.y - selectPlayer.y;
-          var angle = mapRange(diff, 0, 25, -rad, rad);
-          ball.vX = (0.5 * Math.cos(angle)) * -1; 
-          ball.vY = (0.5 * Math.sin(angle)); 
-      }
-      ball.speed += 0.1;
-  }
-
-  if(ball.x - ball.radius < 0) {
-      player2.score++;
-      ball.x = 50;
-      ball.y = 50;
-      ball.radius = 3;
-      ball.speed = 1;
-      ball.vX = .1;
-      ball.vY = .1;
-  } else  if(ball.x + ball.radius > 100){
-      player1.score++;
-      ball.x = 50;
-      ball.y = 50;
-      ball.radius = 3;
-      ball.speed = 1;
-      ball.vX = .1;
-      ball.vY = .1;
-  }
+const initBall = (ball: Ball) => {
+    ball.x = 50;
+    ball.y = 50;
+    ball.radius = 3;
+    ball.speed = 2;
+    ball.vX = 0.1;
+    ball.vY = 0.1
 }
 
 
@@ -151,6 +114,48 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(client: Socket) {
   }
 
+  updateScore = (player1: Player, player2: Player) => {
+    this.server.to(player1.data.PlayerSocket as string).emit("updateScoore", player1.score, player2.score);
+    this.server.to(player2.data.PlayerSocket as string).emit("updateScoore", player2.score, player1.score);
+  }
+  update = (ball: Ball, player1: Player, player2: Player) => {
+    ball.x += ball.vX * ball.speed;
+    ball.y += ball.vY * ball.speed;
+    var rad = radiansRange(45);
+    if(ball.y + ball.radius > 100 || ball.y - ball.radius < 0){
+      ball.vY = -ball.vY;
+    }
+    let selectPlayer = ball.x < 100 / 2 ? player1 : player2;
+    if(collision(ball, selectPlayer))
+    {
+        if(selectPlayer == player1)
+        {
+            var diff = ball.y - selectPlayer.y;
+            var angle = mapRange(diff, 0, 25, -rad, rad);
+            ball.vX = 0.5 * Math.cos(angle);
+            ball.vY = 0.5 * Math.sin(angle);
+        }
+        else
+        {
+            var diff = ball.y - selectPlayer.y;
+            var angle = mapRange(diff, 0, 25, -rad, rad);
+            ball.vX = (0.5 * Math.cos(angle)) * -1; 
+            ball.vY = (0.5 * Math.sin(angle)); 
+        }
+        ball.speed += 0.1 ;
+    }
+  
+    if(ball.x - ball.radius < 0) {
+      player2.score++;
+      this.updateScore(player1, player2);
+      initBall(ball);
+    } else  if(ball.x + ball.radius > 100){
+        player1.score++;
+        this.updateScore(player1, player2);
+        initBall(ball);
+    }
+  }
+
   @SubscribeMessage('setSocket')
   async getSocketGame(client: Socket,obj:{token:string}) {
     if (await this.jwt.verify(obj.token))
@@ -158,8 +163,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       const user = await this.jwt.decoded(obj.token);
       user.PlayerSocket = client.id;
       await this.userservice.update(user,user.id as number);
-      // const oponnent = await this.userservice.findByName(obj.username);
-      // client.emit("getOpponent", oponnent);
       await this.startGame();
     }
   }
@@ -175,21 +178,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('startGame')
   async startGame() {
-    i++;
-    if(i % 2 == 0)
-    {
         await this.connectPlayers({p1Name: "Hamza", p2Name: "Zakaria"});
-    }
   }
 
   @SubscribeMessage('connectPlayers')
   async connectPlayers(obj:{p1Name: string, p2Name: string}) {
-    const player1 = await this.userservice.findByName("Hamza");
-    const player2 = await this.userservice.findByName("Zakaria");
+    const player1 = await this.userservice.findByName(obj.p1Name);
+    const player2 = await this.userservice.findByName(obj.p2Name);
     const initGameData = { 
       player1: {isLeft: true, data: player1, y: 300, score: 0}, 
       player2: {isLeft: false, data: player2, y: 300, score: 0}, 
-      ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.1, vY: 0.1}
+      ball: {x: 50, y: 50, radius: 3, speed: 5, vX: 0.1, vY: 0.1}
     };
     const id: string = player1.username.toString() + player2.username.toString();
     this.GamesData.set(id, initGameData);
@@ -208,7 +207,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     {
       if(gameData.player1.data.username === obj.user.username)
       {
-        update(gameData.ball, gameData.player1, gameData.player2);
+        this.update(gameData.ball, gameData.player1, gameData.player2);
         ball.x = gameData.ball.x;
         ball.y = gameData.ball.y;
         client.emit("getBallOpponentPostion", gameData.player2.y, ball);
@@ -227,7 +226,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
     if(gameData)
     {
-      // console.log("User : " + obj.user.username + " Pos : " + obj.pos + " id = " + obj.id);
       if(gameData.player1.data.username == obj.user.username)
       {
         

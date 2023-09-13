@@ -43,6 +43,10 @@ const OneVsOne = () => {
             setOpponentPos(pos);
             setBallCoordinates(ball)
         });
+        socket?.on('updateScoore', (me: number, opp: number) => {
+            setP1Score(me);
+            setP2Score(opp);
+        });
     }, [socket]);
 
     useEffect(() => { 
@@ -55,34 +59,36 @@ const OneVsOne = () => {
     }, []);
 
     return (
-        <div>
+        <div className=''>
             <div className='mb-[10px] grid grid-cols-3 justify-between place-content-center'>
-                <div className='flex justify-center space-x-3'>
-                    <div className={`h-[60px] w-[60px] bg-cover bg-center overflow-hidden rounded-full border-[3px] border-[#6E4778]`} >
-                        <img src={user?.avatar_url} alt="" className=' relative ' />
+                <div className='flex justify-center items-center space-x-3'>
+                    <div className={`h-[40px] sm:h-[60px] w-[40px] sm:w-[60px] bg-cover bg-center overflow-hidden rounded-full border-[3px] border-[#6E4778]`} >
+                        <img src={user?.avatar_url} alt="" className=' w-full h-full ' />
                     </div>
-                    <span className='font-Bomb'>You</span>
+                    <span className='font-Bomb text-xl sm:text-3xl'>You</span>
                 </div>
-                <div className=' flex justify-center space-x-5 font-Bomb items-center text-5xl'>
+                <div className=' flex justify-center space-x-2 sm:space-x-5 font-Bomb items-center text-2xl sm:text-5xl'>
                     <span className=' '>{p1Score}</span>
                     <p>-</p>
                     <span className=''>{p2Score}</span>
                 </div>
                 <div className=' flex justify-center items-center space-x-3'>
-                    <span className=' font-Bomb'>{opponent?.username}</span>
-                    <div className="h-[60px] w-[60px] bg-cover bg-center overflow-hidden rounded-full mr-[10px] border-[3px] border-primary-pink-300">
-                    <img src={opponent?.avatar_url} alt="" className=' relative ' />
+                    <span className=' font-Bomb text-xl sm:text-3xl'>{opponent?.username}</span>
+                    <div className="h-[40px] sm:h-[60px] w-[40px] sm:w-[60px] bg-cover bg-center overflow-hidden rounded-full mr-[10px] border-[3px] border-primary-pink-300">
+                        <img src={opponent?.avatar_url} alt="" className=' w-full h-full ' />
                     </div>
                 </div>
             </div>
-            <div className='border-[2px] border-gray w-fit'>
-                <ReactP5Wrapper sketch={sketch} 
-                                socket={socket} 
-                                gameId={gameId}
-                                user={user}
-                                opponentPos={opponentPos}
-                                ballCoordinates={ballCoordinates}
-                                  />
+            <div className=' grid place-items-center items-center'>
+                <div className='border-[2px] border-gray w-fit'>
+                    <ReactP5Wrapper sketch={sketch} 
+                                    socket={socket} 
+                                    gameId={gameId}
+                                    user={user}
+                                    opponentPos={opponentPos}
+                                    ballCoordinates={ballCoordinates}
+                                    />
+                </div>
             </div>
             {/* <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
                 <div>
