@@ -45,7 +45,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
             className="p-2 text-gray-500 rounded-lg cursor-pointer hover:bg-[#2D0130]"
           >
             <Image
-              src="/imogi.png"
+              src="/avatars/avatar1.png"
               width={35}
               height={35}
               alt="icon"
@@ -57,7 +57,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
             onChange={(e) => setValue(e.target.value)}
             type="text"
             rows="1"
-            className=" my-1 py-4 resize-none text-white mx-4 p-2.5 w-full text-sm  bg-[#4F2150] rounded-lg focus:outline-none scrollbar-hide "
+            className=" my-1 py-4 resize-none text-white mx-4 p-2.5 w-full text-sm  bg-[#4F2150] rounded-lg focus:outline-none no-scrollbar "
             placeholder="Type here ..."
           ></textarea>
           <SendButton />

@@ -7,6 +7,7 @@ import { ChannelMembership } from '../database/channelMembership.entity';
 import { User } from '../database/user.entity';
 import * as bcrypt from 'bcrypt';
 import { Equal, In } from 'typeorm';
+import { equal } from 'assert';
 
 console.log("HEETEe");
 
@@ -53,10 +54,13 @@ export class ChannelService {
         
         const membership = new ChannelMembership();
         membership.Userid = owner;
-        membership.Channelid = channel.id
         membership.Type = "owner";
-        channel.memberships.push(membership)
+        channel.memberships = [];
+        console.log("----- ", membership);
         const savedChannel = await this.channelRepository.save(channel);
+        membership.Channelid = savedChannel.id
+        console.log("------->", savedChannel)
+        channel.memberships.push(membership)
         await this.channelMembershipRepository.save(membership);
         return savedChannel;
     }
@@ -73,15 +77,22 @@ export class ChannelService {
         
         const membership = new ChannelMembership();
         membership.Userid = initiator.id;
-        membership.Channelid = channel.id
         membership.Type = "owner";
-        channel.memberships.push(membership);
+        channel.memberships = [];
+
         const savedChannel = await this.channelRepository.save(channel);
+        membership.Channelid = savedChannel.id
+        console.log("--------------------------", membership);
+        channel.memberships.push(membership);
+
         await this.channelMembershipRepository.save(membership);
         await this.joinChannel(savedChannel.id, recipient.id, null);
         return (savedChannel);
     }
-
+    async findById(channelID:number)
+    {
+        return await this.channelRepository.findOne({where:{ id: Equal(channelID)}});
+    }
     async assignAdmin(channelID: Number, userId: Number, initiatorId: Number): Promise<ChannelMembership>
     {
         
@@ -385,11 +396,17 @@ export class ChannelService {
     return invitationLink;
   }
 
-//   async getChannelsJoined(userid : Number): Promise<Channel[]>
-//   {
-//     const user = await this.userRepository.findOne({where:{id: Equal(userid)}, relations:["memberships"]});
-//     if (!user)
-//         throw new HttpException("User not found", HttpStatus.FORBIDDEN);
-//     const array = user.memberships.map(memberships =>)
-//     }
+  async getChannelsJoined(userid : Number): Promise<Channel[]>
+  {
+    const channelmemberships = await this.channelMembershipRepository.find({
+        where:{
+            Userid: Equal(userid)
+        },
+            relations: ['channel']
+    });
+    const filtered = channelmemberships.filter((membership) => membership.channel.Type != 'Duo');
+    const channelIds = filtered.map((membership)=> membership.channel);
+    console.log("================= ", channelIds);
+    return channelIds;
+}
 }

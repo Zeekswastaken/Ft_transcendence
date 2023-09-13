@@ -55,6 +55,7 @@ module.exports = {
     require('flowbite/plugin'),
     require("daisyui"),
     require('tailwindcss-animated'),
+    
   ],
   
 }

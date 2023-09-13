@@ -20,8 +20,8 @@ export default function RootLayout({
 }) {
   
   return (
-    <html lang="en">
-      <body  className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat flex justify-center ">
+    <html suppressHydrationWarning={true} lang="en">
+      <body suppressHydrationWarning={true} className=" bg-[url('/neon-background2.jpeg')] bg-cover bg-center bg-no-repeat flex justify-center ">
         <Providers>
           <UserDataProvider>
             <SocketProvider>

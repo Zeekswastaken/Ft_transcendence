@@ -101,7 +101,7 @@ const BlockedCard = ( {id, username, avatar_url}:Props ) => {
   const [currentUserID, setCurrentUserID] = useState<number>(0);
   const router = useRouter();
   const token = getCookie("accessToken");
-  useEffect(() => {
+  useEffect(() => {token
     try {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
@@ -125,7 +125,7 @@ const BlockedCard = ( {id, username, avatar_url}:Props ) => {
       {isBlocked && (
         <div className=" bg-[#3A0E3B] drop-shadow-[6px_5px_0_rgba(0,0,00.15)] rounded-2xl px-2 2xl:px-6 py-3">
           <div className=" flex justify-between items-center">
-            <div className=" flex space-x-5 items-center">
+            <div className=" flex sptokenace-x-5 items-center">
               <img
                 src={avatar_url}
                 height={50}
@@ -203,7 +203,7 @@ const Friends = () => {
     // socket?.emit("getFriends", {userID: currentUserID});
     // socket?.emit("getBlocked", {userID: currentUserID});
     socket?.emit("getFriends", {user: User});
-    // socket?.emit("getBlocked", {userID: User});
+    socket?.emit("getBlocked", {userID: currentUserID});
   }, [currentUserID])
   // console.log("blocked = ", userBlocked)
   

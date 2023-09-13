@@ -20,7 +20,7 @@ const config = {
     password: 'pass',
     database: 'mydb',
     entities: [Message, Channel, User, ChannelMembership, Stats, Match, GameInvite, BlockedUser, UserFriends, Achievements, Notification],
-    logging: true,
+    logging: false,
     synchronize: true,
     migrations: ["dist/migrations/*{.ts,.js}"],
     autoLoadEntities: true,
