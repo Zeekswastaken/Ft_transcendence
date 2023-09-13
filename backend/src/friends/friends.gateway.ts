@@ -229,7 +229,7 @@ export class FriendsGateway {
 
       const user = await this.userService.findByName(data.user);
       console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
-      this.server.to(client.id).emit('getfriends' ,friends);
+      this.server.to(client.id).emit('getfriendswithchannels' ,friends);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
