@@ -178,4 +178,17 @@ export class ChannelGateway {
     throw error;
     }
   }
+
+  @SubscribeMessage('getChannels')
+  async getting2(@ConnectedSocket() client: Socket)
+  {
+    try{
+        const channels = await this.channelService.getAllChannels();
+        this.server.to(client.id).emit("channels", channels);
+    }
+  catch (error) {
+    console.error('Error getting all the channels by the user: ', error.message);
+    throw error;
+    }
+  }
 }
