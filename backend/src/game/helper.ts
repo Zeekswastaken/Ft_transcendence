@@ -1,5 +1,7 @@
-export function sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-};
+interface Ball {
+  x: number;
+  y: number;
+  speed: number;
+  vX: number;
+  vY: number;
+}

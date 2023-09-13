@@ -1,5 +1,4 @@
-import { Socket } from "socket.io-client";
-import { Player, User } from "./gameInterfaces";
+import { Player } from "./gameInterfaces";
 import { P5CanvasInstance } from "@p5-wrapper/react";
 
 export default class Paddel implements Player{
@@ -13,7 +12,7 @@ export default class Paddel implements Player{
 
     constructor(p5: P5CanvasInstance, isLeft: boolean) {
         this.isLeft = isLeft;
-        this.width = p5.width / 64;
+        this.width = p5.width / 50;
         this.height = p5.height / 4;
         this.gap = this.width / 2;
         this.score = 0;
@@ -31,7 +30,6 @@ export default class Paddel implements Player{
     }
 
     drow (p5: P5CanvasInstance, pos: number) {
-    
         p5.fill(this.color);
         if(this.isLeft)
         {

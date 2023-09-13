@@ -5,7 +5,7 @@ import io, {Socket} from 'socket.io-client';
 import { getCookie } from 'cookies-next';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import sketch from './Game';
-import { User } from './gameInterfaces';
+import { BallCoordinates, User } from './gameInterfaces';
 
 const OneVsOne = () => {
     const [user, setUser] = useState<JwtPayload>();
@@ -15,10 +15,13 @@ const OneVsOne = () => {
     const [opponent, setOpponent] = useState<User>();
     const [gameId, setGameId] = useState<string>();
     const [opponentPos, setOpponentPos] = useState<number> ();
+    const [ballCoordinates, setBallCoordinates] = useState<BallCoordinates> ();
 
 
-
-
+    let ball: BallCoordinates  = {
+        x: 50,
+        y: 50,
+    }
     const token = getCookie("accessToken");
 
     useEffect(() => {
@@ -36,8 +39,9 @@ const OneVsOne = () => {
             setOpponent(op);
             setGameId(gameId);
         });
-        socket?.on('getOpponentPostion', (pos: number) => {
+        socket?.on('getBallOpponentPostion', (pos: number, ball: BallCoordinates) => {
             setOpponentPos(pos);
+            setBallCoordinates(ball)
         });
     }, [socket]);
 
@@ -76,7 +80,9 @@ const OneVsOne = () => {
                                 socket={socket} 
                                 gameId={gameId}
                                 user={user}
-                                opponentPos={opponentPos} />
+                                opponentPos={opponentPos}
+                                ballCoordinates={ballCoordinates}
+                                  />
             </div>
             {/* <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
                 <div>
