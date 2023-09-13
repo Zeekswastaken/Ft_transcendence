@@ -1,93 +1,62 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import ChatList from './chatList';
-import ChatListMobil from './chatListMobil';
-import Board from './board';
+import EmptyChatList from './emptyChatList';
 import ChatContent from './chatContent';
+import EmptyChatContent from './emptyChatContent';
 import { getCookie } from 'cookies-next';
 import { io } from 'socket.io-client';
 import { useSocketContext } from '../socket';
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { useMyStore } from "./state";
+
+
 const page = () => {
 
-  const token = getCookie("accessToken");
+  const [currentUsername, setCurrentUsername] = useState<string>("");
+  const [currentUserID, setCurrentUserID] = useState<number>(0);
+
+
+  useEffect(() => {
+    const token = getCookie("accessToken");
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUsername(user.username)
+        setCurrentUserID(user.id)
+      }
+      // setCurrentUsername(jwt.decode(token).username);
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  }, [])
   const {socket} = useSocketContext();
-  socket?.emit("Duo", {token:token,name:'Oussama'});
+  const [userFriends, setUserFriends] = useState<any>([]);
+
+  useEffect(() => {
+    socket?.emit("getFriends", {user: currentUsername});
+  }, [currentUserID])
+  useEffect(() => {
+    console.log("heer");
+    socket?.on("getfriends", (data:any) => {
+      console.log("data = ", data);
+      setUserFriends(data);
+    })
+  },[userFriends, currentUsername])
+  console.log(userFriends);
+  // socket?.emit("Duo", {token:token,name:'Oussama'});
+
+  const {myBoolean} = useMyStore();
 
   return (
     <div className=" w-screen h-screen mx-4 max-sm:mx-0 bg-opacity-80 shadow-md">
-    <div className=" mt-[100px] h-[85%] max-xl:h-[75%] max-sm:h-[80%] flex gap-4 justify-center my-8 mx-20 max-xl:mx-4 max-sm:mx-0 bg-opacity-80 shadow-md backdrop-blur-md rounded-3xl place-items-center"> {/* chat and friends */}
-      <ChatList/>
-      <ChatContent />
+    <div className=" mt-[100px] h-[85%] flex gap-4 justify-center my-8 mx-20 max-xl:mx-4 max-sm:mx-0 bg-opacity-80 shadow-md rounded-3xl place-items-center"> {/* chat and friends */}
+      {userFriends.length ? <ChatList userFriends={userFriends}/> : <EmptyChatList/>}
+      {myBoolean ? <ChatContent /> : <EmptyChatContent />}
     </div>
-    {/* <div className="md:mt-[150px] max-sm:w-full max-sm:block hidden h-[90%] gap-2 justify-center mt-[90px] ">  */}
-      {/* <ChatListMobil /> */}
-      {/* <ChatContent /> */}
-    {/* </div> */}
   </div>
   );
   }
   
   export default page
   
-  
-  //   // <div className=" flex mt-[250px] mx-8 w-full h-screen">
-  //   //   <div>
-  
-  //   //   </div>
-  //   // </div>
-  //   <div className=' mt-[200px] text-white w-full xl:max-w-[1600px] mx-8'>
-  //     <div  className='  h-[80%]  relative'>
-  //       <div className='h-[550px] w-[700px] bg-[#321B38] absolute inset-y-0 right-0 '>
-  //         <p className=' text-black absolute right-0'>heloo world</p>
-  //       </div>
-  //       {/* <div className='h-[800px] w-[700px] bg-black absolute inset-y-0 left-0 '>
-  
-  //       </div> */}
-  //     </div>
-  //   </div>
-  // //   <div className="w-full h-screen  bg-gray-200">
-  // //   <div className="bg-[#321B38] mx-8 mt-[200px] h-5/6 w-full">
-  // //   </div>
-  // // </div>
-  {/*<div className="flex w-[1400px]">
-     <div className="absolute mt-[200px] max-w-[400px] w-[1112px] h-[1100px] flex-shrink-0 rounded-2xl bg-purple-800 bg-opacity-30 shadow-lg ml-[50px]">
-
-        <span className='absolute mx-50 my-[50]'>friends section</span>
-    </div>
-    <div className=" bottom-[300px] mt-[200px] max-w-[900px] w-[1112px] h-[1100px]  flex-shrink-0 rounded-2xl bg-[#321B38] shadow-2xl bg-opacity-30 ml-[500px]">
-      <div className="w-1112 h-[112px] flex-shrink-0 rounded-tl-xl rounded-tr-xl rounded-br-0 rounded-bl-0 bg-[#2D0130] ">
-      <Image src="/vector.svg" width={40} height={40} alt="icon" className="absolute mx-4 ml-[825px] mt-[40px]"/>
-      <Image src="/Ellipse.png" width={50} height={50} alt="pic" className="absolute mx-4 ml-[30px] mt-[30px]"/>
-        <h1 className=" absolute chat_text_username mt-7 ml-[100px]">Judith</h1>
-        <p className=" absolute chat_text_p mt-[60px] ml-[100px]">judith juanita</p>
-      </div>
-        <p>test</p>
-        <span>chat section</span>
-    </div>
-    </div>*/}
-  {/*--------------------------------------------------------------------------------------------------*/}
-
-// import React from 'react'
-// import Image from "next/image";
-
-// const page = () => {
-//   return (
-//   <div className="flex w-[1400px]">
-//     <div className="absolute mt-[200px] max-w-[400px] w-[1112px] h-[1100px] flex-shrink-0 rounded-2xl bg-purple-800 bg-opacity-30 shadow-lg ml-[50px]">
-
-//         <span className='absolute mx-50 my-[50]'>friends section</span>
-//     </div>
-//     <div className="absolute mt-[200px] max-w-[900px] w-[1112px] h-[1100px] flex-shrink-0 rounded-2xl bg-[#321B38] shadow-2xl bg-opacity-30 ml-[500px]">
-//       <div className="w-1112 h-[112px] flex-shrink-0 rounded-tl-xl rounded-tr-xl rounded-br-0 rounded-bl-0 bg-[#2D0130] ">
-//       <Image src="/vector.svg" width={40} height={40} alt="icon" className="absolute mx-4 ml-[825px] mt-[40px]"/>
-//       <Image src="/Ellipse.png" width={50} height={50} alt="pic" className="absolute mx-4 ml-[30px] mt-[30px]"/>
-//         <h1 className=" absolute chat_text_username mt-7 ml-[100px]">Judith</h1>
-//         <p className=" absolute chat_text_p mt-[60px] ml-[100px]">judith juanita</p>
-//       </div>
-//         {/* <span>chat section</span> */}
-//     </div>
-//     </div>
-//   )
-// }
-
-// export default page

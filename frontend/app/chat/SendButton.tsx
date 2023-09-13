@@ -2,13 +2,14 @@
 
 import React, { useState } from 'react'
 import Image from "next/image";
+import FiSend from 'react-ic'
 
 
 const SendButton = () => {
   return (
   <div>
     <button type="submit" className="inline-flex justify-center p-2 rounded-full cursor-pointer">
-      <Image src="/send.png" width={40} height={40} alt="icon" className=" mx-2 rotate-12" />
+      <Image src="/avatars/avatar3.png" width={40} height={40} alt="icon" className=" mx-2 rotate-12" />
     </button>
   </div>
   );
