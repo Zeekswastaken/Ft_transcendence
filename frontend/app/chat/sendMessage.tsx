@@ -57,7 +57,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
             onChange={(e) => setValue(e.target.value)}
             type="text"
             rows="1"
-            className=" my-1 py-4 resize-none text-white mx-4 p-2.5 w-full text-sm  bg-[#4F2150] rounded-lg focus:outline-none scrollbar-hide "
+            className=" my-1 py-4 resize-none text-white mx-4 p-2.5 w-full text-sm  bg-[#4F2150] rounded-lg focus:outline-none no-scrollbar "
             placeholder="Type here ..."
           ></textarea>
           <SendButton />

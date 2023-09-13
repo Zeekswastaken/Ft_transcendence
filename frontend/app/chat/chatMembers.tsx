@@ -76,7 +76,7 @@ function chatMembers() {
               </div>
             </div>
           </div>
-          <div className=" h-[55%] overflow-y-scroll scrollbar-hide bg-[#4C2556]">
+          <div className=" h-[55%] overflow-y-scroll no-scrollbar bg-[#4C2556]">
             <ul className=" flex flex-col whitespace-no-wrap p-4 max-sm:p-0">
               {/* Sidebar content here */}
               <GroupList />

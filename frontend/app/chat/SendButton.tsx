@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Image from "next/image";
+import FiSend from 'react-ic'
 
 
 const SendButton = () => {

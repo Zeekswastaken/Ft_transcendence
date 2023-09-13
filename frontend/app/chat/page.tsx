@@ -1,14 +1,14 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import ChatList from './chatList';
-import ChatListMobil from './chatListMobil';
-// import Board from './board';
+import EmptyChatList from './emptyChatList';
 import ChatContent from './chatContent';
+import EmptyChatContent from './emptyChatContent';
 import { getCookie } from 'cookies-next';
 import { io } from 'socket.io-client';
 import { useSocketContext } from '../socket';
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { useParams, useRouter } from "next/navigation";
+import { useMyStore } from "./state";
 
 
 const page = () => {
@@ -39,18 +39,20 @@ const page = () => {
   useEffect(() => {
     console.log("heer");
     socket?.on("getfriends", (data:any) => {
-      // console.log("data = ", data);
+      console.log("data = ", data);
       setUserFriends(data);
     })
-  },[userFriends])
+  },[userFriends, currentUsername])
   console.log(userFriends);
   // socket?.emit("Duo", {token:token,name:'Oussama'});
 
+  const {myBoolean} = useMyStore();
+
   return (
     <div className=" w-screen h-screen mx-4 max-sm:mx-0 bg-opacity-80 shadow-md">
-    <div className=" mt-[100px] h-[85%] max-xl:h-[75%] max-sm:h-[80%] flex gap-4 justify-center my-8 mx-20 max-xl:mx-4 max-sm:mx-0 bg-opacity-80 shadow-md backdrop-blur-md rounded-3xl place-items-center"> {/* chat and friends */}
-      <ChatList Friends={userFriends}/>
-      <ChatContent />
+    <div className=" mt-[100px] h-[85%] flex gap-4 justify-center my-8 mx-20 max-xl:mx-4 max-sm:mx-0 bg-opacity-80 shadow-md rounded-3xl place-items-center"> {/* chat and friends */}
+      {userFriends.length ? <ChatList userFriends={userFriends}/> : <EmptyChatList/>}
+      {myBoolean ? <ChatContent /> : <EmptyChatContent />}
     </div>
   </div>
   );
