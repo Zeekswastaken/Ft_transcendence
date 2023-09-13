@@ -309,7 +309,7 @@ export class ChannelService {
 
     async getAllChannels(): Promise<Channel[]> 
     {
-        return this.channelRepository.find({
+        return await this.channelRepository.find({
             where: {
                 Type: Not(In(["private","Duo"])) 
             },

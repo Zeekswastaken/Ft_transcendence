@@ -20,7 +20,7 @@ export class ChannelGateway {
   @SubscribeMessage('createChannel')
   async create(@MessageBody() createChannelDto: createChannelDto, @ConnectedSocket() client: Socket) {
     try{
-      const userid = 3;
+      const userid = 1;
     // console.log("====> ", client.id);xxxxx
       // console.log("it kinda worked");
       // const token = client.handshake.query.token;
@@ -184,6 +184,8 @@ export class ChannelGateway {
   {
     try{
         const channels = await this.channelService.getAllChannels();
+        console.log("Rah kay3eyyet", channels);
+
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {

@@ -30,11 +30,11 @@ const CreatGroup = () =>
                     </div>
                 </div>
                 <input placeholder='Group Name' className=' font-Heading w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300'/>
-                <div className=' order-4 flex items-center font-bold w-full h-[190px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)] outline-none focus:outline focus:outline-primary-pink-300 text-white'>
-                    <div className=' px-5 py-4 h-full w-[260px] rounded-xl'>
+                <div className=' order-4 flex items-center font-bold w-full h-[150px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)] outline-none focus:outline focus:outline-primary-pink-300 text-white'>
+                    <div className=' px-5 py-4 h-full w-[240px] rounded-xl'>
                         <img src={path} className=' rounded-xl py-1 h-full w-full ' alt="" />
                     </div>
-                    <input onChange={handleImageChange} id='file' accept="image/*" type="file" placeholder='Group Cover' className=' pt-16 z-50 w-full h-full' />
+                    <input onChange={handleImageChange} id='file' accept="image/*" type="file" placeholder='Group Cover' className=' pt-12 z-50 w-full h-full' />
                     {/* <p className=' absolute px-20 font-Heading text-lg tracking-wide text-[#ffff]'>Group Owner</p> */}
                 </div>
                 <div className=' w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)]'>
