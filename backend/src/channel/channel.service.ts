@@ -158,7 +158,7 @@ export class ChannelService {
        return await this.channelMembershipRepository.save(updatedmembership);
     }
 
-    async joinChannel(channelID: Number, userID: Number, Pass: String): Promise<ChannelMembership>
+    async joinChannel(channelID: Number, userID: Number, Pass: String): Promise<boolean>
     {
         console.log("-88888-------> ", userID);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelID)}});
@@ -174,14 +174,16 @@ export class ChannelService {
             throw new HttpException("The User is already in the chat", HttpStatus.FORBIDDEN);
         if (channel.Type == "protected")
         {
+            console.log("TYPE IS PROTECTED")
             if (!this.checkPassword(channelID, Pass))
-                throw new HttpException("Password is incorrect", HttpStatus.FORBIDDEN);
+                return false;
         }
         const newmembership = new ChannelMembership();
         newmembership.Userid = user.id;
         newmembership.Channelid = channel.id
         newmembership.Type = "member";
-        return await this.channelMembershipRepository.save(newmembership);
+        await this.channelMembershipRepository.save(newmembership);
+        return true;
     }
 
     async LeaveChannel(channelID: Number, userID: Number): Promise<Boolean>
@@ -201,8 +203,25 @@ export class ChannelService {
             const adminmem = await this.channelMembershipRepository.findOne({
                 where: { Type: 'admin', Channelid: Equal(channel.id) },
             });
+            if (!adminmem)
+            {
+                const membermem = await this.channelMembershipRepository.findOne({
+                    where: { Type: 'member', Channelid: Equal(channel.id) },
+                });
+                if (!membermem)
+                {
+                    await this.channelRepository.delete(channel.id.valueOf());
+                    return true;
+                }
+                else{
+                    membermem.Type = "owner";
+                    await this.channelMembershipRepository.save(membermem);
+                }
+            }
+            else{
             adminmem.Type = "owner";
             await this.channelMembershipRepository.save(adminmem);
+            }
         }
         await this.channelMembershipRepository.delete(membership.id.valueOf());
         return true
@@ -333,7 +352,8 @@ export class ChannelService {
         if (!password)
             return false;
         const pass = await this.channelRepository.findOne({where:{ id: Equal(channelID)}});
-        return bcrypt.compare(password , pass);
+        console.log("--------------------------------------------------------------------");
+        return bcrypt.compare(password.valueOf , pass.valueOf);
     }
 
     async unbanUser(channelID: Number, userID: Number): Promise<ChannelMembership>

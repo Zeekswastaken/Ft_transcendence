@@ -42,31 +42,27 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('JoinChannel')
-  async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }){
+  async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
     try {
-      const channelID = 8; 
-      const userID = data.userID;
-      const Pass = data.Pass;
-    const userid = 1;
-    return await this.channelService.joinChannel(channelID, userid, Pass);
+    const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
+    client.to(client.id).emit("isjoined", bool);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
+      client.to(client.id).emit("isjoined", false);
       throw error;
     }
   }
 
   @SubscribeMessage('LeaveChannel')
-  async Leave(@MessageBody() data: { channelID: Number, userID: Number})
+  async Leave(@MessageBody() data: { channelID: Number, userID: Number}, @ConnectedSocket() client: Socket)
   {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
       console.log("--------> ", data.channelID);
       console.log("--------> ", data.userID);
-    const userid = 2;
-    const channelid = 2;
-    return await this.channelService.LeaveChannel(channelid, userid);
-    }catch (error) {
+      client.to(client.id).emit('isleft', await this.channelService.LeaveChannel(data.channelID, data.userID));
+    }catch (error){
       console.error('Error joining channel: ', error.message);
       throw error;
     }
