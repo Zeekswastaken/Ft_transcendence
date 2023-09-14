@@ -60,7 +60,7 @@ const Navbar = () => {
 		
 		const {socket} = useSocketContext();
 		useEffect(() => {
-			socket?.emit("getSocketId", {token: token})
+			socket?.emit("getSocketId&JoinRoom", {token: token})
 		}, [socket])
 		// useEffect(() => {u
 		//   }, [socket])
