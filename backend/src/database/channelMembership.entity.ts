@@ -30,7 +30,7 @@ export class ChannelMembership {
   @Column({ type: 'timestamp', default: null, nullable: true })
   banEndDate: Date;
 
-  @ManyToOne(() => Channel, channel => channel.memberships, {cascade:true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Channel, (channel) => channel.memberships, {cascade: true, onDelete: 'CASCADE'} )
   @JoinColumn({ name: 'Channelid', referencedColumnName: 'id' })
   channel: Channel;
 
@@ -38,6 +38,9 @@ export class ChannelMembership {
   @JoinColumn({ name: 'Userid', referencedColumnName: 'id' })
   user: User;
 
-  @OneToMany(() => Message, message => message.membership)
+  @OneToMany(() => Message, message => message.membership , {
+        cascade: true,
+        onDelete: 'CASCADE',
+      })
   messages: Message[];
 }

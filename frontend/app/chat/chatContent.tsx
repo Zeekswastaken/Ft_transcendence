@@ -6,6 +6,7 @@ import SendMessage from "./sendMessage";
 import ChatBox from "./chatBox";
 import initialContent, { Content } from "./content";
 import ChatMembers from "./chatMembers";
+import ChatProfile from "./chatProfile";
 import { useMyStore } from "./state";
 
 
@@ -21,7 +22,8 @@ function chatContent() {
       {" "}
       {/* chat*/}
       <DiscutionHeader />
-      <ChatMembers />
+      {/* <ChatMembers /> */}
+      <ChatProfile />
       <ChatBox content={content} />
       <SendMessage addContent={addContent} />
     </div>
