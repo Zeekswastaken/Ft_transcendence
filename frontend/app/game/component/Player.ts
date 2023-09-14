@@ -29,6 +29,23 @@ export default class Paddel implements Player{
         }
     }
 
+    resize = (p5: P5CanvasInstance, isLeft: boolean) => {
+        this.isLeft = isLeft;
+        this.width = p5.width / 50;
+        this.height = p5.height / 4;
+        this.gap = this.width / 2;
+        this.score = 0;
+        this.pos = p5. createVector(0, (p5.height / 2) - (this.height / 2));
+        
+        if(this.isLeft) {
+            this.pos.x = this.gap;
+        }
+        else
+        {
+            this.pos.x = p5.width - this.width - this.gap;
+        }
+    }
+
     drow (p5: P5CanvasInstance, pos: number) {
         p5.fill(this.color);
         if(this.isLeft)

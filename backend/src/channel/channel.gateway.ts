@@ -184,6 +184,8 @@ export class ChannelGateway {
   {
     try{
         const channels = await this.channelService.getAllChannels();
+        console.log("Rah kay3eyyet", channels);
+
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {

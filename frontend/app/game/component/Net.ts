@@ -12,9 +12,16 @@ export default class Net {
         this.width = p5.width / 150;
         this.height = p5.height / 10;
         this.gap = p5.height / 20;
-        console.log(this.gap);
         this.x = p5.width / 2 - this.width / 2;
         this.y = 0;
+    }
+
+    resize = (p5: P5CanvasInstance) => {
+        this.width = p5.width / 150;
+        this.height = p5.height / 10;
+        this.gap = p5.height / 20;
+        this.x = p5.width / 2 - this.width / 2;
+        this.y = 0
     }
 
     drow (p5: P5CanvasInstance) {

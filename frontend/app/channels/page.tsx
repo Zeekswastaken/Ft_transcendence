@@ -30,7 +30,8 @@ import FindGroup from './FindGroup';
 import CreatGroup from './CreatGroup';
 import GroupButton from './component/Button';
 import GroupFrom from './component/GroupForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSocketContext } from '../socket';
 
 
 const page = () => {
@@ -52,77 +53,91 @@ const page = () => {
   };
 
 
-  const groupsInfo = [
-    {
-      name : "Fringilla Fusce Elit",
-      image: "https://placekitten.com/g/200/200",
-      members: 20,
-      type: "Protected",
-      id:1
-    },
-    {
-      name : "Inceptos",
-      image: "https://placekitten.com/g/200/200",
-      members: 12,
-      type: "Public",
-      id:2
-    },
-    {
-      name : "Vestibulum",
-      image: "https://placekitten.com/g/200/200",
-      members: 3,
-      type: "Protected",
-      id:3
-    },
-    {
-      name : "Fringilla Fusce Elit",
-      image: "https://placekitten.com/g/200/200",
-      members: 20,
-      type: "Protected",
-      id:4
-    },
-    {
-      name : "Alkawakkib",
-      image: "https://placekitten.com/g/200/200",
-      members: 12,
-      type: "Public",
-      id:5
-    },
-    {
-      name : "Argontina",
-      image: "https://placekitten.com/g/200/200",
-      members: 3,
-      type: "Protected",
-      id:6
-    },
-    {
-      name : "Vamos",
-      image: "https://placekitten.com/g/200/200",
-      members: 20,
-      type: "Protected",
-      id:7
-    },
-    {
-      name : "Mostagraciass",
-      image: "https://placekitten.com/g/200/200",
-      members: 12,
-      type: "Public",
-      id:8
-    },
-    {
-      name : "Suuuu",
-      image: "https://placekitten.com/g/200/200",
-      members: 3,
-      type: "Protected",
-      id:9
-    },
-  ];
+  // const groupsInfo = [
+  //   {
+  //     name : "Fringilla Fusce Elit",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 20,
+  //     type: "Protected",
+  //     id:1
+  //   },
+  //   {
+  //     name : "Inceptos",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 12,
+  //     type: "Public",
+  //     id:2
+  //   },
+  //   {
+  //     name : "Vestibulum",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 3,
+  //     type: "Protected",
+  //     id:3
+  //   },
+  //   {
+  //     name : "Fringilla Fusce Elit",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 20,
+  //     type: "Protected",
+  //     id:4
+  //   },
+  //   {
+  //     name : "Alkawakkib",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 12,
+  //     type: "Public",
+  //     id:5
+  //   },
+  //   {
+  //     name : "Argontina",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 3,
+  //     type: "Protected",
+  //     id:6
+  //   },
+  //   {
+  //     name : "Vamos",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 20,
+  //     type: "Protected",
+  //     id:7
+  //   },
+  //   {
+  //     name : "Mostagraciass",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 12,
+  //     type: "Public",
+  //     id:8
+  //   },
+  //   {
+  //     name : "Suuuu",
+  //     image: "https://placekitten.com/g/200/200",
+  //     members: 3,
+  //     type: "Protected",
+  //     id:9
+  //   },
+  // ];
 
+  const {socket} = useSocketContext();
+  const [groupsInfo, setGroupsInfo] = useState<GroupInfoStatesProps[]>([]);
+  useEffect(() => {
+    if (socket) {
+      socket.on('channels', (data: any) => {
+        setGroupsInfo(data);
+      });
+    }
+    socket?.emit('getChannels');
+  },[socket]);
+
+  console.log(groupsInfo);
+  
   interface GroupInfoStatesProps {
-    name: string;
-    image: string;
-    members: number;
-    type: string;
+    Name: string;
+    Image: string;
+    Members: number;
+    Type: string;
+    Password:string;
     id: number;
   }
 
