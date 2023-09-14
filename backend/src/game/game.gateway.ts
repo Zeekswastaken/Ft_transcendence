@@ -5,104 +5,9 @@ import { Server, Socket } from 'socket.io';
 import { JWToken } from 'src/auth/jwt.service';
 import { User } from 'src/database/user.entity';
 import { UserService } from 'src/user/user.service';
-
+import { Ball, Player, BallBoundary, PlayerBoundary, GameData, BallCoordinates } from './gameInterfaces';
+import { collision, radiansRange, mapRange, initBall } from './helper';
 let i = 0;
-
-interface Player {
-  isLeft: boolean;
-  data: User;
-  y: number;
-  score: number
-}
-
-interface Ball {
-  x: number;
-  y: number;
-  radius: number;
-  speed: number;
-  vX: number;
-  vY: number;
-}
-
-interface BallCoordinates {
-  x: number;
-  y: number;
-}
-
-interface BallBoundary {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-}
-
-interface PlayerBoundary {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-}
-
-interface GameData {
-  player1: Player;
-  player2: Player;
-  ball:    Ball;
-}
-
-function radiansRange (degrees: number)
-{
-  var pi = Math.PI;
-  return degrees * (pi/180);
-}
-
-function mapRange (value: number, a: number, b: number, c: number, d: number) {
-    value = (value - a) / (b - a);
-    return c + value * (d - c);
-}
-
-const  collision = (ball: Ball, player: Player) => {
-  let b: BallBoundary = {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  };
-
-  let p: PlayerBoundary = {
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-  };
-
-  b.top = ball.y - ball.radius;
-  b.bottom = ball.y + ball.radius;
-  b.left = ball.x - ball.radius;
-  b.right = ball.x + ball.radius;
-  
-  p.top = player.y;
-  p.bottom = player.y + 25;
-  if(player.isLeft)
-  {
-    p.left = 0.5;
-    p.right = 2.5;
-  } else {
-    p.left = 97.5;
-    p.right =  97.5 + 2;
-  }
-
-  return (b.right > p.left && b.bottom > p.top && b.left < p.right && b.top < p.bottom );
-}
-
-const initBall = (ball: Ball) => {
-    ball.x = 50;
-    ball.y = 50;
-    ball.radius = 3;
-    ball.speed = 2;
-    ball.vX = 0.1;
-    ball.vY = 0.1
-}
-
 
 @Injectable()
 @WebSocketGateway()
@@ -118,6 +23,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.to(player1.data.PlayerSocket as string).emit("updateScoore", player1.score, player2.score);
     this.server.to(player2.data.PlayerSocket as string).emit("updateScoore", player2.score, player1.score);
   }
+
   update = (ball: Ball, player1: Player, player2: Player) => {
     ball.x += ball.vX * ball.speed;
     ball.y += ball.vY * ball.speed;
@@ -186,8 +92,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     const player1 = await this.userservice.findByName(obj.p1Name);
     const player2 = await this.userservice.findByName(obj.p2Name);
     const initGameData = { 
-      player1: {isLeft: true, data: player1, y: 300, score: 0}, 
-      player2: {isLeft: false, data: player2, y: 300, score: 0}, 
+      player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0}, 
+      player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
       ball: {x: 50, y: 50, radius: 3, speed: 5, vX: 0.1, vY: 0.1}
     };
     const id: string = player1.username.toString() + player2.username.toString();
@@ -228,7 +134,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     {
       if(gameData.player1.data.username == obj.user.username)
       {
-        
         this.GamesData.get(obj.id).player1.y = obj.pos;
       }
       else
@@ -236,6 +141,5 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         this.GamesData.get(obj.id).player2.y = obj.pos;
       }
     }
-
   }
 }

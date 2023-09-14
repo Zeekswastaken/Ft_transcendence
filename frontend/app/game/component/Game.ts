@@ -53,7 +53,6 @@ export default function sketch(p5: P5CanvasInstance) {
     };
 
     p5.windowResized = () => {
-      //console.log(p5.windowWidth);
       if(p5.windowWidth < 1500 && p5.windowWidth > 350)
       {
         p5.resizeCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);

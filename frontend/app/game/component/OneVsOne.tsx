@@ -16,12 +16,13 @@ const OneVsOne = () => {
     const [gameId, setGameId] = useState<string>();
     const [opponentPos, setOpponentPos] = useState<number> ();
     const [ballCoordinates, setBallCoordinates] = useState<BallCoordinates> ();
-
+    const [trigger, setTrigger] = useState<boolean>(false);
 
     let ball: BallCoordinates  = {
         x: 50,
         y: 50,
     }
+
     const token = getCookie("accessToken");
 
     useEffect(() => {
@@ -90,15 +91,11 @@ const OneVsOne = () => {
                                     />
                 </div>
             </div>
-            {/* <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
-                <div>
-                    trigger ? <button className='bg-[#6E4778] hover:bg-[#6E4778]/[0.7] duration-300 rounded-[10px] px-3 py-2' onClick={handeltrigger}>Pause</button>
-                    : <button className='bg-[#6E4778] hover:bg-[#6E4778]/[0.7] duration-300 rounded-[10px] px-3 py-2' onClick={handeltrigger}>Start Game</button>
-                </div>
+            <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
                 <div className='ml-[20px]'>
-                <button className='bg-primary-pink-300 hover:bg-primary-pink-300/[0.7] duration-300 rounded-[10px] px-[20px] py-[10px]'>Exit</button>
+                    <button className='bg-primary-pink-300 hover:bg-primary-pink-300/[0.7] duration-300 rounded-[10px] px-[20px] py-[10px]'>Exit</button>
                 </div>
-            </div> */}
+            </div>
         </div>
     );
 }

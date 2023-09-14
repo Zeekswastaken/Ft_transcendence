@@ -33,7 +33,7 @@ export default class Paddel implements Player{
         this.isLeft = isLeft;
         this.width = p5.width / 50;
         this.height = p5.height / 4;
-        this.gap = this.width / 2;
+        this.gap = 0.5;
         this.score = 0;
         this.pos = p5. createVector(0, (p5.height / 2) - (this.height / 2));
         
