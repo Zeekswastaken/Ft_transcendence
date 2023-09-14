@@ -95,15 +95,17 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     return ({status:"Invalid Token"});
   }
   @SubscribeMessage('Duo')
-  async handleMessage(client: Socket, obj: {token:String,username:string,message:String, receiver:string, channelid:Number}) {
-    console.log(obj.token);
+  async handleMessage(client: Socket, obj: {token:String,message:String, receiver:string, channelid:Number}) {
+    console.log("CHAT OBJ = ");
+    console.log(obj.message);
+    console.log("ENDING");
 
     // const token = client.handshake.query.token;
     if (await this.jwt.verify(obj.token)){
-      const recuser = await this.userservice.findByName(obj.username);
+      const recuser = await this.userservice.findByName(obj.receiver);
       const user = await this.jwt.decoded(obj.token);
-        client.to(recuser.Socket).emit(obj.message  as string);
-        await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, user, recuser);
+        client.to(recuser.Socket).emit("ToDuo",obj.message  as string);
+        // await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, user, recuser);
     }
     //check if channel added in db
     // client.to(payload.channelId).emit(payload.message);

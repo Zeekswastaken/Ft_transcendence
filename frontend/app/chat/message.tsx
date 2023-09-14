@@ -18,14 +18,11 @@ const message = ({message} : messageElements) => {
           Obi-Wan Kenobi
           <time className="text-xs opacity-50">12:45</time>
         </div>
-        <div className=" h-12 max-w-fit px-4 rounded-2xl bg-[#360d36] flex items-center justify-center  break-words text-2xl text-white">
-          {message.text}
+        <div className=" chat-bubble bg-[#360d36] break-words text-2xl text-white">
+          {message}
         </div>
-        {/* <div className="chat-footer opacity-50">
-        Delivered
-        </div> */}
     </div>
-    <div className="chat chat-end">
+    {/* <div className="chat chat-end">
       <div className="chat-image avatar">
         <div className="w-12  rounded-full">
           <img src="/Ellipse-2.png" />
@@ -35,13 +32,10 @@ const message = ({message} : messageElements) => {
         Anakin
         <time className="text-xs opacity-50">12:46</time>
       </div>
-      <div className="h-12 max-w-fit px-4 rounded-2xl bg-[#4A3A61] flex items-center justify-center  break-words text-2xl text-white">
-      {message.text}
+      <div className="chat-bubble bg-[#4A3A61]  break-words text-2xl text-white">
+      {message}
         </div>
-      {/* <div className="chat-footer opacity-50">
-        Seen at 12:46
-      </div> */}
-    </div>
+    </div> */}
   </div>
   )
 }

@@ -7,7 +7,6 @@ import { useMyStore } from "./state";
 function chatList({userFriends}:any)
 {
   const {setMyBoolean , myBoolean} = useMyStore();
-  console.log(userFriends);
     return (
     <div className={` relative w-[500px] h-[90%] p-1 m-4 rounded-2xl max-xl:w-[400px] glass ${myBoolean ? "max-lg:hidden" : "max-lg:w-full"}`}> {/* friends*/}
       <div>
