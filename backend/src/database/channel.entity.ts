@@ -10,6 +10,6 @@ export class Channel {
     Type:String;
     @Column({nullable: true})
     Password:String;
-    @OneToMany(() => ChannelMembership, ChannelMembership => ChannelMembership.Channelid, { cascade: true, onDelete: 'CASCADE' })
-    memberships: ChannelMembership[];
+    @OneToMany(() => ChannelMembership, (membership) => membership.channel)
+      memberships: ChannelMembership[];
 }

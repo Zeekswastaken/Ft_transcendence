@@ -79,6 +79,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   {
     // await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, user, recuser);
     this.server.to(payload.channelid.toString()).emit("MessageToRoom",payload.message);
+    //DO THE SAME AS THE DUO ONE
   }
   @SubscribeMessage('JoinRoom')
   async joinroom(client:Socket,payload : {token:String}){
@@ -111,16 +112,25 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   async handleMessage(client: Socket, obj: {token:String,message:String, receiver:string, channelid:Number}) {
     console.log(obj.token);
 
-    // const token = client.handshake.query.token;
-    if (await this.jwt.verify(obj.token)){
+    //  const token = client.handshake.query.token;
+     if (await this.jwt.verify(obj.token)){
       const recuser = await this.userservice.findByName(obj.receiver);
-      const sender = await this.jwt.decoded(obj.token);
+      const sender = await this.jwt.decoded(obj.token)
         client.to(recuser.Socket).emit(obj.message  as string);
-        await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, sender, recuser);
-    }
-    else
-      return "Invalid Token";
+        await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, sender);
+         }
+      else
+        return "Invalid Token";
     //check if channel added in db
     // client.to(payload.channelId).emit(payload.message);
-  }
+   }
+  @SubscribeMessage('getmessages')
+  async getMessage(client: Socket, obj: {token:String, channelid:Number}) {
+    // console.log(obj.token);
+    if (await this.jwt.verify(obj.token)){
+      const sender = await this.jwt.decoded(obj.token)
+        const messages = await this.chatservice.getmessages(obj.channelid);
+        client.to(sender.Socket).emit("messages", messages);  
+      }
+    }
 }

@@ -5,7 +5,6 @@ import { useMyStore } from "./state";
 
 const discutionHeader = () => {
   const {setMyBoolean , myBoolean, userData} = useMyStore();
-  console.log(userData.avatar_url)
   return (
     <div>
       <div className="relative h-[80px] flex-shrink-0 rounded-tl-xl rounded-tr-xl rounded-br-0 rounded-bl-0 bg-[#2D0130] ">
@@ -22,14 +21,14 @@ const discutionHeader = () => {
     </button>
         </div>
         <img
-          src={userData.avatar_url}
+          src={userData.user.avatar_url}
           alt="pic"
           className=" w-[50px] h-[50px] rounded-full absolute mx-4 left-4 max-lg:left-10 bottom-4"
         />
         <h1 className=" absolute chat_text_username max-sm:text-sm max-sm:py-2 bottom-7 left-24 max-lg:left-28">
-          {userData.username}
+          {userData.user.username}
         </h1>
-        <p className=" absolute chat_text_p max-sm:text-sm bottom-3 left-24 max-lg:left-28">{userData.username + " " } {userData.username}</p>
+        <p className=" absolute chat_text_p max-sm:text-sm bottom-3 left-24 max-lg:left-28">{userData.user.status}</p>
       </div>
     </div>
   );

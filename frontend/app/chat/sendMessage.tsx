@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import SendMessage from "./sendMessage";
 import SendButton from "./SendButton";
+import { useSocketContext } from '../socket';
 import initialContent, { Content } from "./content";
+import { useMyStore } from "./state";
+
 
 interface addContentProps {
   addContent: (newContent: initialContent) => void;
 }
 
 const sendMessage = ({ addContent }: addContentProps) => {
+
+  const {token, userData, setMessage} = useMyStore();
+  const {socket} = useSocketContext();
   const [value, setValue] = useState("");
+
   const submitSendMessage = (e) => {
     e.preventDefault();
     if (value.trim() != "") {
@@ -23,19 +30,31 @@ const sendMessage = ({ addContent }: addContentProps) => {
       setValue("");
     }
   };
+
   const handlSendMessage = (e) => {
     if (e.keyCode == 13 && e.shiftKey == false) {
       e.preventDefault();
       if (value.trim() != "") {
-        const newContent: initialContent = {
-          id: Math.floor(Math.random() * 1000000),
-          text: value,
-        };
-        addContent(newContent);
+        // const newContent: initialContent = {
+        //   id: Math.floor(Math.random() * 1000000),
+        //   text: value,
+        // };
+        // addContent(newContent);
+        const receiver = userData.user.username;
+        const channelid = userData.channelid;
+        console.log("value = "+value);
+        socket?.emit("Duo",  {token, message:value, receiver, channelid});
         setValue("");
       }
     }
   };
+  useEffect(() => {
+    socket?.on( "ToDuo", (data:string) => {
+      console.log(data);
+      setMessage(data);
+    })
+  },[])
+
   return (
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
       <div className="flex justify-center absolute bottom-3 w-full h-16">
