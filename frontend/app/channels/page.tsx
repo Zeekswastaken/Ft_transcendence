@@ -61,7 +61,7 @@ const page = () => {
     Password:string;
     id: number;
   }
-
+  console.log("groupsInfo = ", groupsInfo)
   return (
     <div className=' text-sm sm:text-2xl text-white pt-[250px] w-full mx-1 sm:mx-5 h-screen max-w-[1150px] '>
         <div className=' glass p-5  overflow-auto min-w-[350px] items-center'>

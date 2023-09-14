@@ -1,7 +1,10 @@
 "use client"
 import { useRouter } from 'next/navigation';
-import React, { MouseEvent, useRef, useState } from 'react'
+import React, { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useGroupStore } from './page';
+import { useSocketContext } from '../socket';
+import { getCookie } from 'cookies-next';
+import jwt,{ JwtPayload } from 'jsonwebtoken';
 
 const CreatGroup = () =>
 {
@@ -10,7 +13,20 @@ const CreatGroup = () =>
     const [privacy, setPrivacy] = useState("");
     const [password, setPassword] = useState("");
     const [channelName, setChannelName] = useState("");
-    
+    const [currentUserID, setCurrentUserID] = useState<Number>();
+    const {socket} = useSocketContext();
+    const token = getCookie("accessToken");
+    useEffect(() => {
+        try {
+            const user = jwt.decode(token as string) as JwtPayload
+            if (user) {
+                setCurrentUserID(user.id)
+          }
+        } catch (error) {
+            console.error('Error decoding token:');
+        }
+    }, [])
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
         avatar.current = e.target.files[0];
@@ -24,17 +40,15 @@ const CreatGroup = () =>
     }
     const router = useRouter();
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
+        console.log("submit")
         e.preventDefault();
+        socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
         // router.push("/channels");
     }
     const {group, setGroup} = useGroupStore()
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
         setGroup(!group);
     }
-    console.log("path = ", path)
-    console.log("channelName = ", channelName)
-    console.log("password = ", password)
-    console.log("privacy = ", privacy)
 
     return (
         <div className='rounded-xl bg-[#670647]/[0.4] items-center place-content-center mt-20 px-5 sm:px-[3rem] py-[3rem] mb-[100px]'>
@@ -59,17 +73,17 @@ const CreatGroup = () =>
                 <div className=' w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)]'>
                     <select onChange={e => setPrivacy(e.target.value)} defaultValue="Privacy"  name="Privacy" autoComplete="off" className="shadow-base font-Heading tracking-widest text-2xl border-transparent focus:ring-0 focus:border-transparent rounded-2xl placeholder:text-[#B1B1B1] placeholder:font-bold placeholder:text-2xl bg-[#2E0231E5] w-full h-full ">
                       <option className=' text-xl' disabled value="Privacy">Privacy</option>
-                      <option className=' text-xl' value="Public">Public</option>
-                      <option className=' text-xl' value="Protected">Protected</option>
-                      <option className=' text-xl' value="Private">Private</option>
+                      <option className=' text-xl' value="public">Public</option>
+                      <option className=' text-xl' value="protected">Protected</option>
+                      <option className=' text-xl' value="private">Private</option>
                     </select>
                 </div>
                 <input
-                    disabled={privacy !== "Protected"}
+                    disabled={privacy !== "protected"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder={privacy !== "Protected" ? 'Channel Password' : 'Set Password'}
-                    className={`font-Heading w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,0,0.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300` + (privacy !== "Protected" ? ' cursor-not-allowed' : '')}
+                    placeholder={privacy !== "protected" ? 'Channel Password' : 'Set Password'}
+                    className={`font-Heading w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,0,0.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300` + (privacy !== "protected" ? ' cursor-not-allowed' : '')}
                     />
             </div>
             <div className='flex space-x-3'>

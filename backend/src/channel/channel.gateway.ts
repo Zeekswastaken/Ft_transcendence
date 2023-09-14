@@ -18,7 +18,7 @@ export class ChannelGateway {
               private readonly jwtService: JwtService) {}
 
   @SubscribeMessage('createChannel')
-  async create(@MessageBody() data :{ userid:Number, name:String, type:String, Password: String, avatar_URL: String}, @ConnectedSocket() client: Socket) {
+  async create(@MessageBody() data :{ userid:Number, name:String, type:String, password: String, avatar_URL: String}, @ConnectedSocket() client: Socket) {
     try{
     // console.log("====> ", client.id);xxxxx
       // console.log("it kinda worked");
