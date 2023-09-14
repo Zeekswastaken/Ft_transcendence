@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, Equal } from 'typeorm';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { ChannelService } from 'src/channel/channel.service';
+import { Channel, channel } from 'diagnostics_channel';
 @Injectable()
 export class FriendsService {
   constructor(
@@ -14,7 +15,9 @@ export class FriendsService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly notifService: NotificationsService,
-    private readonly channelService: ChannelService
+    private readonly channelService: ChannelService,
+    @InjectRepository(Channel)
+    private readonly channelRepository: Repository<Channel>
   ) {}
 
   async create(userid: Number, recipientid: Number) {
@@ -127,7 +130,8 @@ async refuseRequest(userid:Number, recipientid:Number){
 
     }
     console.log("pepepeppepee");
-      await this.userFriendsRepository.remove(friendship);
+    await this.channelService.findAndDelete(friendship.id);
+    await this.userFriendsRepository.remove(friendship);
       console.log("leleleleleel");
       await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
     }

@@ -18,15 +18,15 @@ export class ChannelGateway {
               private readonly jwtService: JwtService) {}
 
   @SubscribeMessage('createChannel')
-  async create(@MessageBody() createChannelDto: createChannelDto, @ConnectedSocket() client: Socket) {
+  async create(@MessageBody() data :{ userid:Number, name:String, type:String, Password: String, avatar_URL: String}, @ConnectedSocket() client: Socket) {
     try{
-      const userid = 3;
     // console.log("====> ", client.id);xxxxx
       // console.log("it kinda worked");
       // const token = client.handshake.query.token;
       // const decodedToken = this.jwtService.verify(token.toString());
       // const userid = decodedToken.sub;
-      const channel = await this.channelService.createChannel(createChannelDto, userid);
+      const channel = await this.channelService.createChannel(data, data.userid);
+      console.log("=====> ", channel);
       this.server.emit('channel', channel);
       return channel;
     } catch (error)
@@ -181,6 +181,19 @@ export class ChannelGateway {
 
   @SubscribeMessage('getChannels')
   async getting2(@ConnectedSocket() client: Socket)
+  {
+    try{
+        const channels = await this.channelService.getAllChannels();
+        this.server.to(client.id).emit("channels", channels);
+    }
+  catch (error) {
+    console.error('Error getting all the channels by the user: ', error.message);
+    throw error;
+    }
+  }
+
+  @SubscribeMessage('getChannels')
+  async delete(@ConnectedSocket() client: Socket,@MessageBody() data: {userid: Number, channelid: Number})
   {
     try{
         const channels = await this.channelService.getAllChannels();
