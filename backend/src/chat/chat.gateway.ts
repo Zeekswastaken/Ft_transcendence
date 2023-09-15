@@ -133,4 +133,9 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
         this.server.to(client.id).emit("messages", messages);
       }
     }
+    @SubscribeMessage('isDuo')
+      async check(client: Socket, obj: {channelid:Number}){
+        const bool = await this.chatservice.checkDuo(obj.channelid);
+        this.server.to(client.id).emit("isduo", bool);
+    }
 }
