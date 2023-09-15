@@ -7,6 +7,8 @@ import GroupFrom from './component/GroupForm';
 import { useEffect, useState } from 'react';
 import { useSocketContext } from '../socket';
 import { create } from 'zustand';
+import { getCookie } from 'cookies-next';
+import jwt,{ JwtPayload } from 'jsonwebtoken';
 
 
 type Store = {
@@ -35,7 +37,18 @@ const page = () => {
     e.preventDefault();
     setSearch('');
 }
-
+const [currentUserID, setCurrentUserID] = useState<Number>();
+const token = getCookie("accessToken");
+    useEffect(() => {
+        try {
+            const user = jwt.decode(token as string) as JwtPayload
+            if (user) {
+                setCurrentUserID(user.id)
+          }
+        } catch (error) {
+            console.error('Error decoding token:');
+        }
+    }, [])
 // const updateGroup = group((state:any) => state.group)
   const handleClick = () => {
     // group((state:any) => state.group)
@@ -45,21 +58,25 @@ const page = () => {
   };
   const {socket} = useSocketContext();
   const [groupsInfo, setGroupsInfo] = useState<GroupInfoStatesProps[]>([]);
+  
   useEffect(() => {
     if (socket) {
       socket.on('channels', (data: any) => {
         setGroupsInfo(data);
       });
     }
-    socket?.emit('getChannels');
-  },[socket]);  
+    socket?.emit('getChannels', {userid: currentUserID});
+  },[socket, group]);  
   interface GroupInfoStatesProps {
-    Name: string;
-    Image: string;
-    Members: number;
-    Type: string;
-    Password:string;
-    id: number;
+    channel: {
+      Name: string;
+      Image: string;
+      Members: number;
+      Type: string;
+      Password:string;
+      id: number;
+    }
+    joined: boolean;
   }
   console.log("groupsInfo = ", groupsInfo)
   return (

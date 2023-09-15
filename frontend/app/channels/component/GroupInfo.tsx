@@ -13,9 +13,10 @@ interface GroupsStateprops {
     Type: string;
     Password: string;
     Id: Number;
+    Joined: boolean;
 }
 
-const GroupInfos = ({Name, Image, Members, Type, Id}: GroupsStateprops) => {
+const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) => {
     const [currentUserID, setCurrentUserID] = useState<number>()
     const token = getCookie("accessToken");
     useEffect(() => {
@@ -45,6 +46,7 @@ const GroupInfos = ({Name, Image, Members, Type, Id}: GroupsStateprops) => {
     const [isclicked, setIsclicked] = useState(false);
     const {socket} = useSocketContext()
     const [errorMessage, setErrorMessage] = useState<string>("")
+    const [done , setDone] = useState<boolean>(false)
     console.log("pass = ", channelPass)
     const handleJoinChannel = (e: MouseEvent<HTMLButtonElement>) => {
         console.log("id = ", Id , "user = ", currentUserID)
@@ -55,7 +57,7 @@ const GroupInfos = ({Name, Image, Members, Type, Id}: GroupsStateprops) => {
                 if (data) {
                     setErrorMessage("")
                     setLoading(true);
-                    setIsclicked(true);
+                    setIsclicked(!isclicked);
                     setTimeout(() => {
                         setLoading(false);
                         // toast.success("Joined Succesfully")
@@ -107,7 +109,7 @@ const GroupInfos = ({Name, Image, Members, Type, Id}: GroupsStateprops) => {
             if (currentUserID !== undefined)
                 socket.emit("LeaveChannel", {channelID: Id, userID: currentUserID})
             
-            setIsclicked(false);
+            setIsclicked(!isclicked);
             // toast.success("Left Succesfully");
             toast("You Left this Channel", {
                 style: {
@@ -170,13 +172,26 @@ const GroupInfos = ({Name, Image, Members, Type, Id}: GroupsStateprops) => {
                             </dialog>
                         </>
                     ): (
-                        !isclicked ? (
-                        <button onClick={handleJoinChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
-                                Join Group
-                        </button> ) : 
-                        (<button onClick={handleLeaveChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
-                            {loading ? (<BeatLoader color="#ffff" size={10} />) : "Leave Group"}
-                        </button> )
+                        !Joined ? (
+                            !isclicked ? (
+                            <button onClick={handleJoinChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                    Join Group
+                            </button> ) : 
+                            (<button onClick={handleLeaveChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                {loading ? (<BeatLoader color="#ffff" size={10} />) : "Leave Group"}
+                            </button> )
+                        ) : (
+                            !isclicked ? (
+                                <button onClick={handleLeaveChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                    {loading ? (<BeatLoader color="#ffff" size={10} />) : "Leave Group"}
+                                </button> 
+
+                            ) : (
+                                <button onClick={handleJoinChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                        Join Group
+                                </button>
+                            )
+                        )
                     )}
                 </div>
            </div>

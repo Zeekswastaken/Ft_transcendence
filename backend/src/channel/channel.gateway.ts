@@ -36,11 +36,6 @@ export class ChannelGateway {
     }
   }
   
-  @SubscribeMessage('findAllChannels')
-  async findAll() {
-    return await this.channelService.getAllChannels();
-  }
-
   @SubscribeMessage('JoinChannel')
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
     try {
@@ -177,25 +172,13 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('getChannels')
-  async getting2(@ConnectedSocket() client: Socket)
+  async getting2(@ConnectedSocket() client: Socket,@MessageBody() data: {userid: Number})
   {
     try{
-        const channels = await this.channelService.getAllChannels();
-        console.log("Rah kay3eyyet", channels);
-
-        this.server.to(client.id).emit("channels", channels);
-    }
-  catch (error) {
-    console.error('Error getting all the channels by the user: ', error.message);
-    throw error;
-    }
-  }
-
-  @SubscribeMessage('getChannels')
-  async delete(@ConnectedSocket() client: Socket,@MessageBody() data: {userid: Number, channelid: Number})
-  {
-    try{
-        const channels = await this.channelService.getAllChannels();
+      // data.userid = 2;
+      console.log("=-=-=-=-=-=-=data.userid", data.userid);
+        const channels = await this.channelService.getAllChannels(data.userid);
+        console.log("=-=-=-=-=-=-=channels", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {

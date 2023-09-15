@@ -12,7 +12,7 @@ function chatList({userFriends}:any)
       <div>
         <ul className='flex flex-row overflow-x-auto whitespace-no-wrap space-x-4 no-scrollbar'>
         {userFriends?.map((friend:any) => {
-              return <Profile friend={friend} />
+              return <Profile key={friend.user.id} friend={friend} />
           })}
         </ul>
       </div>
@@ -20,7 +20,7 @@ function chatList({userFriends}:any)
         <div className=" w-full h-full overflow-y-scroll no-scrollbar rounded-2xl">
           <ul className=" flex flex-col  whitespace-no-wrap space-y-2">
           {userFriends?.map((friend:any) => {
-              return <FriendBar friend={friend} />
+              return <FriendBar key={friend.user.id} friend={friend} />
           })}
           </ul>
         </div>
