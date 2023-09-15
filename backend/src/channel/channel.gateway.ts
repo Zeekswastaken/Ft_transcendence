@@ -175,13 +175,26 @@ export class ChannelGateway {
   {
     try{
       // data.userid = 2;
-        const channels = await this.channelService.getAllChannels(2);
+        const channels = await this.channelService.getAllChannels(data.userid);
         console.log("=-=-=-=-=-=-=channels", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {
     console.error('Error getting all the channels by the user: ', error.message);
     throw error;
+    }
+  }
+  @SubscribeMessage('getChannelMembers')
+  async getChannelMembers(@ConnectedSocket() client: Socket,@MessageBody() data: {channelid: Number})
+  {
+    try{
+      const channels = await this.channelService.getChannelMembers(data.channelid);
+      this.server.to(client.id).emit("members", channels);
+    }
+    catch(error)
+    {
+      console.error('Error getting all the channels by the user: ', error.message);
+      throw error;  
     }
   }
 }
