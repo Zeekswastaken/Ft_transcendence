@@ -4,12 +4,15 @@ import React from 'react'
 import GroupInfos from "./component/GroupInfo";
 
 interface GroupInfoStatesProps {
-    Name: string;
-    Image: string;
-    Members: number;
-    Type: string;
-    Password: string;
-    id: number
+    channel: {
+        Name: string;
+        Image: string;
+        Members: number;
+        Type: string;
+        Password:string;
+        id: number;
+      }
+      joined: boolean;
 }
 
 interface GroupInfosStatesProps
@@ -27,17 +30,18 @@ const FindGroup = ({groupsInfos, search}: GroupInfosStatesProps) => {
                         return (
                             search.toLocaleLowerCase() === '' 
                                 ? group 
-                                : group.Name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+                                : group.channel.Name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
                         );
                     }).map((group) => (
                         <GroupInfos 
-                                    key={group.id}
-                                    Id={group.id}
-                                    Name={group.Name} 
-                                    Password={group.Password}
-                                    Image={group.Image} 
-                                    Members={group.Members} 
-                                    Type={group.Type}
+                                    key={group?.channel.id}
+                                    Id={group.channel.id}
+                                    Name={group.channel.Name} 
+                                    Password={group.channel.Password}
+                                    Image={group.channel.Image} 
+                                    Members={group.channel.Members} 
+                                    Type={group.channel.Type}
+                                    Joined={group.joined}
                         />
                     ))
                 }
