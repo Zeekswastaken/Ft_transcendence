@@ -111,12 +111,12 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   @SubscribeMessage('Duo')
   async handleMessage(client: Socket, obj: {token:String,message:String, receiver:string, channelid:Number}) {
     console.log(obj.token);
-
+    console.log("------->MESSAGE ======= ", obj.message);
     //  const token = client.handshake.query.token;
      if (await this.jwt.verify(obj.token)){
       const recuser = await this.userservice.findByName(obj.receiver);
       const sender = await this.jwt.decoded(obj.token)
-        client.to(recuser.Socket).emit(obj.message  as string);
+        client.to(recuser.Socket).emit('ToDuo',obj.message  as string);
         await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, sender);
          }
       else
@@ -126,7 +126,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
    }
   @SubscribeMessage('getmessages')
   async getMessage(client: Socket, obj: {token:String, channelid:Number}) {
-    // console.log(obj.token);
+    console.log("loooooooool LOOOOOOOOOOOOOOOL -> "+ obj.token);
     if (await this.jwt.verify(obj.token)){
       const sender = await this.jwt.decoded(obj.token)
         const messages = await this.chatservice.getmessages(obj.channelid);

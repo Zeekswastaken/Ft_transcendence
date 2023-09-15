@@ -44,16 +44,27 @@ const sendMessage = ({ addContent }: addContentProps) => {
         const channelid = userData.channelid;
         console.log("value = "+value);
         socket?.emit("Duo",  {token, message:value, receiver, channelid});
+        socket?.emit("getmessages",  {token, channelid});
         setValue("");
       }
     }
   };
-  useEffect(() => {
-    socket?.on( "ToDuo", (data:string) => {
+  // useEffect(() => {
+    console.log("start");
+    socket?.on("messages", (data:any) => {
+      console.log("it works");
       console.log(data);
-      setMessage(data);
+      // setMessage(data);
     })
-  },[])
+    console.log("end")
+  // },[])
+  // useEffect(() => {
+  //   console.log("heeer inside");
+  //   socket?.on( "getmessages", (data:any) => {
+  //     console.log(data);
+  //     // setMessage(data);
+  //   })
+  // },[value])
 
   return (
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
