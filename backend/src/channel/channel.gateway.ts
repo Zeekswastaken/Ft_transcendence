@@ -174,7 +174,9 @@ export class ChannelGateway {
   async getting2(@ConnectedSocket() client: Socket,@MessageBody() data: {userid: Number})
   {
     try{
-        const channels = await this.channelService.getAllChannels(data.userid);
+      // data.userid = 2;
+        const channels = await this.channelService.getAllChannels(2);
+        console.log("=-=-=-=-=-=-=channels", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {
