@@ -45,10 +45,11 @@ export class ChannelGateway {
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
     try {
     const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
-    client.to(client.id).emit("isjoined", bool);
+    console.log("--------**********------> ", bool);
+    this.server.to(client.id).emit("isjoined", bool);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
-      client.to(client.id).emit("isjoined", false);
+      this.server.to(client.id).emit("isjoined", false);
       throw error;
     }
   }
