@@ -130,6 +130,9 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     if (await this.jwt.verify(obj.token)){
       const sender = await this.jwt.decoded(obj.token)
         const messages = await this.chatservice.getmessages(obj.channelid);
+        console.log("*********************************************************************************************************\n")
+        console.log(messages);
+        console.log("***********************************************************************************************************");
         client.to(sender.Socket).emit("messages", messages);  
       }
     }
