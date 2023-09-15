@@ -48,25 +48,51 @@ const GroupInfos = ({Name, Image, Members, Type, Id}: GroupsStateprops) => {
     const handleJoinChannel = (e: MouseEvent<HTMLButtonElement>) => {
         if (currentUserID !== undefined)
             socket.emit("JoinChannel", {channelID: Id, userID: currentUserID, Pass: channelPass})
-        
-        setLoading(true);
-        setIsclicked(true);
-        setTimeout(() => {
-            setLoading(false);
-            // toast.success("Joined Succesfully")
-            toast("You Joined this Channel", {
-                style: {
-                    borderRadius: '10px',
-                    background: '#810851',
-                    color: '#fff',
-                    fontFamily: 'Heading',
-                    fontSize: '1.2rem',
-                },
-                icon: '✅',
-            })
-        }, 2000);
+        socket.on("isjoined", (data:any) => {
+            console.log("data = ", data)
+            // if (data) {
+            //     setLoading(true);
+            //     setIsclicked(true);
+            //     setTimeout(() => {
+            //         setLoading(false);
+            //         // toast.success("Joined Succesfully")
+            //         toast("You Joined this Channel", {
+            //             style: {
+            //                 borderRadius: '10px',
+            //                 background: '#810851',
+            //                 color: '#fff',
+            //                 fontFamily: 'Heading',
+            //                 fontSize: '1.2rem',
+            //             },
+            //             icon: '✅',
+            //         })
+            //     }, 1000);
+            // }
+            // else {
+            //     setLoading(true);
+            //     setIsclicked(false);
+            //     setTimeout(() => {
+            //         setLoading(false);
+            //         // toast.error("Wrong Password")
+            //         toast("Wrong Password", {
+            //             style: {
+            //                 borderRadius: '10px',
+            //                 background: '#810851',
+            //                 color: '#fff',
+            //                 fontFamily: 'Heading',
+            //                 fontSize: '1.2rem',
+            //             },
+            //             icon: '🚫',
+            //         })
+            //     }, 1000);
+            // }
+            
+        })
 
     }
+    // const handleJoinProtectedChannel = (e: MouseEvent<HTMLButtonElement>) => {
+
+    // }
 
     console.log("id = ", Id , "user = ", currentUserID)
     const handleLeaveChannel = (e: MouseEvent<HTMLButtonElement>) => {
@@ -118,7 +144,7 @@ const GroupInfos = ({Name, Image, Members, Type, Id}: GroupsStateprops) => {
                             <dialog id="my_modal_2" className="modal">
                                 <div className="modal-box bg-[#810851] space-y-5 grid place-items-center">
                                     <h3 className="font-Bomb text-2xl text-center">Enter Channel Password!</h3>
-                                    <input onChange={e => {setChannelPass(e.target.value)}} value={channelPass} type="text" className=" outline-none focus:outline bg-[#532051] placeholder:text-center text-center font-Bomb text-white h-14 px-10  w-full placeholder:text-white" placeholder="Password" />
+                                    <input onChange={e => {setChannelPass(e.target.value)}} value={channelPass} type="text" className=" outline-none focus:outline bg-[#532051]  text-center placeholder:font-Bomb font-bold text-white h-14 px-10  w-full placeholder:text-white" placeholder="Password" />
                                     {!isclicked ? (
                                         <button onClick={handleJoinChannel} className="bg-[#FF1382] hover:bg-[#FF1382]/[0.8] duration-300 text-white font-Bomb text-xl tracking-wide px-14 h-10 rounded-xl">Join</button>
 

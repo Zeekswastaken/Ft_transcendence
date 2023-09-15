@@ -38,10 +38,21 @@ const CreatGroup = () =>
         }
       }
     }
+    const [canSubmit, setCanSubmit] = useState(false);
+    useEffect(() => {
+        if (channelName && privacy) {
+            if (privacy == "protected" && !password)
+                setCanSubmit(false)
+            else    
+                setCanSubmit(true)
+        }
+        else
+            setCanSubmit(false)
+    }, [channelName, privacy, password])
     const router = useRouter();
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
-        console.log("submit")
         e.preventDefault();
+
         socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
         // router.push("/channels");
     }
@@ -62,7 +73,7 @@ const CreatGroup = () =>
                         <p className=' px-3 font-Heading text-lg tracking-wide text-[#b7b7b7]'>Group Owner</p>
                     </div>
                 </div>
-                <input onChange={e => {setChannelName(e.target.value)}} value={channelName} placeholder='Channel Name' className=' font-Heading w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300'/>
+                <input onChange={e => {setChannelName(e.target.value)}} value={channelName} placeholder='Channel Name' className=' font-bold placeholder:font-Heading w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300'/>
                 <div className=' order-4 flex items-center font-bold w-full h-[150px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,00.15)] outline-none focus:outline focus:outline-primary-pink-300 text-white'>
                     <div className=' px-5 py-4 h-full w-[220px] rounded-xl'>
                         <img src={path} className=' rounded-xl py-1 h-full w-full ' alt="" />
@@ -83,12 +94,16 @@ const CreatGroup = () =>
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={privacy !== "protected" ? 'Channel Password' : 'Set Password'}
-                    className={`font-Heading w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,0,0.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300` + (privacy !== "protected" ? ' cursor-not-allowed' : '')}
+                    className={` placeholder:font-Heading font-bold w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,0,0.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300` + (privacy !== "protected" ? ' cursor-not-allowed' : '')}
                     />
             </div>
             <div className='flex space-x-3'>
                 <button onClick={handleCancel} className=' mt-10 px-4 text-white font-Bomb pt-1 rounded-lg duration-300 hover:text-primary-pink-300 '>Cancel</button>
-                <button onClick={handleSubmit} className=' mt-10 px-4 text-white font-Bomb pt-1 rounded-lg hover:bg-primary-pink-300/[0.8] duration-300 bg-primary-pink-300'>Submit</button>
+                {canSubmit ? (
+                    <button onClick={handleSubmit} className=' mt-10 px-4 text-white font-Bomb pt-1 rounded-lg hover:bg-primary-pink-300/[0.8] duration-300 bg-primary-pink-300'>Submit</button>
+                ) : (
+                    <button className=' mt-10 px-4 text-white font-Bomb pt-1 rounded-lg duration-300 bg-gray-600 cursor-not-allowed'>Submit</button>
+                )}
             </div>
         </div>
     );
