@@ -13,7 +13,8 @@ function chatBox({content}: Content)
     return <div className= "h-[85%] max-sm:h-[70%] max-lg:h-[80%] max-xl:h-[80%] overflow-y-scroll flex flex-col-reverse no-scrollbar">
         <ul>
          {/* {content.map( mes => ( */}
-            <li key = "3">
+            <li
+            >
                 <Message message={message} />
             </li>
             {/* ))} */}

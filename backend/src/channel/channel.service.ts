@@ -175,9 +175,13 @@ export class ChannelService {
         if (channel.Type == "protected")
         {
             console.log("TYPE IS PROTECTED")
-            if (!this.checkPassword(channelID, Pass))
+            if (!(await this.checkPassword(channelID, Pass)))
+            {
+                console.log("HEEEERRU");
                 return false;
+            }
         }
+        console.log("DAZ");
         const newmembership = new ChannelMembership();
         newmembership.Userid = user.id;
         newmembership.Channelid = channel.id
@@ -349,11 +353,20 @@ export class ChannelService {
 
     async checkPassword(channelID: Number, password: String): Promise<Boolean>
     {
-        if (!password)
+        if (!password) {
             return false;
-        const pass = await this.channelRepository.findOne({where:{ id: Equal(channelID)}});
-        console.log("--------------------------------------------------------------------");
-        return bcrypt.compare(password.valueOf , pass.valueOf);
+          }
+      
+          const channel = await this.channelRepository.findOne({where: { id: Equal(channelID)}});
+      
+          if (!channel) {
+            return false; // Channel with the specified ID not found
+          }
+      
+          // Compare the provided password with the channel's password hash
+          const isPasswordValid = await bcrypt.compare(password, channel.Password);
+
+          return isPasswordValid;
     }
 
     async unbanUser(channelID: Number, userID: Number): Promise<ChannelMembership>
