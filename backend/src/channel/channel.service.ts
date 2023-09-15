@@ -334,15 +334,28 @@ export class ChannelService {
         return await this.channelMembershipRepository.save(membership);
     }
 
-    async getAllChannels(): Promise<Channel[]> 
+    async getAllChannels(userid: Number): Promise<{ channel: Channel; joined: boolean }[]>
     {
-        return await this.channelRepository.find({
+
+        const user = await this.userRepository.findOne({where:{id:Equal(userid)}});
+        if (!user)
+            throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+
+        const channels = await this.channelRepository.find({
             where: {
                 Type: Not(In(["private","Duo"])) 
-            },
-            
+            },relations:['memberships']
         });
-    }
+        const channelsWithStatus = channels.map((channel) => ({
+            channel,
+            joined: (channel.memberships || []).some(
+                (membership) =>
+                  membership.Userid === user.id && membership.Channelid === channel.id
+              ),
+            
+          }));
+        return (channelsWithStatus);  
+    }   
 
 
 
