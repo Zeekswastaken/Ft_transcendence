@@ -12,7 +12,10 @@ export class Message {
   @Column({ default: () => "CURRENT_TIMESTAMP" }) //CHANGE IT LATER
   Created_at: Date;
   
-  @ManyToOne(() => ChannelMembership, membership => membership.messages)
+  @ManyToOne(() => ChannelMembership, membership => membership.messages,{
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'Userid', referencedColumnName: 'Userid', })
   @JoinColumn({ name: 'Channelid', referencedColumnName: 'Channelid' })
   membership: ChannelMembership;

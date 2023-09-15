@@ -38,9 +38,6 @@ export class ChannelMembership {
   @JoinColumn({ name: 'Userid', referencedColumnName: 'id' })
   user: User;
 
-  @OneToMany(() => Message, message => message.membership , {
-        cascade: true,
-        onDelete: 'CASCADE',
-      })
+  @OneToMany(() => Message, message => message.membership )
   messages: Message[];
 }
