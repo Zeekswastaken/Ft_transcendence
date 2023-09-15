@@ -1,14 +1,21 @@
 import reaact, { MouseEvent, MouseEventHandler } from "react"
 import { useMyStore } from "./state";
+import { useSocketContext } from '../socket';
+import friendBar from "./friendBar";
+
 
 
 const profile = ({friend}:any) =>
 {
-  const {setMyBoolean , setUserData} = useMyStore();
+  const {token,setMyBoolean , setUserData} = useMyStore();
+  const {socket} = useSocketContext();
+
   const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
     e.preventDefault();
     setMyBoolean(true);
     setUserData(friend);
+    const channelid = friend.channelid;
+    socket?.emit("getmessages",  {token, channelid});
   }
     return (
         <li className=" items-center space-y-1">

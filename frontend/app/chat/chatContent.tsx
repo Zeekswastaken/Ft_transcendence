@@ -24,7 +24,7 @@ function chatContent() {
       <DiscutionHeader />
       {/* <ChatMembers /> */}
       <ChatProfile />
-      <ChatBox content={content} />
+      <ChatBox/>
       <SendMessage addContent={addContent} />
     </div>
   );

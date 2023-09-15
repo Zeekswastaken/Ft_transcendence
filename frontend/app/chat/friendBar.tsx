@@ -2,14 +2,18 @@
 import React from "react";
 import Image from "next/image";
 import ChatContent from "./chatContent";
+import { useSocketContext } from '../socket';
 import { useMyStore } from "./state";
 
 const friendBar = ({friend}:any) => {
-  const {setMyBoolean , setUserData} = useMyStore();
+  const {token,setMyBoolean , setUserData} = useMyStore();
+  const {socket} = useSocketContext();
   const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
     e.preventDefault();
     setMyBoolean(true);
     setUserData(friend);
+    const channelid = friend.channelid;
+    socket?.emit("getmessages",  {token, channelid});
   }
   return (
     <button onClick={setMyStore}>
