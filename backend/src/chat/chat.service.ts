@@ -50,11 +50,11 @@ export class ChatService {
         if (!channel)
             throw new HttpException("Channel not found", HttpStatus.FORBIDDEN);
         const messagesWithMemberships = await this.msg.find({
-            where: { membership: { Channelid: Equal(channelid) } }, relations:['membership']
+            where: { membership: { Channelid: Equal(channelid) } }, relations:['membership'], order: { id: 'ASC'}
            });
         const userIds = messagesWithMemberships.map((message) => message.membership.Userid);
         const users = await this.userRepository.find({
-            where: { id: In(userIds) }, // Assuming you import 'In' from 'typeorm'
+            where: { id: In(userIds) },
           });
 
         // Create an object array with messages and their corresponding users

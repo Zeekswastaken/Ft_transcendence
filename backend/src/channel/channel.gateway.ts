@@ -18,7 +18,7 @@ export class ChannelGateway {
               private readonly jwtService: JwtService) {}
 
   @SubscribeMessage('createChannel')
-  async create(@MessageBody() data :{ userid:Number, name:String, type:String, password: String, avatar_URL: String}, @ConnectedSocket() client: Socket) {
+  async create(@MessageBody() data :{ userid:Number, name:String, type:String, password: String, avatar: ArrayBuffer}, @ConnectedSocket() client: Socket) {
     try{
     // console.log("====> ", client.id);xxxxx
       // console.log("it kinda worked");
@@ -86,8 +86,6 @@ export class ChannelGateway {
   async removeAd(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
   {
     try {
-      const channelID = data.channelID; 
-      const userID = data.userID;
       console.log("--------> ", data.channelID);
       console.log("--------> ", data.userID);
     const userid = 2;

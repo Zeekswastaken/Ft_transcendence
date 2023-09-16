@@ -1,6 +1,7 @@
 import {Entity, PrimaryColumn, Column, PrimaryGeneratedColumn, Collection, ManyToMany, OneToMany, ManyToOne, OneToOne,JoinColumn} from "typeorm";
 import {User} from './user.entity'
 import { Achievements } from "./achievements.entity";
+import { Match } from "./match.entity";
 @Entity()
 export class Stats{
     @PrimaryGeneratedColumn()
@@ -22,4 +23,6 @@ export class Stats{
     user: User ;
     @OneToMany(() => Achievements, achievements => achievements.stats)
     achievements: Achievements[];
+    @OneToMany(()=> Match, matches => matches.stats, { cascade: true, eager: true, onDelete: 'CASCADE' })
+    matches: Match[];
 }
