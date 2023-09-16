@@ -1,4 +1,4 @@
-import reaact, { MouseEvent, MouseEventHandler } from "react"
+import reaact, { MouseEvent, MouseEventHandler, useEffect } from "react"
 import { useMyStore } from "./state";
 import { useSocketContext } from '../socket';
 import friendBar from "./friendBar";
@@ -7,7 +7,7 @@ import friendBar from "./friendBar";
 
 const profile = ({friend}:any) =>
 {
-  const {token,setMyBoolean , setUserData} = useMyStore();
+  const {token,setMyBoolean , setUserData, setChanelType, setGetChat} = useMyStore();
   const {socket} = useSocketContext();
 
   const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
@@ -16,6 +16,13 @@ const profile = ({friend}:any) =>
     setUserData(friend);
     const channelid = friend.channelid;
     socket?.emit("getmessages",  {token, channelid});
+    socket?.emit("isDuo",{channelid} );
+    socket?.on("messages", (data:any) => {
+      setGetChat(data);
+    })
+    // socket?.on("isduo", (bol:Boolean)=>{
+    //   setChanelType(bol);
+    // });
   }
     return (
         <li className=" items-center space-y-1">

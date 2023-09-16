@@ -7,6 +7,7 @@ import SendButton from "./SendButton";
 import { useSocketContext } from '../socket';
 import initialContent, { Content } from "./content";
 import { useMyStore } from "./state";
+import { current } from "@reduxjs/toolkit";
 
 
 interface addContentProps {
@@ -15,7 +16,7 @@ interface addContentProps {
 
 const sendMessage = ({ addContent }: addContentProps) => {
 
-  const {token, userData, setMessage} = useMyStore();
+  const {token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat} = useMyStore();
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
 
@@ -42,22 +43,31 @@ const sendMessage = ({ addContent }: addContentProps) => {
         // addContent(newContent);
         const receiver = userData.user.username;
         const channelid = userData.channelid;
-        console.log("value = "+value);
         socket?.emit("Duo",  {token, message:value, receiver, channelid});
         socket?.emit("getmessages",  {token, channelid});
         setValue("");
+        const message = {text:value, Created_at:"15:15" }; 
+        const obj = {user:currUserData, message};
+        console.log("AFTERRRRRRRRRRRRRRRRRRRRRRR");
+        console.log(getChat);
+        // console.log(obj);
+        setUpdateChat(obj);
+        socket?.emit("obj", {obj, receiver});
+        // setGetChat([...getChat, obj]);
+        // console.log("BEFOOOOOOOOOOOOOOOOOOOOOOR");
+        // console.log(getChat);
       }
     }
   };
   
   // useEffect(() => {
-    // console.log("start");
-    // socket?.on("messages", (data:any) => {
-    //   console.log("it works");
-    //   console.log(data);
-      // setMessage(data);
-    // })
-    // console.log("end");
+  //   console.log("it works twice");
+  //   socket?.on("OBJ", (data:any) => {
+  //     console.log("it works");
+  //     console.log(data);
+  //     setUpdateChat(data);
+  //   })
+  //   console.log("end");
   // },[])
   useEffect(() => {
     console.log("heeer inside");

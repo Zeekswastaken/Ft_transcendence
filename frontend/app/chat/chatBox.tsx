@@ -10,25 +10,31 @@ import { useSocketContext } from '../socket';
 function chatBox()
 {
   const {socket} = useSocketContext();
-  const {message, getChat, setGetChat} = useMyStore();
-    useEffect(() => {
-        console.log("inside Box");
-        socket?.on("messages", (data:any) => {
+  const {message, getChat, setGetChat, updateChat, setUpdateChat} = useMyStore();
+  useEffect(()=>{
+
+      console.log("incide Effect");
+      socket?.on("OBJ", (data:any) => {
           console.log("it works");
-          setGetChat(data);
-        })
-    },[])
-    console.log(getChat);
+          console.log(data);
+          setUpdateChat(data);
+        });
+    }, [])
+
+  console.log(getChat);
     return <div className= "h-[85%] max-sm:h-[70%] max-lg:h-[80%] max-xl:h-[80%] overflow-y-scroll flex flex-col-reverse no-scrollbar">
         <ul>
-         {getChat.map( (mes) => (
-            <li
-            >
+         {getChat.map( (mes, id) => (
+            <li key={id}>
                 {/* {console.log(mes)} */}
-                <Message key={mes.user.id} messages={mes}/>
+                <Message messages={mes}/>
             </li>
             ))}
-
+        {updateChat ? (
+            <li key={Math.random()}>
+                <Message messages={updateChat} />
+            </li>
+            ) : null}
         </ul>
     </div>;
 }

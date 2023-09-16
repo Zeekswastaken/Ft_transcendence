@@ -8,6 +8,9 @@ interface messageElements
 
 const message = ({messages}:messageElements) => { 
 
+  if (!messages || !messages.user || !messages.user.id || !messages.message) {
+    return null; // Return null if any required properties are missing
+  }
   const {token, userData,setMyBoolean} = useMyStore();
 
   return (
@@ -36,7 +39,7 @@ const message = ({messages}:messageElements) => {
           </div>
         </div>
         <div className="chat-header">
-          Anakin
+        {messages.user.username}
           <time className="text-xs opacity-50">{messages.message.Created_at}</time>
         </div>
         <div className="chat-bubble bg-[#4A3A61]  break-words text-2xl text-white">
