@@ -126,19 +126,23 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
    }
   @SubscribeMessage('getmessages')
   async getMessage(client: Socket, obj: {token:String, channelid:Number}) {
-    // console.log("loooooooool LOOOOOOOOOOOOOOOL -> "+ obj.token);
-    let num;
     if (await this.jwt.verify(obj.token)){
       const sender = await this.jwt.decoded(obj.token)
         const messages = await this.chatservice.getmessages(obj.channelid);
-        messages.forEach((obj)=>{
-          num = obj.user.Socket;
-        })
-        console.log("****************************************************************************\n")
-        console.log(messages);
-        console.log("**********************************************************************************")
-        console.log("Socket id = ",client.id);
-        client.to(num.toString()).emit("messages", messages);
+        console.log("===============>SOCKET in the chat ", sender.Socket);
+        this.server.to(client.id).emit("messages", messages);
       }
+    }
+    @SubscribeMessage('isDuo')
+      async check(client: Socket, obj: {channelid:Number, userid:Number}){
+        const bool = await this.chatservice.checkDuo(obj.channelid);
+        let type;
+        if (!bool)
+          type = await this.chatservice.getType(obj.channelid, obj.userid);
+        const bool2 = {
+          bool: bool,
+          type: type
+        };
+        this.server.to(client.id).emit("isduo", bool2);
     }
 }

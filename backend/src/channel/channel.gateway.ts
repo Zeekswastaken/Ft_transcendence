@@ -36,19 +36,15 @@ export class ChannelGateway {
     }
   }
   
-  @SubscribeMessage('findAllChannels')
-  async findAll() {
-    return await this.channelService.getAllChannels();
-  }
-
   @SubscribeMessage('JoinChannel')
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
     try {
     const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
-    client.to(client.id).emit("isjoined", bool);
+    console.log("--------**********------> ", bool);
+    this.server.to(client.id).emit("isjoined", bool);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
-      client.to(client.id).emit("isjoined", false);
+      this.server.to(client.id).emit("isjoined", false);
       throw error;
     }
   }
@@ -176,12 +172,12 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('getChannels')
-  async getting2(@ConnectedSocket() client: Socket)
+  async getting2(@ConnectedSocket() client: Socket,@MessageBody() data: {userid: Number})
   {
     try{
-        const channels = await this.channelService.getAllChannels();
-        console.log("Rah kay3eyyet", channels);
-
+      // data.userid = 2;
+        const channels = await this.channelService.getAllChannels(data.userid);
+        console.log("=-=-=-=-=-=-=channels", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {
@@ -189,17 +185,17 @@ export class ChannelGateway {
     throw error;
     }
   }
-
-  @SubscribeMessage('getChannels')
-  async delete(@ConnectedSocket() client: Socket,@MessageBody() data: {userid: Number, channelid: Number})
+  @SubscribeMessage('getChannelMembers')
+  async getChannelMembers(@ConnectedSocket() client: Socket,@MessageBody() data: {channelid: Number})
   {
     try{
-        const channels = await this.channelService.getAllChannels();
-        this.server.to(client.id).emit("channels", channels);
+      const channels = await this.channelService.getChannelMembers(data.channelid);
+      this.server.to(client.id).emit("members", channels);
     }
-  catch (error) {
-    console.error('Error getting all the channels by the user: ', error.message);
-    throw error;
+    catch(error)
+    {
+      console.error('Error getting all the channels by the user: ', error.message);
+      throw error;  
     }
   }
 }

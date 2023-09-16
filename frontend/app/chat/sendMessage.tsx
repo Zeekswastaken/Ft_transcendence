@@ -51,22 +51,21 @@ const sendMessage = ({ addContent }: addContentProps) => {
   };
   
   // useEffect(() => {
-    console.log("start");
-    console.log("socket id = " + socket.id);
-    socket?.on("messages", (data:any) => {
-      console.log("it works");
-      console.log(data);
+    // console.log("start");
+    // socket?.on("messages", (data:any) => {
+    //   console.log("it works");
+    //   console.log(data);
       // setMessage(data);
-    })
-    console.log("end")
+    // })
+    // console.log("end");
   // },[])
-  // useEffect(() => {
-  //   console.log("heeer inside");
-  //   socket?.on( "getmessages", (data:any) => {
-  //     console.log(data);
-  //     // setMessage(data);
-  //   })
-  // },[value])
+  useEffect(() => {
+    console.log("heeer inside");
+    socket?.on( "ToDuo", (data:string) => {
+      console.log(data);
+      setMessage(data);
+    })
+  },[])
 
   return (
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
