@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface MyStore {
+export  interface MyStore {
     myBoolean: Boolean;
     currUserData:any;
     userData:any;
@@ -8,6 +8,7 @@ interface MyStore {
     message:string;
     getChat:any[];
     updateChat:any;
+    tempo:any[];
     chanelType:Boolean;
     setMyBoolean: (value: Boolean) => void;
     setCurrUserData: (data: any) => void;
@@ -16,6 +17,7 @@ interface MyStore {
     setMessage: (data: string) => void;
     setGetChat: (data: any[]) => void;
     setUpdateChat: (data: any) => void;
+    setTempo: (data: any[]) => void;
     setChanelType: (value: Boolean) => void;
   }
   
@@ -27,6 +29,7 @@ interface MyStore {
     message:"",
     getChat:[],
     updateChat:[],
+    tempo:[],
     chanelType:false,
     setMyBoolean: (value: Boolean) => set({ myBoolean: value }),
     setCurrUserData: (data: any) => set({ currUserData: data }),
@@ -35,5 +38,6 @@ interface MyStore {
     setMessage: (data: string) => set({ message: data }),
     setGetChat: (data) => set({ getChat: data }),
     setUpdateChat: (data:any) => set({ updateChat: data }),
+    setTempo: (data) => set({ tempo: data }),
     setChanelType: (value: Boolean) => set({ chanelType: value }),
   }));

@@ -6,7 +6,7 @@ import { useSocketContext } from '../socket';
 import { useMyStore } from "./state";
 
 const friendBar = ({friend}:any) => {
-  const {token,setMyBoolean , setUserData, setChanelType, setGetChat} = useMyStore();
+  const {token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo} = useMyStore();
   const {socket} = useSocketContext();
   const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
     e.preventDefault();
@@ -14,11 +14,13 @@ const friendBar = ({friend}:any) => {
     setUserData(friend);
     const channelid = friend.channelid;
     socket?.emit("getmessages",  {token, channelid});
+    socket?.emit("isDuo",{channelid} );
+    setUpdateChat([]);
+    setTempo([]);
     socket?.on("messages", (data:any) => {
-      console.log("hello from inside");
+      console.log(data);
       setGetChat(data);
     })
-    socket?.emit("isDuo",{channelid} );
     // socket?.on("isduo", (bol:Boolean)=>{
     //   setChanelType(bol);
     // });
