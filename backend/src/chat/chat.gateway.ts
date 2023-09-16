@@ -136,6 +136,13 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     @SubscribeMessage('isDuo')
       async check(client: Socket, obj: {channelid:Number}){
         const bool = await this.chatservice.checkDuo(obj.channelid);
+        console.log("84848484=45>54 45444454=> ",bool);
         this.server.to(client.id).emit("isduo", bool);
+    }
+    @SubscribeMessage("obj")
+    async toanother(client:Socket,payload:{obj:any,receiver:string})
+    {
+      const recuser = await this.userservice.findByName(payload.receiver);
+      client.to(recuser.Socket).emit("OBJ",payload.obj as any);
     }
 }
