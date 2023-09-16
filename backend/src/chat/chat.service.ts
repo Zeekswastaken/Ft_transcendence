@@ -31,11 +31,11 @@ export class ChatService {
 
     }
     async saveMsg(text:Partial<Message>, channelid : Number, sender: User){
-        console.log("------------------>ID ", channelid);
+        // console.log("------------------>ID ", channelid);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelid)}, relations: ['memberships', 'memberships.messages']});
         if (!channel)
             throw new HttpException("The channel doesn't exist", HttpStatus.FORBIDDEN);
-        console.log("==========> ", sender);
+        // console.log("==========> ", sender);
             const membership = channel.memberships.find(member => member.Userid == sender.id);
         if (!membership)
             throw new HttpException("The user isn't in the channel", HttpStatus.FORBIDDEN);
@@ -62,7 +62,7 @@ export class ChatService {
           message,
           user: users.find((user) => user.id === message.membership.Userid),
         }));
-        console.log("------>", messagesWithUsers);
+        // console.log("------>", messagesWithUsers);
         return messagesWithUsers;
     }
     async checkDuo(channelid:Number):Promise<Boolean>

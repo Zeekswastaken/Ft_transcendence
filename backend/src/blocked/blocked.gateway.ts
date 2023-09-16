@@ -16,10 +16,10 @@ export class BlockedGateway {
   @SubscribeMessage('Block')
   async create(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try{
-      console.log("---------> ", data.userID);
-      console.log("---------> ", data.recipientID);
+      // console.log("---------> ", data.userID);
+      // console.log("---------> ", data.recipientID);
       const request = await this.blockedService.create(data.userID, data.recipientID);
-      console.log("REQUEST ====== ", request);  
+      // console.log("REQUEST ====== ", request);  
       const message = "The User has been blocked";
       const user = await this.userService.findById(data.userID);
       this.server.to(user.Socket).emit('message', message);
@@ -36,8 +36,8 @@ export class BlockedGateway {
   @SubscribeMessage('Unblock')
   async cancel(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try {
-      console.log("---------> ", data.userID);
-      console.log("---------> ", data.recipientID);
+      // console.log("---------> ", data.userID);
+      // console.log("---------> ", data.recipientID);
       await this.blockedService.unblock(data.userID, data.recipientID);
       const message = "The user has been unblocked";
       const user = await this.userService.findById(data.userID);
@@ -53,10 +53,10 @@ export class BlockedGateway {
   @SubscribeMessage('isBlocked')
   async isBlocked(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
     try {
-      console.log("---------> ", data.userID);
-      console.log("---------> ", data.recipientID);
+      // console.log("---------> ", data.userID);
+      // console.log("---------> ", data.recipientID);
       const bool = await this.blockedService.isBlocked(data.userID, data.recipientID);
-      console.log("RESULT ======= ", bool);
+      // console.log("RESULT ======= ", bool);
       const user = await this.userService.findById(data.userID);
       this.server.to(user.Socket).emit('isblocked', bool);
 
@@ -83,7 +83,7 @@ export class BlockedGateway {
   @SubscribeMessage('getBlocked')
   async getBlocked(@MessageBody() data: { userID: Number}, @ConnectedSocket() client: Socket) {
     try {
-      console.log("=========> ", data.userID);
+      // console.log("=========> ", data.userID);
       const blockedUsers = await this.blockedService.getblocked(data.userID);
       const user = await this.userService.findById(data.userID);
       this.server.to(user.Socket).emit('getblocked', blockedUsers);

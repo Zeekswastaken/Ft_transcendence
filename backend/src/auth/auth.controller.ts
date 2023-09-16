@@ -19,19 +19,19 @@ export class AuthController {
 
     @Put('modify-data')
     async modyfiy(@Body() Body,@Res() res){
-        console.log(Body);
+        // console.log(Body);
         const decode = await this.jwtservice.decoded(Body.cookie);
         delete Body.cookie;
         delete Body.avatar_url;
         const id = decode.id as number;
         await this.userservice.update(Body,id);
         const user = await this.userservice.findById(id);
-        console.log("Body = " +JSON.stringify(Body));
+        // console.log("Body = " +JSON.stringify(Body));
         if (user)
         {
-            console.log(user);
+            // console.log(user);
             const cookie_token = await this.authservice.generateToken_2(user);
-            console.log(await this.jwtservice.decoded(cookie_token));
+            // console.log(await this.jwtservice.decoded(cookie_token));
             res.send(cookie_token)
             //res.redirect('10.14.2.7:3001/home')
         }
@@ -45,9 +45,9 @@ export class AuthController {
         const ret = await this.authservice.check_and_create(Body);
         if(typeof ret == 'object')
         {
-            console.log("Body = "+ret);
+            // console.log("Body = "+ret);
             const cookie_token = await this.authservice.generateToken_2(ret as User);
-            console.log(await this.jwtservice.decoded(cookie_token));
+            // console.log(await this.jwtservice.decoded(cookie_token));
             res.send(cookie_token);
         }
         else
@@ -89,16 +89,21 @@ export class googleController{
     @UseGuards(AuthGuard('google'))
     @Get('google')
     googlelogin(){
+<<<<<<< HEAD
         console.log("Auth/google");
         //response.redirect('https://accounts.google.com/v3/signin/identifier?opparams=%253F&dsh=S688648157%3A1690628583384724&client_id=154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com&o2v=2&redirect_uri=http%3A%2F%2F10.14.2.7%3A3000%2Fauth%2Ffrom-google&response_type=code&scope=email+Profile&service=lso&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPGR2GqJKOJkkWG3gupm3W4L17g5-s-sQUjYdX252QPpvXeXcIxoHprz5jC5MeQqrTjvRkO9YUVj6IYV-hkvHdjISC9BmDveISvbv3jxN7DKvhzYAszlocGYx8ZYsbJ2cmFJjM_KY1D-J3O2A1Rc5Bwf-KWwrRIgfl8h20gD0uwWYc2tRYrbSX-Gd1DM7X_lZDkVx0aar6ABgIfviRXRe3ywIqaZNCC1TwalgolwmL5rBvxNt4PUE2QqPvhUrxt6EZOovckEdDSMkqetQ54tlZkaePYYnkAmem-jkAy4yFgx2dn18HkLMC8rNPg5rtanNdlYMlvqCwqwu4O4s3eYnU7RO6QBSGA8W35slYr06J4Y6Bxn1jHqypPD9eIabbR_4pay-0Wn7J_84dihPqT8TLb4_ulV0imSJYu9e6RTcxup609X3p5FTvxW_DIzJGdf11KFEIFzLkVw0jryd22tfW48j5kkA%26as%3DS688648157%253A1690628583384724%26client_id%3D154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com%23&app_domain=http%3A%2F%2F10.14.2.7%3A3000&rart=ANgoxcdyRNwbgwnx4WL0BaKJ3lZkHaKfZx2HPFGhkw88O02V5z_0G19q6MtRyNpDdtXQINFZ7tBKgmnTcEBdnW_7YcLCCbG06g')
+=======
+        // console.log("Auth/google");
+        //response.redirect('https://accounts.google.com/v3/signin/identifier?opparams=%253F&dsh=S688648157%3A1690628583384724&client_id=154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com&o2v=2&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Ffrom-google&response_type=code&scope=email+Profile&service=lso&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPGR2GqJKOJkkWG3gupm3W4L17g5-s-sQUjYdX252QPpvXeXcIxoHprz5jC5MeQqrTjvRkO9YUVj6IYV-hkvHdjISC9BmDveISvbv3jxN7DKvhzYAszlocGYx8ZYsbJ2cmFJjM_KY1D-J3O2A1Rc5Bwf-KWwrRIgfl8h20gD0uwWYc2tRYrbSX-Gd1DM7X_lZDkVx0aar6ABgIfviRXRe3ywIqaZNCC1TwalgolwmL5rBvxNt4PUE2QqPvhUrxt6EZOovckEdDSMkqetQ54tlZkaePYYnkAmem-jkAy4yFgx2dn18HkLMC8rNPg5rtanNdlYMlvqCwqwu4O4s3eYnU7RO6QBSGA8W35slYr06J4Y6Bxn1jHqypPD9eIabbR_4pay-0Wn7J_84dihPqT8TLb4_ulV0imSJYu9e6RTcxup609X3p5FTvxW_DIzJGdf11KFEIFzLkVw0jryd22tfW48j5kkA%26as%3DS688648157%253A1690628583384724%26client_id%3D154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com%23&app_domain=http%3A%2F%2Flocalhost%3A3000&rart=ANgoxcdyRNwbgwnx4WL0BaKJ3lZkHaKfZx2HPFGhkw88O02V5z_0G19q6MtRyNpDdtXQINFZ7tBKgmnTcEBdnW_7YcLCCbG06g')
+>>>>>>> 4885e8498f814456d2d184267fd2e7180f82a9ca
     }
 
     @UseGuards(AuthGuard('google'))
     @Get('from-google')
     async googleloginredirect(@Req() req, @Res() res){
-        console.log("CallBack");
+        // console.log("CallBack");
         const user = await req.user;
-        console.log(user);
+        // console.log(user);
         const newUser = await this.authservice.create_Oauth(user);
         if (typeof newUser == 'object')
         {
@@ -110,8 +115,13 @@ export class googleController{
               
             res.redirect("http://10.14.2.7:3001/");
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
+<<<<<<< HEAD
             console.log('coockie token = '+ cookie_token);
             //res.status(200).redirect("http://10.14.2.7:3001/");
+=======
+            // console.log('coockie token = '+ cookie_token);
+            //res.status(200).redirect("http://localhost:3001/");
+>>>>>>> 4885e8498f814456d2d184267fd2e7180f82a9ca
             return {
                 status:200,
                 token : cookie_token,
@@ -127,8 +137,13 @@ export class googleController{
                // httpOnly: true,
               });
               
+<<<<<<< HEAD
               res.redirect("http://10.14.2.7:3001/");
             console.log('coockie token = '+ cookie_token + "\n\n\n\n");
+=======
+              res.redirect("http://localhost:3001/");
+            // console.log('coockie token = '+ cookie_token + "\n\n\n\n");
+>>>>>>> 4885e8498f814456d2d184267fd2e7180f82a9ca
 
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
             //res.status(200).redirect("http://10.14.2.7:3001/");
@@ -149,31 +164,31 @@ export class twoFactAuth_Controller{
     @Post('qr-code')
     async generateQrCode(@Body() body: { currentUserID: Number}, @Res() res) {
         // const id = 1;
-        console.log("++++++++++++++++++++++++++++", body.currentUserID);
+        // console.log("++++++++++++++++++++++++++++", body.currentUserID);
         const qrCodeUri = await this.authservice.generateQrCodeUri(body.currentUserID);
         res.send({ qrCodeUri });
     }
   
     @Post('verify')
    async verifyToken(@Body() body: {QRCode: string, currentUserID: number }, @Res() res) {
-    console.log("BODY.TOKEN -==== ", body.QRCode, " BODY.USERNAME ==== ", body.currentUserID)
+    // console.log("BODY.TOKEN -==== ", body.QRCode, " BODY.USERNAME ==== ", body.currentUserID)
       const isValid = await this.authservice.verifyToken(body.QRCode, body.currentUserID);
       if (isValid.isValid)
       {
-        console.log("----------------------<", isValid.user);
+        // console.log("----------------------<", isValid.user);
         const cookie_token = await this.authservice.generateToken_2(isValid.user);
             const user2 = await this.jwtservice.decoded(cookie_token);
             res.send({message:'success',token:cookie_token,user:user2,isValid:isValid.isValid});
       }
-      console.log("isvalid ", isValid)
+    //   console.log("isvalid ", isValid)
       return { isValid };
     }
 
     @Post('toggletwofact')
     async Toggle(@Body() body: {currentUserID: Number }) {
-     console.log("BODY.TOKEN -==== ", " BODY.USERNAME ==== ", body.currentUserID);
+    //  console.log("BODY.TOKEN -==== ", " BODY.USERNAME ==== ", body.currentUserID);
        const isValid = await this.authservice.toggleTwoFact(body.currentUserID);
-       console.log("isvalid ", isValid)
+    //    console.log("isvalid ", isValid)
        return { isValid };
      }
 }
@@ -185,20 +200,20 @@ export class fortytwo_Controller{
     @UseGuards(AuthGuard('42'))
     // @UseGuards(TokenGuard)
     googlelogin(@Req() req,@Res() res){
-        console.log("heloWorld")
+        // console.log("heloWorld")
     }
     notExists
 
     @Get('from-42')
     @UseGuards(AuthGuard('42'))
     async fortytwo_loginredirect(@Req() req, @Res() res ){
-        console.log("CallBack");
+        // console.log("CallBack");
         const user = await req.user;
         const newUser = await this.authservice.create_Oauth(user);
-        console.log("New User = "+ newUser);
+        // console.log("New User = "+ newUser);
         if (typeof newUser == 'object')
         {
-            console.log("Fist time")
+            // console.log("Fist time")
             const cookie_token = await this.authservice.generateToken_2(newUser);
             res.cookie('accessToken', cookie_token, {
                 // httpOnly: true,
@@ -209,18 +224,18 @@ export class fortytwo_Controller{
             const user_data = {token: cookie_token,
                 user:newUser,
                 message:'success'}
-                console.log(user_data);
+                // console.log(user_data);
             return user_data;
         }
         else{
             const usertoken = await this.usersrvice.findByName(req.user.username);
-            console.log(usertoken);
+            // console.log(usertoken);
             const cookie_token = await this.authservice.generateToken_2(usertoken);
             res.cookie('accessToken', cookie_token, {
                 // httpOnly: true
               });
               
-            console.log('coockie token = '+ cookie_token);
+            // console.log('coockie token = '+ cookie_token);
             //res.status(201);
             //res.setHeader('Authorization', `Bearer ${cookie_token}`);
             //res.sendFile('/Users/orbiay/Desktop/App2/app/views/home.html');
@@ -229,7 +244,7 @@ export class fortytwo_Controller{
             const user_data = {token: cookie_token,
                 user:usertoken,
                 message:'user already exist'}
-                console.log(usertoken );
+                // console.log(usertoken );
             return user_data;
         }
     }

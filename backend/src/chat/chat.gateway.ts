@@ -18,7 +18,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
    server: Server;
    ///@SubscribeMessage('joinDuo')
    async handleConnection(client:Socket) {
-    console.log("IM HERERERERRERERER PLZ HELP");
+    // console.log("IM HERERERERRERERER PLZ HELP");
    }
  
    @SubscribeMessage('getSocketId&JoinRoom')
@@ -29,7 +29,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       const user = await this.jwt.decoded( obj.token);
       user.Socket = client.id;
       user.status = 'Online';
-      console.log(" chat.id == " + client.id)
+      // console.log(" chat.id == " + client.id)
       await this.userservice.update(user,user.id as number);
       const user2 = await this.userservice.findByName(user.username);
       const channels = await this.ChannelService.getChannelsJoined(user2.id);
@@ -65,14 +65,14 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       user.Socket = null;
       user.status = 'Offline';
       await this.userservice.update(user,user.id as number);
-      console.log("user disconnect ==> "+JSON.stringify(user));
-      console.log(`chat.Client disconnected: ${client.id}`);
+      // console.log("user disconnect ==> "+JSON.stringify(user));
+      // console.log(`chat.Client disconnected: ${client.id}`);
       this.users.delete(client.id)
     }
   }
 
   afterInit(server: Server) {
-    console.log('WebSocket gateway initialized')
+    // console.log('WebSocket gateway initialized')
   }
   @SubscribeMessage('ToRoom')
   async ToRoom(client:Socket,payload:{Token:String,message:String,channelid:Number})
@@ -110,8 +110,8 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   }
   @SubscribeMessage('Duo')
   async handleMessage(client: Socket, obj: {token:String,message:String, receiver:string, channelid:Number}) {
-    console.log(obj.token);
-    console.log("------->MESSAGE ======= ", obj.message);
+    // console.log(obj.token);
+    // console.log("------->MESSAGE ======= ", obj.message);
     //  const token = client.handshake.query.token;
      if (await this.jwt.verify(obj.token)){
       const recuser = await this.userservice.findByName(obj.receiver);
@@ -129,7 +129,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     if (await this.jwt.verify(obj.token)){
       const sender = await this.jwt.decoded(obj.token)
         const messages = await this.chatservice.getmessages(obj.channelid);
-        console.log("===============> MESSAGES IN THE DATABASE ", messages);
+        // console.log("===============>SOCKET in the chat ", sender.Socket);
         this.server.to(client.id).emit("messages", messages);
       }
     }

@@ -26,7 +26,7 @@ export class ChannelGateway {
       // const decodedToken = this.jwtService.verify(token.toString());
       // const userid = decodedToken.sub;
       const channel = await this.channelService.createChannel(data, data.userid);
-      console.log("=====> ", channel);
+      // console.log("=====> ", channel);
       this.server.emit('channel', channel);
       return channel;
     } catch (error)
@@ -55,8 +55,8 @@ export class ChannelGateway {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
       client.to(client.id).emit('isleft', await this.channelService.LeaveChannel(data.channelID, data.userID));
     }catch (error){
       console.error('Error joining channel: ', error.message);
@@ -70,8 +70,8 @@ export class ChannelGateway {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
     const userid = 2;
     const channelid = 4;
     const initiatorid = 1;
@@ -175,7 +175,7 @@ export class ChannelGateway {
     try{
       // data.userid = 2;
         const channels = await this.channelService.getAllChannels(data.userid);
-        console.log("=-=-=-=-=-=-=channels", channels);
+        // console.log("=-=-=-=-=-=-=channels", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {

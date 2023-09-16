@@ -33,7 +33,7 @@ export class NotificationsService {
         recipient.receivednotifications.push(notifs);
         await this.userRepository.save(recipient);
         await this.notificationsRepository.save(notifs);
-        console.log("RECIPIENT ======== ", recipient.receivednotifications);
+        // console.log("RECIPIENT ======== ", recipient.receivednotifications);
         return (notifs);
     }
     
@@ -43,9 +43,9 @@ export class NotificationsService {
        const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications','receivednotifications.sender', 'receivednotifications.recipient']});
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
-        console.log("-=-=-=-=-=-=-=-= ",user.receivednotifications);
+        // console.log("-=-=-=-=-=-=-=-= ",user.receivednotifications);
         const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Friend Request").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        console.log("SORTED      ", sortedNotifs);
+        // console.log("SORTED      ", sortedNotifs);
         return sortedNotifs;
     }
 
@@ -55,7 +55,7 @@ export class NotificationsService {
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
         const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Game Invite").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        console.log(sortedNotifs);
+        // console.log(sortedNotifs);
         const object = {
             "sortedNotifs":sortedNotifs,
             "User":user
@@ -64,7 +64,7 @@ export class NotificationsService {
     }
 
 async deleteNotif(recipient: User, sender: User, Type: string) {
-    console.log("PEPEPEPEPPEPEPEPEP");
+    // console.log("PEPEPEPEPPEPEPEPEP");
 
     const notif = await this.notificationsRepository.findOne({
       where: [
@@ -84,11 +84,11 @@ async deleteNotif(recipient: User, sender: User, Type: string) {
   if (!notif)
     throw new HttpException("No notification to delete", HttpStatus.FORBIDDEN);
   
-  console.log("ZEZEZEEZEZEZEEZEZEE");
+  // console.log("ZEZEZEEZEZEZEEZEZEE");
 
   await this.notificationsRepository.remove(notif);
 
-  console.log("LELELLELELELELELE");
+  // console.log("LELELLELELELELELE");
 }
 
 }

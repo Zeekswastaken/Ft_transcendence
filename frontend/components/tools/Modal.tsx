@@ -29,9 +29,7 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
   const token = getCookie("accessToken");
   const handleRandomlyOpponent= (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    socket.emit("", {token: token});
-    // router.push("/game");
-    
+    router.push("/game");
   }
   const handleFriendOpponent = (e: React.MouseEvent<HTMLElement>) => {
     setClicked(true);
