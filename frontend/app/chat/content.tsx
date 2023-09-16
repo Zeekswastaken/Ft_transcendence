@@ -1,7 +1,6 @@
 export interface Content {
-   id: number;
-    text: string;
-    token: string;
+    message: any;
+    user: any;
 }
   
   const initialContent: Content[] = [];

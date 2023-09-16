@@ -13,7 +13,7 @@ import { useMyStore } from "./state";
 
 const page = () => {
 
-  const {myBoolean, setToken} = useMyStore();
+  const {myBoolean, setToken, setCurrUserData} = useMyStore();
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [currentUserID, setCurrentUserID] = useState<number>(0);
 
@@ -24,6 +24,7 @@ const page = () => {
     try {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
+        setCurrUserData(user);
         setCurrentUsername(user.username)
         setCurrentUserID(user.id)
       }
