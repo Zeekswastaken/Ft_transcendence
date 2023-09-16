@@ -7,7 +7,7 @@ import friendBar from "./friendBar";
 
 const profile = ({friend}:any) =>
 {
-  const {token,setMyBoolean , setUserData, setChanelType, setGetChat} = useMyStore();
+  const {token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo} = useMyStore();
   const {socket} = useSocketContext();
 
   const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
@@ -15,8 +15,11 @@ const profile = ({friend}:any) =>
     setMyBoolean(true);
     setUserData(friend);
     const channelid = friend.channelid;
+    console.log(friend);
     socket?.emit("getmessages",  {token, channelid});
     socket?.emit("isDuo",{channelid} );
+    setUpdateChat([]);
+    setTempo([]);
     socket?.on("messages", (data:any) => {
       setGetChat(data);
     })

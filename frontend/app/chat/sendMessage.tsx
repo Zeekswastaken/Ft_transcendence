@@ -44,16 +44,12 @@ const sendMessage = ({ addContent }: addContentProps) => {
         const receiver = userData.user.username;
         const channelid = userData.channelid;
         socket?.emit("Duo",  {token, message:value, receiver, channelid});
-        socket?.emit("getmessages",  {token, channelid});
         setValue("");
-        const message = {text:value, Created_at:"15:15" }; 
-        const obj = {user:currUserData, message};
-        console.log("AFTERRRRRRRRRRRRRRRRRRRRRRR");
-        console.log(getChat);
+        const message = {text:value, Created_at:"15:15" };
+        const obj = {user:currUserData, message, channelid};
         // console.log(obj);
         setUpdateChat(obj);
         socket?.emit("obj", {obj, receiver});
-        // setGetChat([...getChat, obj]);
         // console.log("BEFOOOOOOOOOOOOOOOOOOOOOOR");
         // console.log(getChat);
       }
@@ -69,9 +65,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
   //   console.log("end");
   // },[])
   useEffect(() => {
-    console.log("heeer inside");
     socket?.on( "ToDuo", (data:string) => {
-      console.log(data);
       setMessage(data);
     })
   },[])
