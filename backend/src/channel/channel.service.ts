@@ -470,4 +470,13 @@ export class ChannelService {
         const channel = await this.channelRepository.findOne({where:{id:Equal(channelid)}});
         await this.channelRepository.remove(channel);
     }
+
+    async getChannelMembers(channelid:Number) : Promise<ChannelMembership[]> 
+    {
+        const memberships = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid)}, relations:['user']});
+        if (!memberships)
+            throw new HttpException("Error getting the members", HttpStatus.FORBIDDEN);
+        console.log("---------->MEMBERSHIPS==== ", memberships)
+        return memberships
+    }
 }
