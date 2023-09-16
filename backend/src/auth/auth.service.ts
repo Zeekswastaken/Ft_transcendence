@@ -27,11 +27,11 @@ export class AuthService {
     }
 
     async generateQrCodeUri(userid: Number): Promise<string> {
-        console.log("******************************************", userid);
+        // console.log("******************************************", userid);
         let user = await this.userservice.findById(userid);
-        console.log("=----> ", user);
+        // console.log("=----> ", user);
         user = await this.generateSecret(user.id); // Await the secret generation
-        console.log("SECRET ==== ", user.twofactorsecret);
+        // console.log("SECRET ==== ", user.twofactorsecret);
         const otpauthURL = otplib.authenticator.keyuri(
             user.username.valueOf(),
             "Pong",
@@ -45,10 +45,10 @@ export class AuthService {
 
     async verifyToken(token: string, userid: number): Promise<any> {
         const user = await this.userservice.findById(userid);
-        console.log("------------");
+        // console.log("------------");
         // console.log("HERE ======> ", user.twofactorsecret);
-        console.log("*****", user.twofactorsecret, "********");
-        console.log("*****+", token,"********");
+        // console.log("*****", user.twofactorsecret, "********");
+        // console.log("*****+", token,"********");
         const secret = user.twofactorsecret;
         const isValid = otplib.authenticator.verify({ token, secret });
         const obj = {
@@ -58,7 +58,7 @@ export class AuthService {
         if (isValid) {
             return obj;
         } else {
-            console.log('Invalid token');
+            // console.log('Invalid token');
             return obj;
         }
     }
@@ -98,7 +98,7 @@ export class AuthService {
                 user.password = await  this.userservice.hashpassword(body.password) ;
                 user.avatar_url = body.avatar_url;
                 await this.userservice.save(user);
-                console.log("************>>"+user.id);
+                // console.log("************>>"+user.id);
 
                 const stats = new Stats();
                 stats.level = 0;
@@ -111,7 +111,7 @@ export class AuthService {
                 await this.userservice.saveStat(stats);
                 //this.userservice.initStats(body);
                 await this.userservice.save(user);
-                console.log("************>>"+user.id);
+                // console.log("************>>"+user.id);
 
                 //await this.userservice.initStats(await this.userservice.findByName(body.username));
                 return user;
@@ -127,12 +127,12 @@ export class AuthService {
         const user = await this.userservice.findByName(username);
         if (user  && user.password && await this.userservice.compare(password,user.password) && user.password != 'Oauth' )
         {
-            console.log(user);
+            // console.log(user);
             return user;
         }
         else 
         {
-            console.log(user)
+            // console.log(user)
             return null;
         }
     }
@@ -141,7 +141,7 @@ export class AuthService {
        const user1 = await this.userservice.findByName(body.username);
        if (!user1)
        {
-            console.log(body);
+            // console.log(body);
             const user = new User();
             user.username = body.username;
             user.avatar_url = body.avatar_url;  
@@ -155,10 +155,10 @@ export class AuthService {
             user.stats = stats;
             stats.user = user;
             await this.userservice.saveStat(stats);
-            console.log("BEFORE")
+            // console.log("BEFORE")
             await this.userservice.save(user);
-            console.log("AFTER");
-            console.log("************>>"+user.id);
+            // console.log("AFTER");
+            // console.log("************>>"+user.id);
             //exit(0);
             return user;
        }

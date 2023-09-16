@@ -1,17 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import SendMessage from "./sendMessage";
 import SendButton from "./SendButton";
+import { useSocketContext } from '../socket';
 import initialContent, { Content } from "./content";
+import { useMyStore } from "./state";
+import { current } from "@reduxjs/toolkit";
+
 
 interface addContentProps {
   addContent: (newContent: initialContent) => void;
 }
 
 const sendMessage = ({ addContent }: addContentProps) => {
+
+  const {token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat} = useMyStore();
+  const {socket} = useSocketContext();
   const [value, setValue] = useState("");
+
   const submitSendMessage = (e) => {
     e.preventDefault();
     if (value.trim() != "") {
@@ -23,19 +31,51 @@ const sendMessage = ({ addContent }: addContentProps) => {
       setValue("");
     }
   };
+
   const handlSendMessage = (e) => {
     if (e.keyCode == 13 && e.shiftKey == false) {
       e.preventDefault();
       if (value.trim() != "") {
-        const newContent: initialContent = {
-          id: Math.floor(Math.random() * 1000000),
-          text: value,
-        };
-        addContent(newContent);
+        // const newContent: initialContent = {
+        //   id: Math.floor(Math.random() * 1000000),
+        //   text: value,
+        // };
+        // addContent(newContent);
+        const receiver = userData.user.username;
+        const channelid = userData.channelid;
+        socket?.emit("Duo",  {token, message:value, receiver, channelid});
+        socket?.emit("getmessages",  {token, channelid});
         setValue("");
+        const message = {text:value, Created_at:"15:15" }; 
+        const obj = {user:currUserData, message};
+        console.log("AFTERRRRRRRRRRRRRRRRRRRRRRR");
+        console.log(getChat);
+        // console.log(obj);
+        setUpdateChat(obj);
+        socket?.emit("obj", {obj, receiver});
+        // setGetChat([...getChat, obj]);
+        // console.log("BEFOOOOOOOOOOOOOOOOOOOOOOR");
+        // console.log(getChat);
       }
     }
   };
+  // useEffect(() => {
+  //   console.log("it works twice");
+  //   socket?.on("OBJ", (data:any) => {
+  //     console.log("it works");
+  //     console.log(data);
+  //     setUpdateChat(data);
+  //   })
+  //   console.log("end");
+  // },[])
+  useEffect(() => {
+    console.log("heeer inside");
+    socket?.on( "ToDuo", (data:string) => {
+      console.log(data);
+      setMessage(data);
+    })
+  },[])
+
   return (
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
       <div className="flex justify-center absolute bottom-3 w-full h-16">

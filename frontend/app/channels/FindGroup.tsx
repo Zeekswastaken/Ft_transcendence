@@ -4,11 +4,15 @@ import React from 'react'
 import GroupInfos from "./component/GroupInfo";
 
 interface GroupInfoStatesProps {
-    name: string;
-    image: string;
-    members: number;
-    type: string;
-    id: number
+    channel: {
+        Name: string;
+        Image: string;
+        Members: number;
+        Type: string;
+        Password:string;
+        id: number;
+      }
+      joined: boolean;
 }
 
 interface GroupInfosStatesProps
@@ -19,22 +23,25 @@ interface GroupInfosStatesProps
 
 const FindGroup = ({groupsInfos, search}: GroupInfosStatesProps) => {
     return (
-        <div className=' rounded-xl h-[800px] bg-[#670647] px-1 sm:px-5 pt-[3rem] overflow-auto no-scrollbar mt-10'>               
+        <div className=' rounded-xl h-auto bg-[#670647]/[0.4] px-1 sm:px-5 pt-[3rem] overflow-auto no-scrollbar sm:mt-10 mt-3'>               
             <div>
                 {
                     groupsInfos.filter((group) => {
                         return (
                             search.toLocaleLowerCase() === '' 
                                 ? group 
-                                : group.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+                                : group.channel.Name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
                         );
                     }).map((group) => (
                         <GroupInfos 
-                                    key={group.id}
-                                    name={group.name} 
-                                    image={group.image} 
-                                    members={group.members} 
-                                    type={group.type}
+                                    key={group?.channel.id}
+                                    Id={group.channel.id}
+                                    Name={group.channel.Name} 
+                                    Password={group.channel.Password}
+                                    Image={group.channel.Image} 
+                                    Members={group.channel.Members} 
+                                    Type={group.channel.Type}
+                                    Joined={group.joined}
                         />
                     ))
                 }

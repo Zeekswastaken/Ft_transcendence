@@ -5,6 +5,7 @@ import { Providers } from "@/redux/provider";
 import { useRouter } from 'next/navigation';
 import { UserDataProvider } from './userDataProvider';
 import {SocketProvider} from './socket';
+import { Toaster } from 'react-hot-toast';
 
 // interface avatar{setAvatar: string;}
 
@@ -27,6 +28,7 @@ export default function RootLayout({
             <SocketProvider>
               <Navbar />
               {children}
+             <Toaster position='top-right'/> 
             </SocketProvider>
           </UserDataProvider>
         </Providers>

@@ -9,10 +9,15 @@ export class Message {
   @Column()
   text: string;
 
-  @Column({ default: () => "CURRENT_TIMESTAMP" }) //CHANGE IT LATER
-  Created_at: Date;
+  @Column({
+    default: () => "TO_CHAR(NOW(), 'HH24:MI')", // CURRENT_TIMESTAMP in hours and minutes
+  })
+  Created_at: string;
   
-  @ManyToOne(() => ChannelMembership, membership => membership.messages)
+  @ManyToOne(() => ChannelMembership, membership => membership.messages,{
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'Userid', referencedColumnName: 'Userid', })
   @JoinColumn({ name: 'Channelid', referencedColumnName: 'Channelid' })
   membership: ChannelMembership;

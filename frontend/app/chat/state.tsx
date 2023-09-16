@@ -1,15 +1,39 @@
 import { create } from "zustand";
 
 interface MyStore {
-    myBoolean: boolean;
+    myBoolean: Boolean;
+    currUserData:any;
     userData:any;
-    setMyBoolean: (value: boolean) => void;
+    token:any;
+    message:string;
+    getChat:any[];
+    updateChat:any;
+    chanelType:Boolean;
+    setMyBoolean: (value: Boolean) => void;
+    setCurrUserData: (data: any) => void;
     setUserData: (data: any) => void;
+    setToken: (data: any) => void;
+    setMessage: (data: string) => void;
+    setGetChat: (data: any[]) => void;
+    setUpdateChat: (data: any) => void;
+    setChanelType: (value: Boolean) => void;
   }
-
-export const useMyStore = create<MyStore>((set) => ({
+  
+  export const useMyStore = create<MyStore>((set) => ({
     myBoolean: false,
+    currUserData:[],
     userData: [],
-    setMyBoolean: (value: boolean) => set({ myBoolean: value }),
+    token:"",
+    message:"",
+    getChat:[],
+    updateChat:[],
+    chanelType:false,
+    setMyBoolean: (value: Boolean) => set({ myBoolean: value }),
+    setCurrUserData: (data: any) => set({ currUserData: data }),
     setUserData: (data: any) => set({ userData: data }),
+    setToken: (data: any) => set({ token: data }),
+    setMessage: (data: string) => set({ message: data }),
+    setGetChat: (data) => set({ getChat: data }),
+    setUpdateChat: (data:any) => set({ updateChat: data }),
+    setChanelType: (value: Boolean) => set({ chanelType: value }),
   }));

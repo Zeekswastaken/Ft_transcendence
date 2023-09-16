@@ -62,7 +62,7 @@ export class JWToken{
             return null;
         } 
         catch (error) {
-          console.log('4---------------->>>>');
+          // console.log('4---------------->>>>');
           return error; // Token is invalid
         }
     }

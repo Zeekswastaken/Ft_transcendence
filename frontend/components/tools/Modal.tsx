@@ -12,6 +12,9 @@ import 'swiper/css/effect-cards';
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { JwtPayload } from 'jsonwebtoken';
+import { getCookie } from 'cookies-next';
+import { useSocketContext } from '@/app/socket';
 // import { Navigation, Pagination, EffectCoverflow } from 'swiper';
 
 interface Props {
@@ -21,12 +24,12 @@ interface Props {
 
 const OneVsOne:React.FC<Props> = ({ title }) => {
   const router = useRouter();
-
+  const {socket} = useSocketContext();
   const [clicked, setClicked] = useState(false);
+  const token = getCookie("accessToken");
   const handleRandomlyOpponent= (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     router.push("/game");
-    
   }
   const handleFriendOpponent = (e: React.MouseEvent<HTMLElement>) => {
     setClicked(true);

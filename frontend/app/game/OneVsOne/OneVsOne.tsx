@@ -36,6 +36,7 @@ const OneVsOne = () => {
 
     useEffect(() => {
         socket?.on('getGameData', (op: User, gameId: string) => {
+            console.log("Hello From SetData");
             setOpponent(op);
             setGameId(gameId);
         });
@@ -53,6 +54,8 @@ const OneVsOne = () => {
         const newSocket = io('http://localhost:3000');
         setSocket(newSocket);
         newSocket.emit('setSocket', {token: token});
+        newSocket.emit("Ready", {token: token});
+        console.log("Hello world Socket = ", newSocket.id);
         return () => {
             socket?.disconnect();
         }

@@ -18,15 +18,15 @@ export class ChannelGateway {
               private readonly jwtService: JwtService) {}
 
   @SubscribeMessage('createChannel')
-  async create(@MessageBody() createChannelDto: createChannelDto, @ConnectedSocket() client: Socket) {
+  async create(@MessageBody() data :{ userid:Number, name:String, type:String, password: String, avatar_URL: String}, @ConnectedSocket() client: Socket) {
     try{
-      const userid = 3;
     // console.log("====> ", client.id);xxxxx
       // console.log("it kinda worked");
       // const token = client.handshake.query.token;
       // const decodedToken = this.jwtService.verify(token.toString());
       // const userid = decodedToken.sub;
-      const channel = await this.channelService.createChannel(createChannelDto, userid);
+      const channel = await this.channelService.createChannel(data, data.userid);
+      // console.log("=====> ", channel);
       this.server.emit('channel', channel);
       return channel;
     } catch (error)
@@ -36,37 +36,29 @@ export class ChannelGateway {
     }
   }
   
-  @SubscribeMessage('findAllChannels')
-  async findAll() {
-    return await this.channelService.getAllChannels();
-  }
-
   @SubscribeMessage('JoinChannel')
-  async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }){
+  async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
     try {
-      const channelID = 8; 
-      const userID = data.userID;
-      const Pass = data.Pass;
-    const userid = 1;
-    return await this.channelService.joinChannel(channelID, userid, Pass);
+    const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
+    console.log("--------**********------> ", bool);
+    this.server.to(client.id).emit("isjoined", bool);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
+      this.server.to(client.id).emit("isjoined", false);
       throw error;
     }
   }
 
   @SubscribeMessage('LeaveChannel')
-  async Leave(@MessageBody() data: { channelID: Number, userID: Number})
+  async Leave(@MessageBody() data: { channelID: Number, userID: Number}, @ConnectedSocket() client: Socket)
   {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
-    const userid = 2;
-    const channelid = 2;
-    return await this.channelService.LeaveChannel(channelid, userid);
-    }catch (error) {
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
+      client.to(client.id).emit('isleft', await this.channelService.LeaveChannel(data.channelID, data.userID));
+    }catch (error){
       console.error('Error joining channel: ', error.message);
       throw error;
     }
@@ -78,8 +70,8 @@ export class ChannelGateway {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
     const userid = 2;
     const channelid = 4;
     const initiatorid = 1;
@@ -96,8 +88,8 @@ export class ChannelGateway {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
     const userid = 2;
     const channelid = 4;
     const initiatorid = 1;
@@ -180,15 +172,30 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('getChannels')
-  async getting2(@ConnectedSocket() client: Socket)
+  async getting2(@ConnectedSocket() client: Socket,@MessageBody() data: {userid: Number})
   {
     try{
-        const channels = await this.channelService.getAllChannels();
+      // data.userid = 2;
+        const channels = await this.channelService.getAllChannels(data.userid);
+        // console.log("=-=-=-=-=-=-=channels", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {
     console.error('Error getting all the channels by the user: ', error.message);
     throw error;
+    }
+  }
+  @SubscribeMessage('getChannelMembers')
+  async getChannelMembers(@ConnectedSocket() client: Socket,@MessageBody() data: {channelid: Number})
+  {
+    try{
+      const channels = await this.channelService.getChannelMembers(data.channelid);
+      this.server.to(client.id).emit("members", channels);
+    }
+    catch(error)
+    {
+      console.error('Error getting all the channels by the user: ', error.message);
+      throw error;  
     }
   }
 }

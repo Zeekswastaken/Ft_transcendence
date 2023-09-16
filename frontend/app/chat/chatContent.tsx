@@ -6,6 +6,7 @@ import SendMessage from "./sendMessage";
 import ChatBox from "./chatBox";
 import initialContent, { Content } from "./content";
 import ChatMembers from "./chatMembers";
+import ChatProfile from "./chatProfile";
 import { useMyStore } from "./state";
 
 
@@ -14,15 +15,16 @@ function chatContent() {
   const addContent = (newContent: initialContent) => {
     setContent([...content, newContent]);
   };
-  const {myBoolean, userData} = useMyStore();
-
+  const {myBoolean, userData, chanelType} = useMyStore();
+  console.log("chanelType = " + chanelType);
   return (
     <div className={` relative w-[1200px] max-xl:w-[900px] h-[90%]  m-4 bg-primary-purple-100 bg-opacity-80 shadow-md  rounded-2xl ${myBoolean ? "max-lg:w-full" : "max-lg:hidden"}`}>
       {" "}
       {/* chat*/}
       <DiscutionHeader />
       <ChatMembers />
-      <ChatBox content={content} />
+      {/* <ChatProfile /> */}
+      <ChatBox/>
       <SendMessage addContent={addContent} />
     </div>
   );

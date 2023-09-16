@@ -13,15 +13,18 @@ import { useMyStore } from "./state";
 
 const page = () => {
 
+  const {myBoolean, setToken, setCurrUserData} = useMyStore();
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [currentUserID, setCurrentUserID] = useState<number>(0);
 
 
   useEffect(() => {
     const token = getCookie("accessToken");
+    setToken(token);
     try {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
+        setCurrUserData(user);
         setCurrentUsername(user.username)
         setCurrentUserID(user.id)
       }
@@ -34,19 +37,15 @@ const page = () => {
   const [userFriends, setUserFriends] = useState<any>([]);
 
   useEffect(() => {
-    socket?.emit("getFriends", {user: currentUsername});
+    socket?.emit("getFriendsWithChannels", {user: currentUsername});
   }, [currentUserID])
   useEffect(() => {
-    console.log("heer");
-    socket?.on("getfriends", (data:any) => {
-      console.log("data = ", data);
+    socket?.on("getfriendswithchannels", (data:any) => {
       setUserFriends(data);
     })
   },[userFriends, currentUsername])
-  console.log(userFriends);
   // socket?.emit("Duo", {token:token,name:'Oussama'});
 
-  const {myBoolean} = useMyStore();
 
   return (
     <div className=" w-screen h-screen mx-4 max-sm:mx-0 bg-opacity-80 shadow-md">

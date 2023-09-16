@@ -9,12 +9,14 @@ import { Ball, Player, BallBoundary, PlayerBoundary, GameData, BallCoordinates }
 import { collision, radiansRange, mapRange, initBall } from './helper';
 import { read } from 'fs';
 import { tokenDto } from 'src/Dto/use.Dto';
+import { promises } from 'dns';
 let i = 0;
 
 @Injectable()
 @WebSocketGateway()
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   GamesData: Map<string, GameData> = new Map();
+  users: Map<Socket, User> = new Map();
   ready : Array<User> = new Array();
   @WebSocketServer()
   server: Server;
@@ -67,12 +69,12 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('setSocket')
   async getSocketGame(client: Socket,obj:{token:string}) {
+    console.log("SET Socket =======================> clinet.id = ", client.id);
     if (await this.jwt.verify(obj.token))
     {
       const user = await this.jwt.decoded(obj.token);
       user.PlayerSocket = client.id;
       await this.userservice.update(user,user.id as number);
-      // await this.startGame();
     }
   }
 
@@ -91,18 +93,20 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   // }
 
   @SubscribeMessage('connectPlayers')
-  async connectPlayers(obj:{player1: User, player2: User}) {
-    // const obj.player1: User = await this.userservice.findByName(obj.p1Name);
-    // const player2: User = await this.userservice.findByName(obj.p2Name);
+  async connectPlayers(obj:{p1: User, p2: User}) {
+    const player1: User = await this.userservice.findByName(obj.p1.username);
+    const player2: User = await this.userservice.findByName(obj.p2.username);
+    console.log("Player 1 ======> ", player1.PlayerSocket);
+    console.log("Player 2 ======> ", player2.PlayerSocket);
     const initGameData = { 
-      player1: {isLeft: true,  isReady: false, data: obj.player1, y: 50, score: 0}, 
-      player2: {isLeft: false, isReady: false,  data: obj.player2, y: 50, score: 0}, 
+      player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0}, 
+      player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
       ball: {x: 50, y: 50, radius: 3, speed: 5, vX: 0.1, vY: 0.1}
     };
-    const id: string = obj.player1.username.toString() + obj.player2.username.toString();
+    const id: string = player1.username.toString() + player2.username.toString();
     this.GamesData.set(id, initGameData);
-    this.server.to(obj.player1.PlayerSocket as string).emit("getGameData", obj.player2, id);
-    this.server.to(obj.player2.PlayerSocket as string).emit("getGameData", obj.player1, id);
+    this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
+    this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
   }
 
   @SubscribeMessage('getBallAndP2Positions')
@@ -145,15 +149,29 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
     }
   }
+  ismatching(username:string){
+    this.ready.forEach((e)=>{
+      if (e.username.toString() == username) {
+        console.log("====>" + username);
+        return false;
+      }
+    });
+    console.log("====>" + username);
+    return true;
+  }
   @SubscribeMessage('Ready')
   async readyToPlay(client: Socket, payload :{token:string}) {
     let user = await this.jwt.decoded(payload.token);
-    console.log(user);
-    this.ready.push(user);
-    if (this.ready.length > 1){
-      this.connectPlayers({player1: this.ready[0], player2: this.ready[1]});
+    if(this.ismatching(user.username.toString())){
+      this.ready.push(user);
+    }
+    console.log("=========",this.ready.length, "user1", this.ready[0].username, this.ready[1].username + "============");
+    if (this.ready.length > 1 ){
+      console.log("************************************",this.ready[0].username,this.ready[1].username);
+      this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
       this.ready.shift();
       this.ready.shift();
+      console.log("<==========",this.ready.length,"============>");
     }
   }
 }
