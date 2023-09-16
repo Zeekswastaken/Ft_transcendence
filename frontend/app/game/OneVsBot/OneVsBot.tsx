@@ -5,18 +5,12 @@ import io, {Socket} from 'socket.io-client';
 import { getCookie } from 'cookies-next';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import sketch from './Game';
-import { BallCoordinates, User } from './gameInterfaces';
+import { BallCoordinates, User } from "../GameComponents/gameInterfaces";
 
-const OneVsOne = () => {
+const OneVsBot= () => {
     const [user, setUser] = useState<JwtPayload>();
-    const [socket, setSocket] = useState<Socket>();
     const [p1Score, setP1Score] = useState<number>(0);
     const [p2Score, setP2Score] = useState<number>(0);
-    const [opponent, setOpponent] = useState<User>();
-    const [gameId, setGameId] = useState<string>();
-    const [opponentPos, setOpponentPos] = useState<number> ();
-    const [ballCoordinates, setBallCoordinates] = useState<BallCoordinates> ();
-    const [trigger, setTrigger] = useState<boolean>(false);
 
     let ball: BallCoordinates  = {
         x: 50,
@@ -35,30 +29,6 @@ const OneVsOne = () => {
       }
     }, [token]);
 
-    useEffect(() => {
-        socket?.on('getGameData', (op: User, gameId: string) => {
-            setOpponent(op);
-            setGameId(gameId);
-        });
-        socket?.on('getBallOpponentPostion', (pos: number, ball: BallCoordinates) => {
-            setOpponentPos(pos);
-            setBallCoordinates(ball)
-        });
-        socket?.on('updateScoore', (me: number, opp: number) => {
-            setP1Score(me);
-            setP2Score(opp);
-        });
-    }, [socket]);
-
-    useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
-        setSocket(newSocket);
-        newSocket.emit('setSocket', {token: token});
-        return () => {
-            socket?.disconnect();
-        }
-    }, []);
-
     return (
         <div className=''>
             <div className='mb-[10px] grid grid-cols-3 justify-between place-content-center'>
@@ -74,20 +44,15 @@ const OneVsOne = () => {
                     <span className=''>{p2Score}</span>
                 </div>
                 <div className=' flex justify-center items-center space-x-3'>
-                    <span className=' font-Bomb text-xl sm:text-3xl'>{opponent?.username}</span>
+                    <span className=' font-Bomb text-xl sm:text-3xl'>Robot</span>
                     <div className="h-[40px] sm:h-[60px] w-[40px] sm:w-[60px] bg-cover bg-center overflow-hidden rounded-full mr-[10px] border-[3px] border-primary-pink-300">
-                        <img src={opponent?.avatar_url} alt="" className=' w-full h-full ' />
+                        <img src='' alt="" className=' w-full h-full ' />
                     </div>
                 </div>
             </div>
             <div className=' grid place-items-center items-center'>
                 <div className='border-[2px] border-gray w-fit'>
-                    <ReactP5Wrapper sketch={sketch} 
-                                    socket={socket} 
-                                    gameId={gameId}
-                                    user={user}
-                                    opponentPos={opponentPos}
-                                    ballCoordinates={ballCoordinates}
+                    <ReactP5Wrapper sketch={sketch}
                                     />
                 </div>
             </div>
@@ -100,4 +65,4 @@ const OneVsOne = () => {
     );
 }
 
-export default OneVsOne
+export default OneVsBot;

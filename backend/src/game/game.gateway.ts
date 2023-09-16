@@ -7,12 +7,15 @@ import { User } from 'src/database/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Ball, Player, BallBoundary, PlayerBoundary, GameData, BallCoordinates } from './gameInterfaces';
 import { collision, radiansRange, mapRange, initBall } from './helper';
+import { read } from 'fs';
+import { tokenDto } from 'src/Dto/use.Dto';
 let i = 0;
 
 @Injectable()
 @WebSocketGateway()
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   GamesData: Map<string, GameData> = new Map();
+  ready : Array<User> = new Array();
   @WebSocketServer()
   server: Server;
   constructor (private readonly jwt:JWToken,private readonly userservice:UserService){}
@@ -69,7 +72,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       const user = await this.jwt.decoded(obj.token);
       user.PlayerSocket = client.id;
       await this.userservice.update(user,user.id as number);
-      await this.startGame();
+      // await this.startGame();
     }
   }
 
@@ -82,24 +85,24 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     console.log('WebSocket gateway initialized');
   }
 
-  @SubscribeMessage('startGame')
-  async startGame() {
-        await this.connectPlayers({p1Name: "Hamza", p2Name: "Zakaria"});
-  }
+  // @SubscribeMessage('startGame')
+  // async startGame() {
+  //       await this.connectPlayers({p1Name: "Hamza", p2Name: "Zakaria"});
+  // }
 
   @SubscribeMessage('connectPlayers')
-  async connectPlayers(obj:{p1Name: string, p2Name: string}) {
-    const player1 = await this.userservice.findByName(obj.p1Name);
-    const player2 = await this.userservice.findByName(obj.p2Name);
+  async connectPlayers(obj:{player1: User, player2: User}) {
+    // const obj.player1: User = await this.userservice.findByName(obj.p1Name);
+    // const player2: User = await this.userservice.findByName(obj.p2Name);
     const initGameData = { 
-      player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0}, 
-      player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
+      player1: {isLeft: true,  isReady: false, data: obj.player1, y: 50, score: 0}, 
+      player2: {isLeft: false, isReady: false,  data: obj.player2, y: 50, score: 0}, 
       ball: {x: 50, y: 50, radius: 3, speed: 5, vX: 0.1, vY: 0.1}
     };
-    const id: string = player1.username.toString() + player2.username.toString();
+    const id: string = obj.player1.username.toString() + obj.player2.username.toString();
     this.GamesData.set(id, initGameData);
-    this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
-    this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
+    this.server.to(obj.player1.PlayerSocket as string).emit("getGameData", obj.player2, id);
+    this.server.to(obj.player2.PlayerSocket as string).emit("getGameData", obj.player1, id);
   }
 
   @SubscribeMessage('getBallAndP2Positions')
@@ -140,6 +143,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       {
         this.GamesData.get(obj.id).player2.y = obj.pos;
       }
+    }
+  }
+  @SubscribeMessage('Ready')
+  async readyToPlay(client: Socket, payload :{token:string}) {
+    let user = await this.jwt.decoded(payload.token);
+    console.log(user);
+    this.ready.push(user);
+    if (this.ready.length > 1){
+      this.connectPlayers({player1: this.ready[0], player2: this.ready[1]});
+      this.ready.shift();
+      this.ready.shift();
     }
   }
 }
