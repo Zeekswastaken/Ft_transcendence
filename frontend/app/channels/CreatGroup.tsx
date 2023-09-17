@@ -50,13 +50,13 @@ const CreatGroup = () =>
             setCanSubmit(false)
     }, [channelName, privacy, password])
     const router = useRouter();
+    const {group, setGroup} = useGroupStore()
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-
         socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
+        setGroup(!group)
         // router.push("/channels");
     }
-    const {group, setGroup} = useGroupStore()
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
         setGroup(!group);
     }

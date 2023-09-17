@@ -55,6 +55,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
       }
     }
   };
+  
   // useEffect(() => {
   //   console.log("it works twice");
   //   socket?.on("OBJ", (data:any) => {
