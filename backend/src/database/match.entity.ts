@@ -1,3 +1,4 @@
+import { Stats } from './stats.entity';
 import { User } from './user.entity';
 import {Entity, PrimaryColumn, Column, PrimaryGeneratedColumn, Collection, ManyToMany, OneToMany, ManyToOne, JoinColumn} from "typeorm";
 
@@ -17,4 +18,6 @@ export class Match {
     result:String;
     @Column()
     Date:Date;
+    @ManyToOne(() => Stats, (stats) => stats.matches)
+    stats: Stats;
 }

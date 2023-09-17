@@ -17,18 +17,18 @@ export class ProfileController {
     @Get(':username')
     async display(@Param('username') username:String,@Res() res){
         try{
-        console.log(username);
+        // console.log(username);
         const user = await this.profileService.findByName(username);
         if (user)
         {
-            console.log(user.stats);
+            // console.log(user.stats);
             delete user.password;
-            console.log("-------- ", user.id);
+            // console.log("-------- ", user.id);
             const details = await this.friendsService.getUserFriends(user.username);
             const details2 = await this.blockedService.getblocked(user.id);
-            console.log(details);
-            console.log("**************************");
-            console.log(details2);
+            // console.log(details);
+            // console.log("**************************");
+            // console.log(details2);
             const info = {
                 user:user, 
                 friends:details,
@@ -46,19 +46,19 @@ export class ProfileController {
     }
     @Put('update/:id')
     async update(@Body() Body:Partial<User>,@Res() res,@Param('id') id:number){
-        console.log("\n\n\n\n\n\nFKJDFKJDSKGDSKHGD\n\n\n\n\n\n\n\n")
+        // console.log("\n\n\n\n\n\nFKJDFKJDSKGDSKHGD\n\n\n\n\n\n\n\n")
         if (Body)
         {
-            console.log("Body = "+ Body.username);
+            // console.log("Body = "+ Body.username);
             // if (!Body.username)
             // {
             //     res.send({messgae:'empty'});
             //     //return;
             // }
-            console.log("Username =="+ Body.username)
+            // console.log("Username =="+ Body.username)
             const exist = await this.userservice.findByName(Body.username);
 
-            console.log('******exist = ' + JSON.stringify(exist) )
+            // console.log('******exist = ' + JSON.stringify(exist) )
             if (!exist)
             {
                 const usersec = await this.userservice.findById(id); 
@@ -82,10 +82,10 @@ export class ProfileController {
                         Body.privacy = usersec.privacy;
                     await this.userservice.update(Body,id);
                     const user = await this.userservice.findById(id); 
-                    console.log(user.stats);
+                    // console.log(user.stats);
                     const token = await this.jwt.generateToken_2(user);
             
-                    console.log(await this.jwt.decoded(token));
+                    // console.log(await this.jwt.decoded(token));
                     res.send({message:'success',token:token});
                 }
                 else

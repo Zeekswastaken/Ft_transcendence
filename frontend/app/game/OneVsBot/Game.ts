@@ -1,9 +1,9 @@
 import { P5CanvasInstance } from "@p5-wrapper/react";
 import { Socket } from "socket.io-client";
-import Paddel from "./Player";
-import Net from "./Net";
-import Ball from "./Ball";
-import { BallCoordinates, GameProps, User } from "./gameInterfaces";
+import Paddel from "../GameComponents/Player";
+import Net from "../GameComponents/Net";
+import Ball from "../GameComponents/Ball";
+import { BallCoordinates, GameProps, User } from "../GameComponents/gameInterfaces";
 
 
 
@@ -12,11 +12,6 @@ export default function sketch(p5: P5CanvasInstance) {
     let player2: Paddel;
     let net    : Net;
     let ball   : Ball;
-    let socket : Socket;
-    let user: User;
-    let opponentPos: number;
-    let gameId: string;
-    let pos: number;
     let ballCoordinates: BallCoordinates = {
       x: 50,
       y: 50
@@ -39,21 +34,14 @@ export default function sketch(p5: P5CanvasInstance) {
     }
     
     p5.draw = () => {
-      socket?.emit("getBallAndP2Positions", {id: gameId, user: user});
       p5.background(0);
       net.drow(p5);
       ball.drow(p5, ballCoordinates.x, ballCoordinates.y);
       player1.drow(p5, 0);
-      player2.drow(p5, opponentPos);
-      let next = player1.update(p5);
-      if(next != undefined && next != pos){
-        socket?.emit("setPositon", {id: gameId, user: user, pos: (next * 100 / p5.height)});
-      }
-      pos = next;
+      player2.drow(p5, 0);
     };
 
     p5.windowResized = () => {
-      //console.log(p5.windowWidth);
       if(p5.windowWidth < 1500 && p5.windowWidth > 350)
       {
         p5.resizeCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
@@ -65,16 +53,4 @@ export default function sketch(p5: P5CanvasInstance) {
       net.resize(p5);
       ball.resize(p5);
     }
-
-    p5.updateWithProps = (props: GameProps) => {
-        socket = props.socket;
-        user = props.user;
-        gameId = props.gameId;
-        if(props.opponentPos){
-          opponentPos = (props.opponentPos * p5.height / 100);
-        }
-        if(props.ballCoordinates) {
-          ballCoordinates = props.ballCoordinates;
-        }
-    };
 }
