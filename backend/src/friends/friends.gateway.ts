@@ -5,7 +5,6 @@ import { Socket, Server } from 'socket.io';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { ChannelService } from 'src/channel/channel.service';
 import { UserService } from 'src/user/user.service';
-import { exit } from 'process';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -227,7 +226,8 @@ export class FriendsGateway {
       // console.log("getfriends: ", friends);
       // exit(1);
 
-      const user = await this.userService.findByName(data.user);
+      console.log("ALL CHANNELS ==== ", friends);
+      // const user = await this.userService.findByName(data.user);
       // console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
       this.server.to(client.id).emit('getfriendswithchannels' ,friends);
     }catch (error)

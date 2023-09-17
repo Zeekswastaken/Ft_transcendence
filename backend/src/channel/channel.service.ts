@@ -7,7 +7,6 @@ import { ChannelMembership } from '../database/channelMembership.entity';
 import { User } from '../database/user.entity';
 import * as bcrypt from 'bcrypt';
 import { Equal, In } from 'typeorm';
-import { equal } from 'assert';
 
 console.log("HEETEe");
 
@@ -25,7 +24,7 @@ export class ChannelService {
         // console.log('ChannelMembershipRepository:', channelMembershipRepository);
         // console.log('UserRepository:', userRepository);
     }
-    async createChannel(data: any, owner: Number)
+    async createChannel(data: any, owner: Number, avatar:string)
     {
         console.log('--------> ', data.name);
         console.log('--------> ', data.type);
@@ -39,6 +38,7 @@ export class ChannelService {
             throw new HttpException("Channel name or Type not specified", HttpStatus.FORBIDDEN);
         channel.Name = data.name;
         channel.Type = data.type;
+        channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
         // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
         if (checkChannel)
