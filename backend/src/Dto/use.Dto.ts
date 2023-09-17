@@ -13,6 +13,7 @@ export class UserDto {
     avatar_url:String;
     gender:String;
     birthDay: Date;
+    email:String;
     constructor(){
         this.avatar_url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZqtgZ2eW2F2HvvFOq9Rs0kVWiWJL7pQbA5g&usqp=CAU';
         this.repassword = 'none';

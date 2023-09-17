@@ -8,21 +8,21 @@ export class ChannelController {
     constructor(private readonly channelService: ChannelService, private readonly uploadController: UploadController){}
     @Post('createChannel')
     @UseInterceptors(FileInterceptor('avatar', multerConfig))
-    async create(@Body() data :{ userid:Number, name:String, type:String, password: String},@UploadedFile() file: Express.Multer.File, @Res() res) {
+    async create(/*@Body() data /*data :{ userid:Number, name:String, type:String, password: String},*/@UploadedFile() file: Express.Multer.File, @Res() res) {
         try{ 
-        // console.log("====> ", client.id);xxxxx
+        console.log("=|||||||||||||||||||||||||||||||||||===> ",file);
           // console.log("it kinda worked");
           // const token = client.handshake.query.token;
           // const decodedToken = this.jwtService.verify(token.toString());
           // const userid = decodedToken.sub;
-          const avatar = await this.uploadController.uploadFile(file)
-          const { filename, originalName } = avatar;
-          const channel = await this.channelService.createChannel(data, data.userid, filename);
+          // const avatar = await this.uploadController.uploadFile(file)
+          // const { filename, originalName } = avatar;
+          // const channel = await this.channelService.createChannel(data, data.userid, filename);
           // console.log("=====> ", channel);
-        if (channel)
-        res.status(HttpStatus.CREATED).json(channel);
-        else
-            res.status(HttpStatus.BAD_REQUEST).json('Error');
+        // if (channel)
+        // res.status(HttpStatus.CREATED).json(channel);
+        // else
+            res.status(HttpStatus.FORBIDDEN).json('Error');
         } catch (error)
         {
           console.error('Error creating channel: ', error.message);

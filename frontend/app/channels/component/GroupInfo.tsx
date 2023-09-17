@@ -17,6 +17,7 @@ interface GroupsStateprops {
 }
 
 const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) => {
+    console.log("Im here !!!!!!!!!!!");
     const [currentUserID, setCurrentUserID] = useState<number>()
     const token = getCookie("accessToken");
     useEffect(() => {
@@ -52,12 +53,12 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
         console.log("id = ", Id , "user = ", currentUserID)
         if (currentUserID !== undefined) {
             socket.emit("JoinChannel", {channelID: Id, userID: currentUserID, Pass: channelPass})
+            setLoading(true);
+            setIsclicked(!isclicked);
             socket.on("isjoined", (data:any) => {
                 console.log("data = ", data)
                 if (data) {
                     setErrorMessage("")
-                    setLoading(true);
-                    setIsclicked(!isclicked);
                     setTimeout(() => {
                         setLoading(false);
                         // toast.success("Joined Succesfully")
@@ -75,22 +76,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
                 }
                 else {
                     setErrorMessage("Wrong Password")
-                    // setLoading(true);
-                    // setIsclicked(true);
-                    // setTimeout(() => {
-                        // setLoading(false);
-                        // toast.error("Wrong Password")
-                        // toast("Wrong Password", {
-                        //     style: {
-                        //         borderRadius: '10px',
-                        //         background: '#810851',
-                        //         color: '#fff',
-                        //         fontFamily: 'Heading',
-                        //         fontSize: '1.2rem',
-                        //     },
-                        //     icon: '🚫',
-                        // })
-                    // }, 1000);
                 }
                 
             })
@@ -146,9 +131,28 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
                 <div>
                     { Type === "protected" ? (
                         <>
-                            <button onClick={openModal} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
-                                Join Group
-                            </button>
+                            {!Joined ? (
+                                !isclicked ? (
+                                    <button onClick={openModal} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                        Join Group
+                                    </button>
+                                ) : (
+                                    <button onClick={handleLeaveChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                        {loading ? (<BeatLoader color="#ffff" size={10} />) : "Leave Group"}
+                                    </button>
+                                )
+                            ) : (
+                                !isclicked ? (
+                                    <button onClick={handleLeaveChannel} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                        {loading ? (<BeatLoader color="#ffff" size={10} />) : "Leave Group"}
+                                    </button> 
+
+                                ) : (
+                                    <button onClick={openModal} className=' text-[1rem] text-white bg-[#532051] px-2 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Heading drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[1px]'>
+                                            Join Group
+                                    </button>
+                                )
+                            )}
                             <dialog id="my_modal_2" className="modal">
                                 <div className="modal-box bg-[#810851]/[0.9] space-y-5 grid place-items-center">
                                     <h3 className="font-Bomb text-2xl text-center">Enter Channel Password!</h3>

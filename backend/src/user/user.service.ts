@@ -38,6 +38,11 @@ export class UserService {
        const user =  await this.userRepo.findOne({where :{ username: username},relations:['stats']});
        return user;
     }
+    async findByEmail(email:any): Promise<User>
+    {
+       const user =  await this.userRepo.findOne({where :{ email: email},relations:['stats']});
+       return user;
+    }
     async findById(id:any): Promise<User>
     {
        const user =  await this.userRepo.findOne({where :{ id: id}});

@@ -5,6 +5,7 @@ import { useGroupStore } from './page';
 import { useSocketContext } from '../socket';
 import { getCookie } from 'cookies-next';
 import jwt,{ JwtPayload } from 'jsonwebtoken';
+import axios from 'axios';
 
 const CreatGroup = () =>
 {
@@ -27,36 +28,54 @@ const CreatGroup = () =>
         }
     }, [])
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        avatar.current = e.target.files[0];
-        try {
-          const imagePath = URL.createObjectURL(avatar.current);
-          setPath(imagePath);
-        } catch (error) {
-          console.error('Error creating URL:', error);
-        }
-      }
-    }
     const [canSubmit, setCanSubmit] = useState(false);
     useEffect(() => {
         if (channelName && privacy) {
             if (privacy == "protected" && !password)
-                setCanSubmit(false)
-            else    
-                setCanSubmit(true)
-        }
-        else
             setCanSubmit(false)
+        else    
+        setCanSubmit(true)
+    }
+    else
+    setCanSubmit(false)
     }, [channelName, privacy, password])
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+        avatar.current = e.target.files[0];
+        try {
+        const imagePath = URL.createObjectURL(avatar.current);
+        setPath(imagePath);
+        } catch (error) {
+        console.error('Error creating URL:', error);
+        }
+    }
+    }
     const router = useRouter();
+    const {group, setGroup} = useGroupStore()
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-
-        socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
+        const formData = new FormData();
+        console.log("file = ", avatar.current)
+        console.log("name = ", channelName);
+        console.log("id = ", currentUserID)
+        console.log("type = ", privacy)
+        console.log("password = ", password)
+        formData.append('file', avatar.current as any)
+        // formData.append('avatar', avatar.current as any); // Assuming 'avatar' is the field name expected by FileInterceptor
+        formData.append('userid', currentUserID as any);
+        formData.append('name', channelName);
+        formData.append('type', privacy);
+        formData.append('password', password);
+        
+        formData.forEach((value, key) => {
+            console.log(`${key}: ${value}`);
+        });
+        axios.post("http://localhost:3000/channel/createChannel",{data: formData})           // avatar_URL: path
+        .then(res => {console.log(res)}).catch(err => {console.log(err)})
+        // socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
+        setGroup(!group)
         // router.push("/channels");
     }
-    const {group, setGroup} = useGroupStore()
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
         setGroup(!group);
     }
