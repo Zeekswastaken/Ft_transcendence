@@ -17,6 +17,7 @@ interface GroupsStateprops {
 }
 
 const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) => {
+    console.log("Im here !!!!!!!!!!!");
     const [currentUserID, setCurrentUserID] = useState<number>()
     const token = getCookie("accessToken");
     useEffect(() => {
@@ -52,12 +53,12 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
         console.log("id = ", Id , "user = ", currentUserID)
         if (currentUserID !== undefined) {
             socket.emit("JoinChannel", {channelID: Id, userID: currentUserID, Pass: channelPass})
+            setLoading(true);
+            setIsclicked(!isclicked);
             socket.on("isjoined", (data:any) => {
                 console.log("data = ", data)
                 if (data) {
                     setErrorMessage("")
-                    setLoading(true);
-                    setIsclicked(!isclicked);
                     setTimeout(() => {
                         setLoading(false);
                         // toast.success("Joined Succesfully")
@@ -75,22 +76,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
                 }
                 else {
                     setErrorMessage("Wrong Password")
-                    // setLoading(true);
-                    // setIsclicked(true);
-                    // setTimeout(() => {
-                        // setLoading(false);
-                        // toast.error("Wrong Password")
-                        // toast("Wrong Password", {
-                        //     style: {
-                        //         borderRadius: '10px',
-                        //         background: '#810851',
-                        //         color: '#fff',
-                        //         fontFamily: 'Heading',
-                        //         fontSize: '1.2rem',
-                        //     },
-                        //     icon: '🚫',
-                        // })
-                    // }, 1000);
                 }
                 
             })
