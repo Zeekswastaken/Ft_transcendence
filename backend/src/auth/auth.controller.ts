@@ -10,6 +10,7 @@ import { error } from 'console';
 import { JWToken } from './jwt.service';
 import { BSON } from 'typeorm';
 import { User } from 'src/database/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 
 
@@ -108,7 +109,7 @@ export class googleController{
             //httpOnly: true,
               });
               
-            res.redirect("http://localhost:3001/");
+            res.redirect("http://localhost:3001/authCompleteProfile");
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
             // console.log('coockie token = '+ cookie_token);
             //res.status(200).redirect("http://localhost:3001/");
@@ -121,7 +122,7 @@ export class googleController{
         }
         else{
             //console.log('error');
-            const usertoken = await this.userservice.findByName(req.user.username);
+            const usertoken = await this.userservice.findByEmail(req.user.email);
             const cookie_token = await this.authservice.generateToken_2(usertoken);
             res.cookie('accessToken', cookie_token, {
                // httpOnly: true,
@@ -167,7 +168,7 @@ export class twoFactAuth_Controller{
       }
     //   console.log("isvalid ", isValid)
       return { isValid };
-    }
+    }JwtService
 
     @Post('toggletwofact')
     async Toggle(@Body() body: {currentUserID: Number }) {
@@ -180,7 +181,7 @@ export class twoFactAuth_Controller{
 
 @Controller('auth')
 export class fortytwo_Controller{
-    constructor(private readonly authservice:AuthService,private readonly usersrvice:UserService){}
+    constructor(private readonly authservice:AuthService,private readonly usersrvice:UserService,private readonly jwtservice:JWToken){}
     @Get('42')
     @UseGuards(AuthGuard('42'))
     // @UseGuards(TokenGuard)
@@ -205,7 +206,7 @@ export class fortytwo_Controller{
               });
               
               //res.redirect("http://localhost:3001/");
-              res.redirect("http://localhost:3001/");
+              res.redirect("http://localhost:3001/authCompleteProfile");
             const user_data = {token: cookie_token,
                 user:newUser,
                 message:'success'}
@@ -213,7 +214,7 @@ export class fortytwo_Controller{
             return user_data;
         }
         else{
-            const usertoken = await this.usersrvice.findByName(req.user.username);
+            const usertoken = await this.usersrvice.findByEmail(req.user.email);
             // console.log(usertoken);
             const cookie_token = await this.authservice.generateToken_2(usertoken);
             res.cookie('accessToken', cookie_token, {
@@ -232,5 +233,25 @@ export class fortytwo_Controller{
                 // console.log(usertoken );
             return user_data;
         }
+    }
+    @Put('complete')
+    async completeProfile(@Body() Body, @Res() res){
+        const decode = await this.jwtservice.decoded(Body.cookie);
+        delete Body.cookie;
+        delete Body.avatar_url;
+        const id = decode.id as number;
+        await this.usersrvice.update(Body,id);
+        const user = await this.usersrvice.findById(id);
+        // console.log("Body = " +JSON.stringify(Body));
+        if (user)
+        {
+            // console.log(user);
+            const cookie_token = await this.authservice.generateToken_2(user);
+            // console.log(await this.jwtservice.decoded(cookie_token));
+            res.send(cookie_token)
+            //res.redirect('localhost:3001/home')
+        }
+        else
+            res.send('Error');
     }
 }

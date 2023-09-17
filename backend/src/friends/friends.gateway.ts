@@ -6,6 +6,7 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { ChannelService } from 'src/channel/channel.service';
 import { UserService } from 'src/user/user.service';
 import { exit } from 'process';
+import { User } from 'src/database/user.entity';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -218,6 +219,19 @@ export class FriendsGateway {
       client.emit('error', error.message);
       throw error;
     }
+  }
+  @SubscribeMessage('GetOnlineFriends')
+  async GetOblineFriends(client:Socket,obj:{user:User}){
+    const friends = await this.friendsService.getUserFriends(obj.user);
+
+    var OnlineFriends = friends.filter((friend)=>{
+        if (friend.status == 'Online')
+          return friend;
+    });
+    OnlineFriends.forEach((one)=>{
+      console.log(one.username); 
+    })
+    this.server.to(obj.user.Socket).emit("GetOnlineFriends",OnlineFriends);
   }
   @SubscribeMessage('getFriendsWithChannels')
   async getChannelFriends(@MessageBody() data: { user: any}, @ConnectedSocket() client: Socket) {
