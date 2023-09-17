@@ -89,13 +89,8 @@ export class googleController{
     @UseGuards(AuthGuard('google'))
     @Get('google')
     googlelogin(){
-<<<<<<< HEAD
-        console.log("Auth/google");
-        //response.redirect('https://accounts.google.com/v3/signin/identifier?opparams=%253F&dsh=S688648157%3A1690628583384724&client_id=154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com&o2v=2&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Ffrom-google&response_type=code&scope=email+Profile&service=lso&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPGR2GqJKOJkkWG3gupm3W4L17g5-s-sQUjYdX252QPpvXeXcIxoHprz5jC5MeQqrTjvRkO9YUVj6IYV-hkvHdjISC9BmDveISvbv3jxN7DKvhzYAszlocGYx8ZYsbJ2cmFJjM_KY1D-J3O2A1Rc5Bwf-KWwrRIgfl8h20gD0uwWYc2tRYrbSX-Gd1DM7X_lZDkVx0aar6ABgIfviRXRe3ywIqaZNCC1TwalgolwmL5rBvxNt4PUE2QqPvhUrxt6EZOovckEdDSMkqetQ54tlZkaePYYnkAmem-jkAy4yFgx2dn18HkLMC8rNPg5rtanNdlYMlvqCwqwu4O4s3eYnU7RO6QBSGA8W35slYr06J4Y6Bxn1jHqypPD9eIabbR_4pay-0Wn7J_84dihPqT8TLb4_ulV0imSJYu9e6RTcxup609X3p5FTvxW_DIzJGdf11KFEIFzLkVw0jryd22tfW48j5kkA%26as%3DS688648157%253A1690628583384724%26client_id%3D154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com%23&app_domain=http%3A%2F%2Flocalhost%3A3000&rart=ANgoxcdyRNwbgwnx4WL0BaKJ3lZkHaKfZx2HPFGhkw88O02V5z_0G19q6MtRyNpDdtXQINFZ7tBKgmnTcEBdnW_7YcLCCbG06g')
-=======
         // console.log("Auth/google");
         //response.redirect('https://accounts.google.com/v3/signin/identifier?opparams=%253F&dsh=S688648157%3A1690628583384724&client_id=154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com&o2v=2&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Ffrom-google&response_type=code&scope=email+Profile&service=lso&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPGR2GqJKOJkkWG3gupm3W4L17g5-s-sQUjYdX252QPpvXeXcIxoHprz5jC5MeQqrTjvRkO9YUVj6IYV-hkvHdjISC9BmDveISvbv3jxN7DKvhzYAszlocGYx8ZYsbJ2cmFJjM_KY1D-J3O2A1Rc5Bwf-KWwrRIgfl8h20gD0uwWYc2tRYrbSX-Gd1DM7X_lZDkVx0aar6ABgIfviRXRe3ywIqaZNCC1TwalgolwmL5rBvxNt4PUE2QqPvhUrxt6EZOovckEdDSMkqetQ54tlZkaePYYnkAmem-jkAy4yFgx2dn18HkLMC8rNPg5rtanNdlYMlvqCwqwu4O4s3eYnU7RO6QBSGA8W35slYr06J4Y6Bxn1jHqypPD9eIabbR_4pay-0Wn7J_84dihPqT8TLb4_ulV0imSJYu9e6RTcxup609X3p5FTvxW_DIzJGdf11KFEIFzLkVw0jryd22tfW48j5kkA%26as%3DS688648157%253A1690628583384724%26client_id%3D154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com%23&app_domain=http%3A%2F%2Flocalhost%3A3000&rart=ANgoxcdyRNwbgwnx4WL0BaKJ3lZkHaKfZx2HPFGhkw88O02V5z_0G19q6MtRyNpDdtXQINFZ7tBKgmnTcEBdnW_7YcLCCbG06g')
->>>>>>> 4885e8498f814456d2d184267fd2e7180f82a9ca
     }
 
     @UseGuards(AuthGuard('google'))
@@ -115,13 +110,8 @@ export class googleController{
               
             res.redirect("http://localhost:3001/");
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
-<<<<<<< HEAD
-            console.log('coockie token = '+ cookie_token);
-            //res.status(200).redirect("http://localhost:3001/");
-=======
             // console.log('coockie token = '+ cookie_token);
             //res.status(200).redirect("http://localhost:3001/");
->>>>>>> 4885e8498f814456d2d184267fd2e7180f82a9ca
             return {
                 status:200,
                 token : cookie_token,
@@ -137,13 +127,8 @@ export class googleController{
                // httpOnly: true,
               });
               
-<<<<<<< HEAD
-              res.redirect("http://localhost:3001/");
-            console.log('coockie token = '+ cookie_token + "\n\n\n\n");
-=======
               res.redirect("http://localhost:3001/");
             // console.log('coockie token = '+ cookie_token + "\n\n\n\n");
->>>>>>> 4885e8498f814456d2d184267fd2e7180f82a9ca
 
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
             //res.status(200).redirect("http://localhost:3001/");
