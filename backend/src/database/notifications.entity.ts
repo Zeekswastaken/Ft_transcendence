@@ -6,10 +6,10 @@ export class Notification   {
   @PrimaryGeneratedColumn()
   id:Number;
   
-  @ManyToOne(() => User, user => user.id)
+  @ManyToOne(() => User, user => user.id,  { cascade: true, onDelete: 'CASCADE' })
   sender: Number;
 
-  @ManyToOne(() => User, user=> user.id)
+  @ManyToOne(() => User, user=> user.id, { cascade: true, onDelete: 'CASCADE' })
   recipient: Number;
 
   @Column()

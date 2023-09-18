@@ -5,6 +5,7 @@ import { Socket, Server } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { BlockedService } from 'src/blocked/blocked.service';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -158,6 +159,7 @@ export class ChannelGateway {
       // data.userid = 2;
         const channels = await this.channelService.getAllChannels(data.userid);
         // console.log("=-=-=-=-=-=-=channels", channels);
+        console.log("CHANNELS JOINED =======> ", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {

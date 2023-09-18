@@ -24,7 +24,7 @@ export class ChannelService {
         // console.log('ChannelMembershipRepository:', channelMembershipRepository);
         // console.log('UserRepository:', userRepository);
     }
-    async createChannel(data: any, owner: Number, avatar:string)
+    async createChannel(data: any, owner: Number)
     {
         console.log('--------> ', data.name);
         console.log('--------> ', data.type);
@@ -38,7 +38,7 @@ export class ChannelService {
             throw new HttpException("Channel name or Type not specified", HttpStatus.FORBIDDEN);
         channel.Name = data.name;
         channel.Type = data.type;
-        channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
+        // channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
         // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
         if (checkChannel)
@@ -349,6 +349,7 @@ export class ChannelService {
                 Type: Not(In(["private","Duo"])) 
             },relations:['memberships']
         });
+        console.log("====CHANNELS=====> ", channels);
         const channelsWithStatus = channels.map((channel) => ({
             channel,
             joined: (channel.memberships || []).some(
@@ -415,7 +416,7 @@ export class ChannelService {
         return await bcrypt.hash(password, saltOrRounds);
     }
 
-    private async validateInvitationLink(invitationLink: string): Promise<boolean> {
+     async validateInvitationLink(invitationLink: string): Promise<boolean> {
         const splitLink = invitationLink.split('-');
         //Check if link structure is valid
         if (splitLink.length !== 3)
