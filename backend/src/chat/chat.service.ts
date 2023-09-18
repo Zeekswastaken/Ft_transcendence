@@ -77,6 +77,7 @@ export class ChatService {
 
     async getType(channelid : Number, userid : Number) : Promise<String>
     {
+        console.log("===CHANNELID====> ", channelid, " +++++userid++++++ ", userid);
         const membership =  await this.ChannelMRepo.findOne({where:{Userid:Equal(userid), Channelid: Equal(channelid)}});
         if (membership)
             return membership.Type;
