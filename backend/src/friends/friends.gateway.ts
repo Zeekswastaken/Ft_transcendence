@@ -221,7 +221,7 @@ export class FriendsGateway {
     }
   }
   @SubscribeMessage('GetOnlineFriends')
-  async GetOblineFriends(client:Socket,obj:{user:User}){
+  async GetOnlineFriends(client:Socket,obj:{user:User}){
     const friends = await this.friendsService.getUserFriends(obj.user);
 
     var OnlineFriends = friends.filter((friend)=>{
