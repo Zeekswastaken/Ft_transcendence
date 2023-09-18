@@ -6,6 +6,7 @@ import { NotificationsService } from 'src/notifications/notifications.service';
 import { ChannelService } from 'src/channel/channel.service';
 import { UserService } from 'src/user/user.service';
 import { exit } from 'process';
+import { User } from 'src/database/user.entity';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -219,6 +220,23 @@ export class FriendsGateway {
       throw error;
     }
   }
+  @SubscribeMessage('GetOnlineFriends')
+  async GetOnlineFriends(client:Socket,obj:{id:number}){
+    console.log(obj.id);
+    const user = await this.userService.findById(obj.id);
+    console.log("USERNAME HERE ======== ", user.username);
+    const friends = await this.friendsService.getUserFriends(user.username);
+   friends.forEach((one)=>{console.log(one.username);})
+    var OnlineFriends = friends.filter((friend)=>{
+        if (friend.status == 'Online')
+          return friend;
+    });
+    console.log("ONLINE FRIENDS===========> ", friends);
+    // OnlineFriends.forEach((one)=>{
+    //   console.log(one.username); 
+    // })
+    this.server.to(client.id).emit("GetOnlineFriends",OnlineFriends);
+  }
   @SubscribeMessage('getFriendsWithChannels')
   async getChannelFriends(@MessageBody() data: { user: any}, @ConnectedSocket() client: Socket) {
     try{
@@ -227,7 +245,8 @@ export class FriendsGateway {
       // console.log("getfriends: ", friends);
       // exit(1);
 
-      const user = await this.userService.findByName(data.user);
+      console.log("ALL CHANNELS ==== ", friends);
+      // const user = await this.userService.findByName(data.user);
       // console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
       this.server.to(client.id).emit('getfriendswithchannels' ,friends);
     }catch (error)

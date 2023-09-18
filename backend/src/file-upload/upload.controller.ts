@@ -1,7 +1,8 @@
 import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from './multer-config';
-
+import { Injectable } from '@nestjs/common';
+@Injectable()
 @Controller('upload')
 export class UploadController {
   @Post()
