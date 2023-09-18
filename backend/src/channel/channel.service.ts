@@ -415,7 +415,7 @@ export class ChannelService {
         return await bcrypt.hash(password, saltOrRounds);
     }
 
-    private async validateInvitationLink(invitationLink: string): Promise<boolean> {
+     async validateInvitationLink(invitationLink: string): Promise<boolean> {
         const splitLink = invitationLink.split('-');
         //Check if link structure is valid
         if (splitLink.length !== 3)
@@ -440,7 +440,7 @@ export class ChannelService {
     const token = `${channelID}-${timestamp}-${randomData}`;
 
     //Construct the full invitation link URL
-    const invitationLink = `https://10.14.2.7.com:3001/join-channel?token=${token}`;
+    const invitationLink = `https://localhost.com:3001/join-channel?token=${token}`;
 
     return invitationLink;
   }
