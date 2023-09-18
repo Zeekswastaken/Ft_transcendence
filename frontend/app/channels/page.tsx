@@ -60,12 +60,13 @@ const token = getCookie("accessToken");
   const [groupsInfo, setGroupsInfo] = useState<GroupInfoStatesProps[]>([]);
   
   useEffect(() => {
+    if (currentUserID)
+      socket?.emit('getChannels', {userid: currentUserID});
     if (socket) {
       socket.on('channels', (data: any) => {
         setGroupsInfo(data);
       });
     }
-    socket?.emit('getChannels', {userid: currentUserID});
   },[socket, group]);  
   interface GroupInfoStatesProps {
     channel: {
@@ -78,7 +79,6 @@ const token = getCookie("accessToken");
     }
     joined: boolean;
   }
-  console.log("groupsInfo = ", groupsInfo)
   return (
     <div className=' text-sm sm:text-2xl text-white pt-[250px] w-full mx-1 sm:mx-5 h-screen max-w-[1150px] '>
         <div className=' glass p-5  overflow-auto min-w-[350px] items-center'>
@@ -101,7 +101,7 @@ const token = getCookie("accessToken");
           {group ? 
             (
               <div className='  w-full'>
-                <FindGroup groupsInfos={groupsInfo} search={search}/>
+                {currentUserID && <FindGroup groupsInfos={groupsInfo} search={search}/>}
               </div>
             ): (
               <CreatGroup />

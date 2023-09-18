@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Not, Equal } from 'typeorm';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { ChannelService } from 'src/channel/channel.service';
-import { Channel, channel } from 'diagnostics_channel';
+import { Channel } from 'src/database/channel.entity';
 @Injectable()
 export class FriendsService {
   constructor(

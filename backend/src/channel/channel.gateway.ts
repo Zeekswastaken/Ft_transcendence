@@ -17,24 +17,6 @@ export class ChannelGateway {
   constructor(private readonly channelService: ChannelService,
               private readonly jwtService: JwtService) {}
 
-  @SubscribeMessage('createChannel')
-  async create(@MessageBody() data :{ userid:Number, name:String, type:String, password: String, avatar: ArrayBuffer}, @ConnectedSocket() client: Socket) {
-    try{
-    // console.log("====> ", client.id);xxxxx
-      // console.log("it kinda worked");
-      // const token = client.handshake.query.token;
-      // const decodedToken = this.jwtService.verify(token.toString());
-      // const userid = decodedToken.sub;
-      const channel = await this.channelService.createChannel(data, data.userid);
-      // console.log("=====> ", channel);
-      this.server.emit('channel', channel);
-      return channel;
-    } catch (error)
-    {
-      console.error('Error creating channel: ', error.message);
-      throw error;
-    }
-  }
   
   @SubscribeMessage('JoinChannel')
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){

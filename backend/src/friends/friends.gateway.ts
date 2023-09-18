@@ -221,17 +221,21 @@ export class FriendsGateway {
     }
   }
   @SubscribeMessage('GetOnlineFriends')
-  async GetOnlineFriends(client:Socket,obj:{user:User}){
-    const friends = await this.friendsService.getUserFriends(obj.user);
-
+  async GetOnlineFriends(client:Socket,obj:{id:number}){
+    console.log(obj.id);
+    const user = await this.userService.findById(obj.id);
+    console.log("USERNAME HERE ======== ", user.username);
+    const friends = await this.friendsService.getUserFriends(user.username);
+   friends.forEach((one)=>{console.log(one.username);})
     var OnlineFriends = friends.filter((friend)=>{
         if (friend.status == 'Online')
           return friend;
     });
-    OnlineFriends.forEach((one)=>{
-      console.log(one.username); 
-    })
-    this.server.to(obj.user.Socket).emit("GetOnlineFriends",OnlineFriends);
+    console.log("ONLINE FRIENDS===========> ", friends);
+    // OnlineFriends.forEach((one)=>{
+    //   console.log(one.username); 
+    // })
+    this.server.to(client.id).emit("GetOnlineFriends",OnlineFriends);
   }
   @SubscribeMessage('getFriendsWithChannels')
   async getChannelFriends(@MessageBody() data: { user: any}, @ConnectedSocket() client: Socket) {
@@ -241,7 +245,8 @@ export class FriendsGateway {
       // console.log("getfriends: ", friends);
       // exit(1);
 
-      const user = await this.userService.findByName(data.user);
+      console.log("ALL CHANNELS ==== ", friends);
+      // const user = await this.userService.findByName(data.user);
       // console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
       this.server.to(client.id).emit('getfriendswithchannels' ,friends);
     }catch (error)
