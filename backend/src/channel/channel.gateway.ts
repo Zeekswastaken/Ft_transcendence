@@ -5,6 +5,7 @@ import { Socket, Server } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { BlockedService } from 'src/blocked/blocked.service';
 @WebSocketGateway({
   cors: {
     origin: '*',
