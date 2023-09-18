@@ -215,8 +215,16 @@ export class fortytwo_Controller{
         }
         else{
             const usertoken = await this.usersrvice.findByEmail(req.user.email);
-            // console.log(usertoken);
             const cookie_token = await this.authservice.generateToken_2(usertoken);
+            if (usertoken.ischange == false)
+            {
+                res.cookie('accessToken', cookie_token, {
+                    // httpOnly: true
+                  });
+                res.redirect("http://localhost:3001/authCompleteProfile");
+                return;
+            }
+            // console.log(usertoken);
             res.cookie('accessToken', cookie_token, {
                 // httpOnly: true
               });
@@ -235,17 +243,14 @@ export class fortytwo_Controller{
         }
     }
     @Put('complete')
-    async completeProfile(@Body() Body, @Res() res){
-        const decode = await this.jwtservice.decoded(Body.cookie);
+    async completeProfile(@Body() Body, @Res() res){;
+        console.log(Body);
         delete Body.cookie;
         delete Body.avatar_url;
-        const id = decode.id as number;
-        await this.usersrvice.update(Body,id);
-        const user = await this.usersrvice.findById(id);
-        // console.log("Body = " +JSON.stringify(Body));
+        await this.usersrvice.update(Body,Body.id as number);
+        const user = await this.usersrvice.findById(Body.id);
         if (user)
         {
-            // console.log(user);
             const cookie_token = await this.authservice.generateToken_2(user);
             // console.log(await this.jwtservice.decoded(cookie_token));
             res.send(cookie_token)

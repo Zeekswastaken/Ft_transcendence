@@ -20,7 +20,7 @@ const page = () => {
     e.preventDefault()
     console.log("QRCode", QRCode);
      if (currentUserID != 0) {
-       await axios.post("http://localhost:3000/auth/verify", {
+      axios.post("http://localhost:3000/auth/verify", {
          QRCode,
          currentUserID
        }).then(res => {
