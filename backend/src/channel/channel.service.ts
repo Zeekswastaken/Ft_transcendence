@@ -349,6 +349,7 @@ export class ChannelService {
                 Type: Not(In(["private","Duo"])) 
             },relations:['memberships']
         });
+        console.log("====CHANNELS=====> ", channels);
         const channelsWithStatus = channels.map((channel) => ({
             channel,
             joined: (channel.memberships || []).some(

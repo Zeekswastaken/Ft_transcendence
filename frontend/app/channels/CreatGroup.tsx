@@ -5,7 +5,7 @@ import { useGroupStore } from './page';
 import { useSocketContext } from '../socket';
 import { getCookie } from 'cookies-next';
 import jwt,{ JwtPayload } from 'jsonwebtoken';
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 
 const CreatGroup = () =>
 {
@@ -76,7 +76,10 @@ const CreatGroup = () =>
             type: privacy,
             password: password
         })           // avatar_URL: path
-        .then(res => {console.log(res)}).catch(err => {console.log(err)})
+        .then(res => {
+            if (res.status == HttpStatusCode.Created)
+                router.refresh()
+        }).catch(err => {console.log(err)})
         // socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
         setGroup(!group)
         // router.push("/channels");

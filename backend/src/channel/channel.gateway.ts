@@ -159,6 +159,7 @@ export class ChannelGateway {
       // data.userid = 2;
         const channels = await this.channelService.getAllChannels(data.userid);
         // console.log("=-=-=-=-=-=-=channels", channels);
+        console.log("CHANNELS JOINED =======> ", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {
