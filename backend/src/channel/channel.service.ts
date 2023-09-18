@@ -41,6 +41,7 @@ export class ChannelService {
         // channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
         // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
+        console.log("HEEERE1");
         if (checkChannel)
             throw new HttpException("Channel already exists with the same name", HttpStatus.FORBIDDEN);
         if (data.type === "protected" && data.password)
@@ -48,23 +49,27 @@ export class ChannelService {
             const hashedPass = await this.hashPassword(data.password);
             channel.Password = hashedPass;
         }
+        console.log("HEEERE2");
         if (data.type === "protected" && !data.password)
             throw new HttpException('Password required', HttpStatus.FORBIDDEN); 
         // if (createChannelDto.type === "private")
         // {
                 //TRY TO THINK OF A WAY FOR INVITATION LINKS TO WORK HERE/// FRIEND LIST
         // }
-        
+        console.log("HEEERE3");
         const membership = new ChannelMembership();
         membership.Userid = owner;
         membership.Type = "owner";
         channel.memberships = [];
         // console.log("----- ", membership);
         const savedChannel = await this.channelRepository.save(channel);
+        console.log("HEEERE4");
         membership.Channelid = savedChannel.id
         // console.log("------->", savedChannel)
         channel.memberships.push(membership)
         await this.channelMembershipRepository.save(membership);
+        console.log("HEEERE5");
+        console.log("CHANNELS IN CREATE ======> ", await this.channelRepository.find());
         return savedChannel;
     }
 
@@ -339,16 +344,17 @@ export class ChannelService {
 
     async getAllChannels(userid: Number): Promise<{ channel: Channel; joined: boolean }[]>
     {
-
+        console.log("HEERERERERERERE");
         const user = await this.userRepository.findOne({where:{id:Equal(userid)}});
         if (!user)
             throw new HttpException("User not found", HttpStatus.FORBIDDEN);
-
+console.log("==================================================");
         const channels = await this.channelRepository.find({
             where: {
                 Type: Not(In(["private","Duo"])) 
             },relations:['memberships']
         });
+        console.log("=========================================");
         console.log("====CHANNELS=====> ", channels);
         const channelsWithStatus = channels.map((channel) => ({
             channel,

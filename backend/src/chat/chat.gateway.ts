@@ -153,7 +153,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
           this.server.to(client.id).emit("groupmessages", messagesWithBlocked);
         }
       }
-      
+
     @SubscribeMessage('isDuo')
       async check(client: Socket, obj: {channelid:Number, userid:Number}){
         

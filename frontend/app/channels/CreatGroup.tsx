@@ -78,10 +78,11 @@ const CreatGroup = () =>
         })           // avatar_URL: path
         .then(res => {
             if (res.status == HttpStatusCode.Created)
-                router.refresh()
+                // router.refresh();
+            setGroup(!group)
+                console.log("here refresh");
         }).catch(err => {console.log(err)})
         // socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
-        setGroup(!group)
         // router.push("/channels");
     }
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
