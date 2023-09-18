@@ -2,8 +2,10 @@
 import reaact from "react";
 import Image from "next/image";
 import GroupList from "./groupList";
+import { useMyStore } from "./state";
 
 function chatMembers() {
+  const {setMyBoolean , myBoolean, userData} = useMyStore();
   return (
     <div className="drawer drawer-end absolute w-[60%] max-2xl:w-[70%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">
       <input

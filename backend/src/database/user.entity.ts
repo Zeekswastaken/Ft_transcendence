@@ -22,6 +22,8 @@ export class User{
     gender: String;
     @Column({default:true})
     privacy:Boolean;
+    @Column({default:false})
+    ischange:Boolean;
     @Column({nullable:true})
     PlayerSocket:String;
     @Column({nullable:true})
