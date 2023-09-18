@@ -9,16 +9,17 @@ import { UserService } from 'src/user/user.service';
 import { channel } from 'diagnostics_channel';
 import { ChannelService } from 'src/channel/channel.service';
 import { Console } from 'console';
+import { BlockedService } from 'src/blocked/blocked.service';
 @Injectable()
 @WebSocketGateway()
 export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  constructor (private readonly chatservice:ChatService, private readonly jwt:JWToken,private readonly userservice:UserService,private readonly ChannelService:ChannelService ){}
+  constructor (private readonly chatservice:ChatService, private readonly jwt:JWToken,private readonly userservice:UserService,private readonly ChannelService:ChannelService, private readonly blockedService: BlockedService ){}
   users = new Map<string, string>();
    @WebSocketServer()
    server: Server;
    ///@SubscribeMessage('joinDuo')
    async handleConnection(client:Socket) {
-    console.log("IM HERERERERRERERER PLZ HELP");
+    // console.log("IM HERERERERRERERER PLZ HELP");
    }
  
    @SubscribeMessage('getSocketId&JoinRoom')
@@ -29,7 +30,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       const user = await this.jwt.decoded( obj.token);
       user.Socket = client.id;
       user.status = 'Online';
-      console.log(" chat.id == " + client.id)
+      // console.log(" chat.id == " + client.id)
       await this.userservice.update(user,user.id as number);
       const user2 = await this.userservice.findByName(user.username);
       const channels = await this.ChannelService.getChannelsJoined(user2.id);
@@ -65,14 +66,14 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       user.Socket = null;
       user.status = 'Offline';
       await this.userservice.update(user,user.id as number);
-      console.log("user disconnect ==> "+JSON.stringify(user));
-      console.log(`chat.Client disconnected: ${client.id}`);
+      // console.log("user disconnect ==> "+JSON.stringify(user));
+      // console.log(`chat.Client disconnected: ${client.id}`);
       this.users.delete(client.id)
     }
   }
 
   afterInit(server: Server) {
-    console.log('WebSocket gateway initialized')
+    // console.log('WebSocket gateway initialized')
   }
   @SubscribeMessage('ToRoom')
   async ToRoom(client:Socket,payload:{Token:String,message:String,channelid:Number})
@@ -110,8 +111,8 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   }
   @SubscribeMessage('Duo')
   async handleMessage(client: Socket, obj: {token:String,message:String, receiver:string, channelid:Number}) {
-    console.log(obj.token);
-    console.log("------->MESSAGE ======= ", obj.message);
+    // console.log(obj.token);
+    // console.log("------->MESSAGE ======= ", obj.message);
     //  const token = client.handshake.query.token;
      if (await this.jwt.verify(obj.token)){
       const recuser = await this.userservice.findByName(obj.receiver);
@@ -129,12 +130,33 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     if (await this.jwt.verify(obj.token)){
       const sender = await this.jwt.decoded(obj.token)
         const messages = await this.chatservice.getmessages(obj.channelid);
-        console.log("===============>SOCKET in the chat ", sender.Socket);
+        // console.log("===============>SOCKET in the chat ", sender.Socket);
         this.server.to(client.id).emit("messages", messages);
       }
     }
+    @SubscribeMessage('getGroupMessages')
+    async getGroupMessage(client: Socket, obj: {token:String, channelid:Number}) {
+      if (await this.jwt.verify(obj.token)){
+        const sender = await this.jwt.decoded(obj.token)
+          const messages = await this.chatservice.getmessages(obj.channelid);
+          // console.log("===============>SOCKET in the chat ", sender.Socket);
+          const messagePromises = messages.map((message) =>
+          this.blockedService.isBlocked(sender.id, message.user.id)
+        );
+        
+        const isBlockedResults = await Promise.all(messagePromises);
+        
+        const messagesWithBlocked = messages.map((message, index) => ({
+          ...message,
+          isBlocked: isBlockedResults[index],
+        }));
+          this.server.to(client.id).emit("groupmessages", messagesWithBlocked);
+        }
+      }
+      
     @SubscribeMessage('isDuo')
       async check(client: Socket, obj: {channelid:Number, userid:Number}){
+        
         const bool = await this.chatservice.checkDuo(obj.channelid);
         let type;
         if (!bool)

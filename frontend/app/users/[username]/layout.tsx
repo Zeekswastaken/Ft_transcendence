@@ -239,7 +239,7 @@ export default function RootLayout({
                           <p className=" text-white/[0.9] tracking-wide font-Bomb ">{Status}</p>
                         </div>
                       </div>
-                      <div className=" text-center pt-4 space-y-2 font-Heading tracking-wider">
+                      <div className=" text-center pt-4 space-y-2 font-bold tracking-wider">
                         <p className=" text-3xl text-white overflow-hidden text-ellipsis ">{User}</p>
                       </div>
                     </div>

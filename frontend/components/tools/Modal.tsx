@@ -1,4 +1,4 @@
-import React, { Children, useEffect, useState } from 'react'
+import React, { Children, use, useEffect, useState } from 'react'
 import SelectFriend from './SelectFriend'
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from 'next/navigation';
@@ -29,9 +29,7 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
   const token = getCookie("accessToken");
   const handleRandomlyOpponent= (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    socket.emit("", {token: token});
-    // router.push("/game");
-    
+    router.push("/game");
   }
   const handleFriendOpponent = (e: React.MouseEvent<HTMLElement>) => {
     setClicked(true);
@@ -39,8 +37,15 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
   const changeState = (state:boolean) => {
     setClicked(state);
   }
+  const [avatar, setAvatar] = useState("/profileEx.png");
 
-  const avatar = useAppSelector((state) => state.avatarReducer.value);
+  // setAvatar(useAppSelector((state) => state.avatarReducer.value));
+  const avatarPicked = useAppSelector((state) => state.avatarReducer.value);
+  useEffect(() => {
+    if (avatarPicked) {
+      setAvatar(avatarPicked);
+    }
+  } , [avatarPicked])
   return (
     <div className=" w-auto place-content-center backdrop-blur-sm">
       <h3 className="text-[40px] mt-2 font-Bomb leading-6 text-white tracking-wide"> {title} </h3>
@@ -52,7 +57,9 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
             <div className=' flex items-center justify-between my-10 space-x-6'>
               <img className=' rounded-xl' src="/Spectate.png" height={120} width={120} alt="" />
               <p className=' text-white text-[50px] font-Bomb'>VS</p>
-              <img className=' rounded-xl' src={avatar} alt="avatar" height={120} width={120} />
+              <div className=' w-[120px] h-[120px]'>
+                <img className=' rounded-xl w-full h-full' src={avatar} alt="avatar" />
+              </div>
             </div>
             <SelectFriend />
           <div className="mt-4 space-x-4">

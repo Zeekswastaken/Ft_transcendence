@@ -10,12 +10,15 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { UserModule } from 'src/user/user.module';
 import { ChannelService } from 'src/channel/channel.service';
+import { BlockedService } from 'src/blocked/blocked.service';
+import { BlockedUser } from 'src/database/blockedUser.entity';
+import { UserFriends } from 'src/database/userFriends.entity';
 
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Channel,Message,ChannelMembership]),UserModule],
+    imports:[TypeOrmModule.forFeature([Channel,Message,ChannelMembership,BlockedUser,UserFriends]),UserModule],
     controllers:[],
-    providers:[ChatService,WebsocketGateway,ChatService,JWToken,JwtService, UserService,ChannelService]
+    providers:[ChatService,WebsocketGateway,ChatService,JWToken,JwtService, UserService,ChannelService, BlockedService]
 })
 export class ChatModule {
 

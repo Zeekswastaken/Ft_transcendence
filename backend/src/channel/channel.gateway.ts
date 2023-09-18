@@ -6,6 +6,7 @@ import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
+import { BlockedService } from 'src/blocked/blocked.service';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -18,24 +19,6 @@ export class ChannelGateway {
   constructor(private readonly channelService: ChannelService,
               private readonly jwtService: JwtService, private readonly userService: UserService) {}
 
-  @SubscribeMessage('createChannel')
-  async create(@MessageBody() data :{ userid:Number, name:String, type:String, password: String, avatar_URL: String}, @ConnectedSocket() client: Socket) {
-    try{
-    // console.log("====> ", client.id);xxxxx
-      // console.log("it kinda worked");
-      // const token = client.handshake.query.token;
-      // const decodedToken = this.jwtService.verify(token.toString());
-      // const userid = decodedToken.sub;
-      const channel = await this.channelService.createChannel(data, data.userid);
-      console.log("=====> ", channel);
-      this.server.emit('channel', channel);
-      return channel;
-    } catch (error)
-    {
-      console.error('Error creating channel: ', error.message);
-      throw error;
-    }
-  }
   
   @SubscribeMessage('JoinChannel')
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
@@ -56,8 +39,8 @@ export class ChannelGateway {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
       client.to(client.id).emit('isleft', await this.channelService.LeaveChannel(data.channelID, data.userID));
     }catch (error){
       console.error('Error joining channel: ', error.message);
@@ -71,8 +54,8 @@ export class ChannelGateway {
     try {
       const channelID = data.channelID; 
       const userID = data.userID;
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
     const userid = 2;
     const channelid = 4;
     const initiatorid = 1;
@@ -87,8 +70,6 @@ export class ChannelGateway {
   async removeAd(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
   {
     try {
-      const channelID = data.channelID; 
-      const userID = data.userID;
       console.log("--------> ", data.channelID);
       console.log("--------> ", data.userID);
     const userid = 2;
@@ -182,7 +163,8 @@ export class ChannelGateway {
     try{
       // data.userid = 2;
         const channels = await this.channelService.getAllChannels(data.userid);
-        console.log("=-=-=-=-=-=-=channels", channels);
+        // console.log("=-=-=-=-=-=-=channels", channels);
+        console.log("CHANNELS JOINED =======> ", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {

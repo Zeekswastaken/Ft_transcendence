@@ -31,11 +31,11 @@ export class ChatService {
 
     }
     async saveMsg(text:Partial<Message>, channelid : Number, sender: User){
-        console.log("------------------>ID ", channelid);
+        // console.log("------------------>ID ", channelid);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelid)}, relations: ['memberships', 'memberships.messages']});
         if (!channel)
             throw new HttpException("The channel doesn't exist", HttpStatus.FORBIDDEN);
-        console.log("==========> ", sender);
+        // console.log("==========> ", sender);
             const membership = channel.memberships.find(member => member.Userid == sender.id);
         if (!membership)
             throw new HttpException("The user isn't in the channel", HttpStatus.FORBIDDEN);
@@ -50,11 +50,11 @@ export class ChatService {
         if (!channel)
             throw new HttpException("Channel not found", HttpStatus.FORBIDDEN);
         const messagesWithMemberships = await this.msg.find({
-            where: { membership: { Channelid: Equal(channelid) } }, relations:['membership']
+            where: { membership: { Channelid: Equal(channelid) } }, relations:['membership'], order: { id: 'ASC'}
            });
         const userIds = messagesWithMemberships.map((message) => message.membership.Userid);
         const users = await this.userRepository.find({
-            where: { id: In(userIds) }, // Assuming you import 'In' from 'typeorm'
+            where: { id: In(userIds) },
           });
 
         // Create an object array with messages and their corresponding users
@@ -62,12 +62,13 @@ export class ChatService {
           message,
           user: users.find((user) => user.id === message.membership.Userid),
         }));
-        console.log("------>", messagesWithUsers);
+        // console.log("------>", messagesWithUsers);
         return messagesWithUsers;
     }
     async checkDuo(channelid:Number):Promise<Boolean>
     {
         const channel = await this.channelRepository.findOne({where:{id: Equal(channelid)}});
+        console.log("-------->", channelid);
         if (!channel)
             throw new HttpException("Channel not found", HttpStatus.FORBIDDEN);
         if (channel.Type === "Duo")

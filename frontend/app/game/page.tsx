@@ -1,4 +1,5 @@
-import OneVsOne from './component/OneVsOne'
+import OneVsOne from './OneVsOne/OneVsOne'
+import OneVsBot from './OneVsBot/OneVsBot';
 
 const page = () => {
   return (
