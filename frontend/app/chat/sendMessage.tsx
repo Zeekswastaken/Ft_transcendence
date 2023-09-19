@@ -56,7 +56,6 @@ const sendMessage = ({ addContent }: addContentProps) => {
           const channelid = userData.id;
           const message = {text:value, Created_at:"15:15" };
           const obj = {user:currUserData, message, channelid};
-          setUpdateChat(obj);
           socket?.emit("ToRoom", {Token:token, message:value, channelid});
         }
         setValue("");
