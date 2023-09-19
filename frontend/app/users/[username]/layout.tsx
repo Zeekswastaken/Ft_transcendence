@@ -100,6 +100,7 @@ export default function RootLayout({
       setReceiverUsername(data.receiver_username);
       setIsPending(data.state);
       setIsClicked(data.state);
+      console.log("isPending = ", data.state)
     }
   });
   socket?.on("isfriend", (data:any) => {
@@ -142,17 +143,21 @@ export default function RootLayout({
   };
 }, [socket, currentUserID, userData, isClicked, isPending, isFriend, Status, isBlocking, isBlocked]);
 
-  if (currentUserID && userData?.id) {
-    socket?.emit("checkPending", {
-      userID: currentUserID,
-      recipientID: userData.id,
-    });
 
-    socket?.emit("checkFriend", {
-      userID: currentUserID,
-      recipientID: userData.id,
-    });
-  }
+useEffect(() => {
+    if (currentUserID && userData?.id) {
+      socket?.emit("checkPending", {
+        userID: currentUserID,
+        recipientID: userData.id,
+      });
+    
+      socket?.emit("checkFriend", {
+        userID: currentUserID,
+        recipientID: userData.id,
+      });
+    }
+  }, [currentUserID, userData?.id])
+
   const handleCancel = () => {
       socket?.emit("Unfriend", { userID: currentUserID, recipientID: userData?.id });
       console.log("cancel");

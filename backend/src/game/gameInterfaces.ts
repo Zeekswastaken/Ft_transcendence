@@ -1,3 +1,4 @@
+
 import { User } from "src/database/user.entity";
 
 export interface Player {
@@ -15,6 +16,7 @@ export interface Ball {
     speed: number;
     vX: number;
     vY: number;
+    direction: number;
 }
 
 export interface BallCoordinates {

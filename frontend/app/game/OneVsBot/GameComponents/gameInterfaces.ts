@@ -1,12 +1,6 @@
 import { Socket } from "socket.io-client";
 export interface Ball {
-    x: number;
-    y: number;
-    radius: number;
-    speed: number;
-    vX: number;
-    vY: number;
-    color: string;
+    
 }
 
 export interface Player {
@@ -33,12 +27,10 @@ export interface User {
 }
 
 export interface GameProps {
-    socket : Socket;
-    user: any;
-    opponent: any;
-    gameId: string;
-    opponentPos: number;
-    ballCoordinates: BallCoordinates
+    COM_LEVEL: number;
+    handlScore: any;
+    socket: Socket;
+    gameOver: boolean;
 }
 
 export interface net {
@@ -46,7 +38,16 @@ export interface net {
     width: number;
 }
 
-export interface BallCoordinates {
-    x: number;
-    y: number;
+export interface BallBoundary {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+}
+
+export interface PlayerBoundary {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
 }

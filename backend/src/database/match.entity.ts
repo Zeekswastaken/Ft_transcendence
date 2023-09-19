@@ -6,9 +6,9 @@ import {Entity, PrimaryColumn, Column, PrimaryGeneratedColumn, Collection, ManyT
 export class Match {
     @PrimaryGeneratedColumn()
     id:Number;
-    @ManyToOne(() => User, (user) => user.player1)
+    @ManyToOne(() => User, (user) => user.player1, { cascade: true, onDelete: 'CASCADE' })
     player1: User;
-    @ManyToOne(() => User, (user) => user.player2)
+    @ManyToOne(() => User, (user) => user.player2, { cascade: true, onDelete: 'CASCADE' })
     player2: User;
     @Column()
     player1Score: number;
@@ -16,8 +16,10 @@ export class Match {
     player2Score: number;
     @Column()
     result:Number;
-    @Column()
-    Date:Date;
+    @Column({
+        default: () => "TO_CHAR(NOW(), 'DD-MM-YYYY HH24:MI')", // Custom date format
+      })
+      Date: string;
     @ManyToOne(() => Stats, (stats) => stats.matches)
     stats: Stats;
 }
