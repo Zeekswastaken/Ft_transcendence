@@ -52,14 +52,14 @@ export class ChannelGateway {
   async assignAd(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
   {
     try {
-      const channelID = data.channelID; 
-      const userID = data.userID;
-      // console.log("--------> ", data.channelID);
-      // console.log("--------> ", data.userID);
-    const userid = 2;
-    const channelid = 4;
-    const initiatorid = 1;
-    return await this.channelService.assignAdmin(channelid, userid, initiatorid);
+    //   const channelID = data.channelID; 
+    //   const userID = data.userID;
+    //   // console.log("--------> ", data.channelID);
+    //   // console.log("--------> ", data.userID);
+    // const userid = 2;
+    // const channelid = 4;
+    // const initiatorid = 1;
+    return await this.channelService.assignAdmin(data.channelID, data.userID, data.initiatorID);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
       throw error;
