@@ -1,13 +1,17 @@
 "use client";
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import ChatContent from "./chatContent";
 import { useSocketContext } from '../socket';
 import { useMyStore } from "./state";
+import { userData } from "@/redux/features/userDataSlice";
+import { channel } from "diagnostics_channel";
 
 const friendBar = ({friend}:any) => {
-  const {token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
+  const {token, myBoolean, userData , setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData, notification, setNotification, chanelType} = useMyStore();
   const {socket} = useSocketContext();
+  const [delevred, setDelevred] =useState(true);
+  console.log(delevred);
   const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
     e.preventDefault();
     const userid = currUserData.id;
@@ -18,13 +22,42 @@ const friendBar = ({friend}:any) => {
     socket?.emit("isDuo",{channelid, userid} );
     setUpdateChat([]);
     setTempo([]);
+    // setDelevred(false);
+    if (notification.id == friend.channelid){
+      // setChanelType(true);
+      // setChanelType(true);
+      setNotification([]);
+    }
+    // else if (!notification)
+    //   setDelevred(true);
     socket?.on("messages", (data:any) => {
       setGetChat(data);
     })
-    socket?.on("isduo", (data:any)=>{
-      setChanelType(data.bol);
-    });
+    // socket?.on("isduo", (data:any)=>{
+    //   setChanelType(data.bol);
+    // });
   }
+  useEffect(() => {
+    socket?.on( "ToDuo", (data:any) => {
+           console.log('ToDuo', data.id ) 
+        // setId(data.id);
+        setDelevred(true);
+
+        setNotification(data);
+        console.log(delevred);
+    })
+  },[])
+
+  // useEffect(() => {
+  //   console.log("chanel =", delevred); // This will log the updated value of delevred
+  // }, [delevred]);
+
+  // console.log("chanel = ",delevred);
+  console.log(friend.channelid, notification.id);
+  console.log(chanelType, delevred);
+  if (notification.id)
+
+
   return (
     <button onClick={setMyStore}>
       <div className="relative h-[80px] flex-shrink-0 rounded-xl rounded-br-0 bg-[#2D0130] hover:bg-primary-purple-100 ">
@@ -41,10 +74,7 @@ const friendBar = ({friend}:any) => {
           {friend.user.username}
         </h1>
         {/* <p className=" absolute text-sm font-Heading tracking-wider bottom-3 left-20">{friend.user.status}</p> */}
-        <div className=" float-right mx-4 my-8 h-5 w-5 rounded-full bg-pink-700 blur-sm">
-          {/* <div className=" relative place-content-center items-center h-3 ">
-          </div> */}
-        </div>
+        {(friend.channelid == notification.id && delevred)? (<div className=" float-right mx-4 my-8 h-5 w-5 rounded-full bg-pink-700 blur-sm"></div>): null}
       </div>
     </button>
   );

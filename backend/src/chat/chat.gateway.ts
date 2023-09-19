@@ -117,7 +117,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
      if (await this.jwt.verify(obj.token)){
       const recuser = await this.userservice.findByName(obj.receiver);
       const sender = await this.jwt.decoded(obj.token)
-        client.to(recuser.Socket).emit('ToDuo',obj.message  as string);
+        client.to(recuser.Socket).emit('ToDuo',{message: obj.message  as string, id:obj.channelid});
         await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, sender);
          }
       else
