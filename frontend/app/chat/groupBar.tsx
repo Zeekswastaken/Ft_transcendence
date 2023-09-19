@@ -13,28 +13,24 @@ const groupBar = ({friend}:any) => {
       e.preventDefault();
       setMyBoolean(true);
       setUserData(friend);
+      setChanelType(true);
       const channelid = friend.id;
       const userid = currUserData.id;
       console.log(userid);
-    //   socket?.emit("getmessages",  {token, channelid});
+      socket?.emit("getGroupMessages",  {token, channelid});
     socket?.emit("isDuo",{channelid, userid} );
       // console.log(friend);
-      // setUpdateChat([]);
-      // setTempo([]);
-      socket?.on("isduo", (data:any)=>{
+      setUpdateChat([]);
+      setTempo([]);
+      // socket?.on("isduo", (data:any)=>{
+      //   console.log(data);
+      //   setChanelType(data.bool);
+      // });
+      // console.log("Done");
+      socket?.on("groupmessages", (data:any) => {
         console.log(data);
-        setChanelType(data.bool);
-      });
-      console.log("Done");
-    //   socket?.on("messages", (data:any) => {
-        // console.log(data);
-        // setGetChat(data.);
-    //   })
-
-
-      socket?.on("isduo", (bol:Boolean)=>{
-        setChanelType(bol);
-      });
+        setGetChat(data);
+      })
     }
     return (
       <button onClick={setMyGroupStor}>

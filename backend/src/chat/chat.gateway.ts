@@ -82,7 +82,8 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       // const recuser = await this.userservice.findByName(payload.receiver);
       const sender = await this.jwt.decoded(payload.Token)
     const message = await this.chatservice.saveMsg({text:payload.message as string}, payload.channelid, sender);
-    this.server.to(payload.channelid.toString()).emit("MessageToRoom",message);
+    console.log("PAAAAAAYLOAAAAAAD ->>>>>>>>>>>>>>>>> PAAAAAAAY YOUUUUUR BILLLLL ", {message: message, user:sender, channelid:payload.channelid})
+    this.server.to(payload.channelid.toString()).emit("MessageToRoom",{message: message, user:sender, channelid:payload.channelid});
     }
     else
       return "Invalid Token";
