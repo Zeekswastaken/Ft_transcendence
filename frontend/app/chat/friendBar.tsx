@@ -53,10 +53,6 @@ const friendBar = ({friend}:any) => {
   // }, [delevred]);
 
   // console.log("chanel = ",delevred);
-  console.log(friend.channelid, notification.id);
-  console.log(chanelType, delevred);
-  if (notification.id)
-
 
   return (
     <button onClick={setMyStore}>
