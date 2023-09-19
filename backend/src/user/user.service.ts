@@ -33,10 +33,12 @@ export class UserService {
        console.log("id = " + id);
             await this.userRepo.update(id,Body);
     }
-    async findByName(username:any): Promise<User>
+    async findByName(username:any): Promise<User | null>
     {
        const user =  await this.userRepo.findOne({where :{ username: username},relations:['stats']});
-       return user;
+       if (user)
+        return user;
+        return null;
     }
     async findByEmail(email:any): Promise<User>
     {
@@ -45,7 +47,7 @@ export class UserService {
     }
     async findById(id:any): Promise<User>
     {
-       const user =  await this.userRepo.findOne({where :{ id: id}});
+        const user =  await this.userRepo.findOne({where :{ id: id},relations:['stats','stats.matches']});
        return user;
     }
     async create(User:Partial<User>)

@@ -19,22 +19,18 @@ const completProfile = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     // console.log("avatar_URL = " + avatar_URL);
-    const avatar_url = new FormData();
-    avatar_url.append("file", avatar.current as File);
-
+    const formData = new FormData();
+    formData.append("file", avatar.current as File);
+    formData.append("birthDay", birthDay as unknown as string);
+    formData.append("gender", gender);
+    formData.append("cookie", cookie as string);
     e.preventDefault();
-    await axios.put("http://localhost:3000/auth/modify-data", {
-    
-      birthDay: birthDay,
-      gender: gender,
-      cookie: cookie,
-      avatar_url: avatar_url,
-    }, {headers: {
+    await axios.put("http://localhost:3000/auth/modify-data", formData, {headers: {
       "Content-Type": "application/json"
     }}).then(res => {
       setCookie("accessToken", res.data);
       router.push("/home");
-    }).catch(err => {});
+    }).catch(err => {console.log(err)});
   }
 
 
@@ -64,7 +60,7 @@ const completProfile = () => {
   return (
     <div className=" grid place-items-center h-screen ">
       <div className=" bg-[#1B071C]/[0.8] min-w-[300px] overflow-auto h-[600px] w-[500px] mt-[140px] rounded-2xl border-[#D16ACE] border">
-      <form onSubmit={handleSubmit} className=" text-center grid  place-content-center  font-semibold">
+      <form onSubmit={handleSubmit} encType="multipart/form-data" className=" text-center grid  place-content-center  font-semibold">
         <div className=" text-white text-center grid place-content-center mt-5 ">
           <div className="font-Bomb">
             <p className=" text-[35px] pt-6">Complete your profile</p>
