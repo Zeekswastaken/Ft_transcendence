@@ -12,12 +12,11 @@ import { useMyStore } from "./state";
 
 
 const page = () => {
-
+  
   const {myBoolean, setToken, setCurrUserData} = useMyStore();
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [currentUserID, setCurrentUserID] = useState<number>(0);
-
-
+  
   useEffect(() => {
     const token = getCookie("accessToken");
     setToken(token);

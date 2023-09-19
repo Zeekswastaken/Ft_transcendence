@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { KeyboardEvent, MouseEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import SendMessage from "./sendMessage";
 import SendButton from "./SendButton";
@@ -20,19 +20,36 @@ const sendMessage = ({ addContent }: addContentProps) => {
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
 
-  const submitSendMessage = (e) => {
+  const submitSendMessage = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (value.trim() != "") {
-      const newContent: initialContent = {
-        id: Math.floor(Math.random() * 1000000),
-        text: value,
-      };
-      addContent(newContent);
+      // const newContent: initialContent = {
+      //   id: Math.floor(Math.random() * 1000000),
+      //   text: value,
+      // };
+      // addContent(newContent);
+      if (!chanelType){
+
+        const receiver = userData.user.username;
+        const channelid = userData.channelid;
+        socket?.emit("Duo",  {token, message:value, receiver, channelid});
+        const message = {text:value, Created_at:"15:15" };
+        const obj = {user:currUserData, message, channelid};
+        setUpdateChat(obj);
+        socket?.emit("obj", {obj, receiver});
+      }
+      else{
+        const channelid = userData.id;
+        const message = {text:value, Created_at:"15:15" };
+        const obj = {user:currUserData, message, channelid};
+        console.log(obj);
+        socket?.emit("ToRoom", {Token:token, message:value, channelid});
+      }
       setValue("");
     }
   };
 
-  const handlSendMessage = (e) => {
+  const handlSendMessage = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode == 13 && e.shiftKey == false) {
       e.preventDefault();
       // console.log(chanelType);
@@ -82,7 +99,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
       <div className="flex justify-center absolute bottom-3 w-full h-16">
         <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">
-          <button
+          {/* <button
             type="button"
             className="p-2 text-gray-500 rounded-lg cursor-pointer hover:bg-[#2D0130]"
           >
@@ -93,7 +110,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
               alt="icon"
               className=" bottom-4 space-y-2"
             />
-          </button>
+          </button> */}
           <textarea
             value={value}
             onChange={(e) => setValue(e.target.value)}

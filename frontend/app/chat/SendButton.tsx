@@ -7,8 +7,8 @@ import Image from "next/image";
 const SendButton = () => {
   return (
   <div>
-    <button type="submit" className="inline-flex justify-center p-2 rounded-full cursor-pointer">
-      <Image src="/avatars/avatar3.png" width={40} height={40} alt="icon" className=" mx-2 rotate-12" />
+    <button type="submit" className=" w-[50px] max-sm:w-[45px] h-[50px] max-sm:h-[45px] inline-flex justify-center p-1 cursor-pointer">
+      <img src="/Send.png"  alt="icon" className="  h-full  mx-2 rotate-12" />
     </button>
   </div>
   );

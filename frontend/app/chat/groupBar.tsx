@@ -8,7 +8,6 @@ import { useMyStore } from "./state";
 const groupBar = ({friend}:any) => {
     const {token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
     const {socket} = useSocketContext();
-    // console.log(friend);
     const setMyGroupStor = (e: MouseEvent<HTMLButtonElement>) =>{
       e.preventDefault();
       setMyBoolean(true);
@@ -16,10 +15,8 @@ const groupBar = ({friend}:any) => {
       setChanelType(true);
       const channelid = friend.id;
       const userid = currUserData.id;
-      console.log(userid);
       socket?.emit("getGroupMessages",  {token, channelid});
     socket?.emit("isDuo",{channelid, userid} );
-      // console.log(friend);
       setUpdateChat([]);
       setTempo([]);
       // socket?.on("isduo", (data:any)=>{
@@ -28,7 +25,6 @@ const groupBar = ({friend}:any) => {
       // });
       // console.log("Done");
       socket?.on("groupmessages", (data:any) => {
-        console.log(data);
         setGetChat(data);
       })
     }

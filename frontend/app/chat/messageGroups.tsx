@@ -9,12 +9,9 @@ interface messageElements
 const messageGroups = ({messages}:messageElements) => { 
 
   const {token, userData,setMyBoolean, chanelType, currUserData, updateChat} = useMyStore();
-  console.log("inside chatBox, " , messages);
   if (!messages || !messages.user || !messages.user.id || !messages.message) {
-    console.log("lol");
     return null;
   }
-  console.log(messages);
 
   return ( 
     messages.user.id != currUserData.id ? (

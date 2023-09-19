@@ -2,7 +2,12 @@
 import reaact from "react";
 import Image from "next/image";
 
-function groupList() {
+interface members
+{
+    member: any;
+}
+
+function groupList({member}:members) {
   return (
     <li className=" p-2 rounded-xl place-items-center">
       <div className="relative h-[60px] flex-shrink-0 rounded-2xl bg-[#673E6A] space-x-4 max-sm:space-x-0 ">
@@ -12,7 +17,7 @@ function groupList() {
           className="absolute w-[50px] mx-4 max-sm:mx-1 left-0 bottom-1"
         />
         <div className=" chat_text_username absolute bottom-4 left-20">
-          <p className=" font-Heading text-2xl max-sm:text-lg">Joseph</p>
+          <p className=" font-Heading text-2xl max-sm:text-lg sm:w-36 truncate">{member.user.username}</p>
         </div>
 
         <div className=" float-right ">

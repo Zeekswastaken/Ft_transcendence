@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import DiscutionHeader from "./discutionHeader";
 import SendMessage from "./sendMessage";
@@ -8,6 +8,7 @@ import initialContent, { Content } from "./content";
 import ChatMembers from "./chatMembers";
 import ChatProfile from "./chatProfile";
 import { useMyStore } from "./state";
+import { useSocketContext } from '../socket';
 
 
 function chatContent() {
@@ -15,11 +16,19 @@ function chatContent() {
   const addContent = (newContent: initialContent) => {
     setContent([...content, newContent]);
   };
-  const {myBoolean, userData, chanelType} = useMyStore();
-  console.log("chanell ", chanelType);
-  console.log("user data ", userData);
+  const {myBoolean, userData, chanelType, setChatMembers} = useMyStore();
+  const {socket} = useSocketContext();
+  useEffect(() =>{
+
+    if(chanelType){
+      socket?.emit("getChannelMembers", {channelid:userData.id})
+      socket?.on("members", (data:any) => {
+        setChatMembers(data);
+      })
+    }
+  }, [])
   return (
-    <div className={` relative w-[1200px] max-xl:w-[900px] h-[90%]  m-4 bg-primary-purple-100 bg-opacity-80 shadow-md  rounded-2xl ${myBoolean ? "max-lg:w-full" : "max-lg:hidden"}`}>
+    <div className={` relative w-[1200px] max-xl:w-[900px] h-[90%]  m-4 bg-primary-purple-100 bg-opacity-80 shadow-md  rounded-2xl ${myBoolean ? "max-md:w-full" : "max-md:hidden"}`}>
       {" "}
       {/* chat*/}
       <DiscutionHeader />

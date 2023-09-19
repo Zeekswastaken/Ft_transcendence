@@ -9,8 +9,6 @@ interface messageElements
 const message = ({messages}:messageElements) => { 
 
   const {token, userData,setMyBoolean, chanelType, currUserData, updateChat} = useMyStore();
-  console.log(updateChat);
-  console.log(messages);
   if (!messages || !messages.user || !messages.user.id || !messages.message) {
     return null;
   }

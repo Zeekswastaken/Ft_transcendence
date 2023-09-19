@@ -11,7 +11,6 @@ const friendBar = ({friend}:any) => {
   const {token, myBoolean, userData , setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData, notification, setNotification, chanelType} = useMyStore();
   const {socket} = useSocketContext();
   const [delevred, setDelevred] =useState(true);
-  console.log(delevred);
   const setMyStore = (e: MouseEvent<HTMLButtonElement>) =>{
     e.preventDefault();
     const userid = currUserData.id;

@@ -24,7 +24,7 @@ const discutionHeader = () => {
     obj.bool = true;
   }
   else {
-    obj.avatar = "./avatars/avatar3.png"; //should be updated later
+    obj.avatar = "./avatars/avatar2.png"; //should be updated later
     obj.name = userData.Name;
     obj.bool = false;
   }
@@ -37,9 +37,9 @@ const discutionHeader = () => {
 
         <button onClick={() =>setMyBoolean(false)} type="button" className=" mx-2 rounded-2xl absolute bottom-5 left-2 hover:bg-primary-purple-100">
       <div className=" h-[40px] flex items-center">
-        {/* <svg className="w-8 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <svg className="w-8 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
           <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
-        </svg> */}
+        </svg>
       </div>
     </button>
         </div>

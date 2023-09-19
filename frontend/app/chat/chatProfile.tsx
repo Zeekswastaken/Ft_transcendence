@@ -22,7 +22,7 @@ function chatProfile() {
           htmlFor="my-drawer-4"
           className="drawer-button absolute mx-4 my-4 right-2 bottom-full pb-2 max-sm:pb-5"
         >
-          <img src="/avatars/avatar1.png" alt="icon" className="w-[40px] max-sm:w-[30px]" />
+          <img src="/Vector.svg" alt="icon" className="w-[40px] max-sm:w-[30px]" />
         </label>
       </div>
       <div className="drawer-side flex flex-col absolute h-[95%] w-full px-4 z-30">

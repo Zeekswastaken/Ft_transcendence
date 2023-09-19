@@ -1,11 +1,28 @@
 "use client";
-import reaact from "react";
+import reaact, { MouseEvent, useState } from "react";
 import Image from "next/image";
 import GroupList from "./groupList";
 import { useMyStore } from "./state";
+import { useSocketContext } from '../socket';
+
+
+
 
 function chatMembers() {
-  const {setMyBoolean , myBoolean, userData} = useMyStore();
+  const {setMyBoolean , myBoolean, userData, chatMembers} = useMyStore();
+  // const {socket} = useSocketContext();
+  // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  
+  // const getMembers = (e: MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
+  //   setIsDrawerOpen(!isDrawerOpen);
+  //   console.log(userData);
+  //   console.log(userData.id);
+  //   socket?.emit("getChannelMembers", {channelid:userData.id})
+  //   socket?.on("members", (data:any) => {
+  //     console.log(data);
+  //   })
+  // }      
   return (
     <div className="drawer drawer-end absolute w-[60%] max-2xl:w-[70%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">
       <input
@@ -14,11 +31,11 @@ function chatMembers() {
         className="drawer-toggle bg-pink-600 right-0 "
       />
       <div className="drawer-content">
-        <label
+        <label 
           htmlFor="my-drawer-4"
           className="drawer-button absolute mx-4 my-4 right-2 bottom-full pb-2 max-sm:pb-5"
         >
-          <img src="/avatars/avatar1.png" alt="icon" className="w-[40px] max-sm:w-[30px]" />
+          <img  src="/Vector.svg" alt="icon" className="w-[40px] max-sm:w-[30px]" />
         </label>
       </div>
       <div className="drawer-side flex flex-col absolute h-[95%] w-full px-4 z-30">
@@ -35,7 +52,7 @@ function chatMembers() {
               </div>
               <div className=" col-span-2 row-span-2 rounded-2xl flex items-center  w-full h-full">
                 <p className=" font-Glitch text-2xl max-sm:text-lg ">
-                  Group Name
+                  {userData.Name}
                 </p>
               </div>
               <div className="bg-yellow-500 col-span-3 rounded-2xl relative h-[40px]">
@@ -80,15 +97,9 @@ function chatMembers() {
           </div>
           <div className=" h-[55%] overflow-y-scroll no-scrollbar bg-[#4C2556]">
             <ul className=" flex flex-col whitespace-no-wrap p-4 max-sm:p-0">
-              {/* Sidebar content here */}
-              <GroupList />
-              <GroupList />
-              <GroupList />
-              <GroupList />
-              <GroupList />
-              <GroupList />
-              <GroupList />
-              <GroupList />
+              {chatMembers.map((mem, id) => (
+                <GroupList key={id} member={mem} />
+              ))}
             </ul>
           </div>
           <div className="menu h-[15%] rounded-b-2xl place-items-center max-sm:mb-8 flex items-center justify-center">
