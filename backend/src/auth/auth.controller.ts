@@ -20,7 +20,7 @@ export class AuthController {
 
     @Put('modify-data')
     async modyfiy(@Body() Body,@Res() res){
-        // console.log(Body);
+        console.log(Body);
         const decode = await this.jwtservice.decoded(Body.cookie);
         delete Body.cookie;
         delete Body.avatar_url;
