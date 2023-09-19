@@ -22,7 +22,7 @@ const  NotificationDropDown = () => {
   const [decline, setDecline] = useState<boolean>(false)
   const [decIdx, setDecIdx] = useState<number>(-1)
   const [isClicked , setIsClicked] = useState(false);
-  const [newNotif, setNewNotif] = useState(true);
+  const [newNotif, setNewNotif] = useState<boolean | undefined> (undefined);
   const [recipientID, setRecipientId] = useState(0);
   const [senderID, setSenderId] = useState(0);
   const router = useRouter();
@@ -46,6 +46,7 @@ const  NotificationDropDown = () => {
         // console.log('Received friend notification:', data);
         // console.log("rec = " + data?.friendRequest[0]?.recipient)
         if (data) {
+          console.log("data = ", data)
           setRecipientId(data?.friendRequest[0]?.recipient.id)
           setSenderId(data?.friendRequest[0]?.sender.id)
         }
@@ -68,21 +69,24 @@ const  NotificationDropDown = () => {
   }, [newNotif, socket, currentUserID, isClicked])
 
   // console.log(notification)
-  const handleDecline = (idx:number) => {
+  const handleDecline = (sender:number) => {
     setDecline(true)
-    setDecIdx(idx)
+    setDecIdx(sender)
     setNewNotif(false)
-    socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: senderID});
+    socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: sender});
     // router.push(`/home`)
+    router.refresh()
     
   }
-  const handleAccept = () => {
+  const handleAccept = (sender:number) => {
     setDecline(false)
     setNewNotif(false)
-    socket?.emit("acceptFriendRequest", {userID: currentUserID, recipientID: senderID});
+    router.refresh();
+    socket?.emit("acceptFriendRequest", {userID: currentUserID, recipientID: sender});
   }
   const handleNotifClick = (e: React.MouseEvent<HTMLElement>) => {
     // if (!isClicked)
+      setNewNotif(false)
       setIsClicked(true)
   }
 
@@ -91,7 +95,7 @@ const  NotificationDropDown = () => {
         <div>
           <Menu.Button onClick={handleNotifClick}>
 		        <img src="/notification.svg" alt="notification" width={32} height={32}/>
-            {newNotif && currentUserID === recipientID && <div className=' w-4 h-4 blur-[2px] ml-4 top-5 absolute rounded-full bg-primary-pink-300 '/>}
+            {newNotif && currentUserID === recipientID && <div onClick={e => {setNewNotif(false)}} className=' w-4 h-4 blur-[2px] ml-4 top-5 absolute rounded-full bg-primary-pink-300 '/>}
           </Menu.Button>
         </div>
           <Menu.Items className=" absolute right-20 mt-2 mr-2 xl:mr-0 sm:w-[400px]  divide-y-1 tracking-wide divide-gray-300 rounded-md  shadow-3xl ">
@@ -141,8 +145,8 @@ const  NotificationDropDown = () => {
                                         {post.message}
                                       </h3>
                                       <div className=' flex space-x-1 items-center'>
-                                        <button onClick={e => handleDecline(idx)} className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><XMarkIcon className=" h-7 w-7 text-red-600"/></button>
-                                        <button onClick={e => handleAccept()} className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><CheckIcon className=' h-7 w-7 text-green-400'/></button>
+                                        <button onClick={e => handleDecline(post.sender.id)} className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><XMarkIcon className=" h-7 w-7 text-red-600"/></button>
+                                        <button onClick={e => handleAccept(post.sender.id)} className=' bg-primary-purple-800/[0.2] hover:bg-[#411742] rounded-md'><CheckIcon className=' h-7 w-7 text-green-400'/></button>
                                       </div>
                                 </div>
                               )}
