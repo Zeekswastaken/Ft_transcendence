@@ -23,7 +23,7 @@ export class UserService {
 
     }
     async save(Body:Partial<User> ){
-        await this.userRepo.save(Body);
+       return await this.userRepo.save(Body);
     }
     async findBySocket(socketId:string){
         return await this.userRepo.findOne({where:{Socket: socketId}});

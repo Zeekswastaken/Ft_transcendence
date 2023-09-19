@@ -1,4 +1,4 @@
-import React, { Children, use, useEffect, useState } from 'react'
+import React, { Children, useEffect, useState } from 'react'
 import SelectFriend from './SelectFriend'
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from 'next/navigation';
@@ -29,7 +29,7 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
   const token = getCookie("accessToken");
   const handleRandomlyOpponent= (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    router.push("/game");
+    router.push("/game/OneVsOne/Random");
   }
   const handleFriendOpponent = (e: React.MouseEvent<HTMLElement>) => {
     setClicked(true);
@@ -37,15 +37,8 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
   const changeState = (state:boolean) => {
     setClicked(state);
   }
-  const [avatar, setAvatar] = useState("/profileEx.png");
 
-  // setAvatar(useAppSelector((state) => state.avatarReducer.value));
-  const avatarPicked = useAppSelector((state) => state.avatarReducer.value);
-  useEffect(() => {
-    if (avatarPicked) {
-      setAvatar(avatarPicked);
-    }
-  } , [avatarPicked])
+  const avatar = useAppSelector((state) => state.avatarReducer.value);
   return (
     <div className=" w-auto place-content-center backdrop-blur-sm">
       <h3 className="text-[40px] mt-2 font-Bomb leading-6 text-white tracking-wide"> {title} </h3>
@@ -57,9 +50,7 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
             <div className=' flex items-center justify-between my-10 space-x-6'>
               <img className=' rounded-xl' src="/Spectate.png" height={120} width={120} alt="" />
               <p className=' text-white text-[50px] font-Bomb'>VS</p>
-              <div className=' w-[120px] h-[120px]'>
-                <img className=' rounded-xl w-full h-full' src={avatar} alt="avatar" />
-              </div>
+              <img className=' rounded-xl' src={avatar} alt="avatar" height={120} width={120} />
             </div>
             <SelectFriend />
           <div className="mt-4 space-x-4">
@@ -91,22 +82,31 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
 const OneVsBot:React.FC<Props> = ({ title }) => {
 
   const router = useRouter();
-  const handelChoosenBot = (e: React.MouseEvent<HTMLElement>) => {
+  const handelEasyBot = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    router.push("/game");
+    router.push("/game/OneVsBot/Easy");
   }
+  const handelMediumBot = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    router.push("/game/OneVsBot/Medium");
+  }
+  const handelHardBot = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    router.push("/game/OneVsBot/Hard");
+  }
+
 
   return (
     <div className=" w-auto place-content-center backdrop-blur-sm">
       <h3 className="text-[40px] mt-2 font-Bomb leading-6 text-gray-100 tracking-wide"> {title} </h3>
       <div className='font-Bomb text-3xl tracking-wide text-white  my-10 flex space-x-6 '>
-            <button onClick={handelChoosenBot} className=" animate-fade-up animate-delay-100 shadow-xl hover:shadow-green-300 hover:text-green-100 duration-300 brightness-100 bg-[url('/easy.jpeg')]  bg-cover bg-center  h-[250px] w-[180px] rounded-3xl">
+            <button onClick={handelEasyBot} className=" animate-fade-up animate-delay-100 shadow-xl hover:shadow-green-300 hover:text-green-100 duration-300 brightness-100 bg-[url('/easy.jpeg')]  bg-cover bg-center  h-[250px] w-[180px] rounded-3xl">
               <p className=" mt-[200px]">EASY</p>
             </button>
-            <button onClick={handelChoosenBot} className=" animate-fade-up animate-delay-500 shadow-xl hover:shadow-yellow-300 hover:text-yellow-100 duration-300 brightness-100 bg-[url('/meduim.jpeg')] bg-cover bg-center h-[250px] w-[180px] rounded-3xl ">
+            <button onClick={handelMediumBot} className=" animate-fade-up animate-delay-500 shadow-xl hover:shadow-yellow-300 hover:text-yellow-100 duration-300 brightness-100 bg-[url('/meduim.jpeg')] bg-cover bg-center h-[250px] w-[180px] rounded-3xl ">
               <p className="mt-[200px]" >Medium</p>
             </button>
-            <button onClick={handelChoosenBot} className=" animate-fade-up animate-delay-[900ms] shadow-xl hover:shadow-red-400 hover:text-red-100 duration-300 brightness-100 bg-[url('/hard.jpeg')] bg-cover bg-center h-[250px] w-[180px] rounded-3xl">
+            <button onClick={handelHardBot} className=" animate-fade-up animate-delay-[900ms] shadow-xl hover:shadow-red-400 hover:text-red-100 duration-300 brightness-100 bg-[url('/hard.jpeg')] bg-cover bg-center h-[250px] w-[180px] rounded-3xl">
               <p className="mt-[200px]">Hard</p>
             </button>
           <div className="slider-container">
