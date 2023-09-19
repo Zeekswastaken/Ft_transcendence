@@ -48,9 +48,9 @@ export class User{
     sentinvites: GameInvite[];
     @OneToMany(() => GameInvite, invite => invite.receiver, { cascade: true, onDelete: 'CASCADE' })
     receivedinvites: GameInvite[];
-    @OneToMany(() => Match, (matchHisory) => matchHisory.player1, { cascade: true, onDelete: 'CASCADE' })
+    @OneToMany(() => Match, (matchHisory) => matchHisory.player1)
     public player1: Match[];
-    @OneToMany(() => Match, (matchHisory) => matchHisory.player2, { cascade: true, onDelete: 'CASCADE' })
+    @OneToMany(() => Match, (matchHisory) => matchHisory.player2)
     public player2: Match[];
     @OneToMany(() => BlockedUser, blockedUser => blockedUser.blockedby)
     blockingUsers: BlockedUser[]; //USERS THAT GOT BLOCKED

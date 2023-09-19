@@ -17,6 +17,7 @@ const friendBar = ({friend}:any) => {
     const userid = currUserData.id;
     setMyBoolean(true);
     setUserData(friend);
+    setChanelType(false);
     const channelid = friend.channelid;
     socket?.emit("getmessages",  {token, channelid});
     socket?.emit("isDuo",{channelid, userid} );

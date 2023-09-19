@@ -6,16 +6,17 @@ interface messageElements
     messages: any;
 }
 
-const message = ({messages}:messageElements) => { 
+const messageGroups = ({messages}:messageElements) => { 
 
   const {token, userData,setMyBoolean, chanelType, currUserData, updateChat} = useMyStore();
-  console.log(updateChat);
-  console.log(messages);
+  console.log("inside chatBox, " , messages);
   if (!messages || !messages.user || !messages.user.id || !messages.message) {
+    console.log("lol");
     return null;
   }
+  console.log(messages);
 
-  return (
+  return ( 
     messages.user.id != currUserData.id ? (
       <div className="p-1 m-4 flex flex-col">
         <div className="chat chat-start">
@@ -33,7 +34,8 @@ const message = ({messages}:messageElements) => {
           </div>
         </div>
       </div>
-    ) : (
+    ) : 
+    (
       <div className="chat chat-end mr-4">
         <div className="chat-image avatar">
           <div className="w-12  rounded-full">
@@ -48,7 +50,8 @@ const message = ({messages}:messageElements) => {
           {messages.message.text}
         </div>
       </div>
-    ));
+  )
+  );
 }
 
-export default message
+export default messageGroups

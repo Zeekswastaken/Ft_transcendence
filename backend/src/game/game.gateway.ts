@@ -1,26 +1,22 @@
-// src/websocket-gateway/websocket-gateway.gateway.ts
 import { Inject, Injectable } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JWToken } from 'src/auth/jwt.service';
 import { User } from 'src/database/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Ball, Player, BallBoundary, PlayerBoundary, GameData, BallCoordinates } from './gameInterfaces';
+import { Ball, Player, GameData, BallCoordinates } from './gameInterfaces';
 import { collision, radiansRange, mapRange, initBall } from './helper';
-import { read } from 'fs';
-import { tokenDto } from 'src/Dto/use.Dto';
-import { promises } from 'dns';
-let i = 0;
+import { GameService } from './game.service';
 
 @Injectable()
 @WebSocketGateway()
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   GamesData: Map<string, GameData> = new Map();
-  users: Map<Socket, User> = new Map();
+  users: Map<string, string> = new Map();
   ready : Array<User> = new Array();
   @WebSocketServer()
   server: Server;
-  constructor (private readonly jwt:JWToken,private readonly userservice:UserService){}
+  constructor (private readonly jwt:JWToken,private readonly userservice:UserService, private readonly gameservice:GameService){}
   async handleConnection(client: Socket) {
   }
 
@@ -29,7 +25,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.to(player2.data.PlayerSocket as string).emit("updateScoore", player2.score, player1.score);
   }
 
-  update = (ball: Ball, player1: Player, player2: Player) => {
+   update = (ball: Ball, player1: Player, player2: Player) => {
     ball.x += ball.vX * ball.speed;
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
@@ -43,17 +39,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         {
             var diff = ball.y - selectPlayer.y;
             var angle = mapRange(diff, 0, 25, -rad, rad);
-            ball.vX = 0.5 * Math.cos(angle);
-            ball.vY = 0.5 * Math.sin(angle);
+            ball.vX = 0.75 * Math.cos(angle);
+            ball.vY = 0.75 * Math.sin(angle);
         }
         else
         {
             var diff = ball.y - selectPlayer.y;
             var angle = mapRange(diff, 0, 25, -rad, rad);
-            ball.vX = (0.5 * Math.cos(angle)) * -1; 
-            ball.vY = (0.5 * Math.sin(angle)); 
+            ball.vX = (0.75 * Math.cos(angle)) * -1; 
+            ball.vY = (0.75 * Math.sin(angle)); 
         }
-        ball.speed += 0.1 ;
+        ball.speed += 0.1;
     }
   
     if(ball.x - ball.radius < 0) {
@@ -67,9 +63,28 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
+  checkScore = async (id: string ,player1: Player, player2: Player) => {
+    if((player2.score == 7 && player1.score == 0 ) || 
+      (player2.score == 0 && player1.score == 7)   || 
+      (player2.score == 9 && player1.score <= 2)   || 
+      (player2.score <= 2 && player1.score == 9)   || 
+       player2.score == 1 || player1.score == 1 ) {
+        this.server.to(player1.data.PlayerSocket as string).emit("gameOver");
+        this.server.to(player2.data.PlayerSocket as string).emit("gameOver");
+        if(player1.score > player2.score) {
+          this.server.to(player1.data.PlayerSocket as string).emit("celebrate");
+          this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player1.data.id});
+
+        } else {
+          this.server.to(player2.data.PlayerSocket as string).emit("celebrate");
+          this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
+        }
+        this.GamesData.delete(id);
+    }
+  }
+
   @SubscribeMessage('setSocket')
   async getSocketGame(client: Socket,obj:{token:string}) {
-    console.log("SET Socket =======================> clinet.id = ", client.id);
     if (await this.jwt.verify(obj.token))
     {
       const user = await this.jwt.decoded(obj.token);
@@ -81,29 +96,36 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   handleDisconnect(client: Socket) 
   { 
     console.log(`Client disconnected: ${client.id}`);
+    const id = this.users.get(client.id);
+    if(id !== undefined) {
+      const gameData = this.GamesData.get(id);
+      if(gameData.player1.data.PlayerSocket == client.id) {
+        this.server.to(gameData.player2.data.PlayerSocket as string).emit("gameOver");
+        this.server.to(gameData.player2.data.PlayerSocket as string).emit("celebrate");
+      } else {
+        this.server.to(gameData.player1.data.PlayerSocket as string).emit("gameOver");
+        this.server.to(gameData.player1.data.PlayerSocket as string).emit("celebrate");
+      }
+    }
   }
 
   afterInit(server: Server) {
     console.log('WebSocket gateway initialized');
   }
 
-  // @SubscribeMessage('startGame')
-  // async startGame() {
-  //       await this.connectPlayers({p1Name: "Hamza", p2Name: "Zakaria"});
-  // }
-
   @SubscribeMessage('connectPlayers')
   async connectPlayers(obj:{p1: User, p2: User}) {
     const player1: User = await this.userservice.findByName(obj.p1.username);
     const player2: User = await this.userservice.findByName(obj.p2.username);
-    console.log("Player 1 ======> ", player1.PlayerSocket);
-    console.log("Player 2 ======> ", player2.PlayerSocket);
+    
     const initGameData = { 
-      player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0}, 
+      player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
       player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
-      ball: {x: 50, y: 50, radius: 3, speed: 5, vX: 0.1, vY: 0.1}
+      ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1}
     };
     const id: string = player1.username.toString() + player2.username.toString();
+    this.users.set(player1.PlayerSocket as string, id);
+    this.users.set(player2.PlayerSocket as string, id);
     this.GamesData.set(id, initGameData);
     this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
     this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
@@ -121,6 +143,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       if(gameData.player1.data.username === obj.user.username)
       {
         this.update(gameData.ball, gameData.player1, gameData.player2);
+        await this.checkScore(obj.id, gameData.player1, gameData.player2);
         ball.x = gameData.ball.x;
         ball.y = gameData.ball.y;
         client.emit("getBallOpponentPostion", gameData.player2.y, ball);
@@ -149,29 +172,37 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
     }
   }
-  ismatching(username:string){
-    this.ready.forEach((e)=>{
-      if (e.username.toString() == username) {
-        console.log("====>" + username);
-        return false;
+  ismatching(username:string) {
+    for(let i = 0 ; i < this.ready.length; i++)
+    {
+      if(this.ready[i].username.toString() === username) {
+        return (false);
       }
-    });
-    console.log("====>" + username);
+    }
     return true;
   }
+
+  changeScore
   @SubscribeMessage('Ready')
   async readyToPlay(client: Socket, payload :{token:string}) {
     let user = await this.jwt.decoded(payload.token);
     if(this.ismatching(user.username.toString())){
       this.ready.push(user);
     }
-    console.log("=========",this.ready.length, "user1", this.ready[0].username, this.ready[1].username + "============");
     if (this.ready.length > 1 ){
-      console.log("************************************",this.ready[0].username,this.ready[1].username);
       this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
       this.ready.shift();
       this.ready.shift();
-      console.log("<==========",this.ready.length,"============>");
     }
+  }
+
+  @SubscribeMessage('oneVsBotChangeScore')
+  async oneVsBot(client: Socket, obj:{player: number, bot: number}) {
+    client.emit("changeScore", obj.player, obj.bot);
+  }
+
+  @SubscribeMessage('gameOver')
+  async gameOver(client: Socket, obj:{player: number, bot: number}) {
+    client.emit("gameOver", obj.player, obj.bot);
   }
 }

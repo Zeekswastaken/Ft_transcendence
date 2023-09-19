@@ -49,7 +49,14 @@ export const initBall = (ball: Ball) => {
     ball.x = 50;
     ball.y = 50;
     ball.radius = 3;
-    ball.speed = 2;
-    ball.vX = 0.1;
-    ball.vY = 0.1
+    ball.speed = 1;
+    ball.direction++;
+    if(ball.direction % 2 == 0) {
+      ball.vX = -0.5;
+      ball.vY = -0.5;
+    }
+    else {
+      ball.vX = 0.5;
+      ball.vY = 0.5;
+    }
 }

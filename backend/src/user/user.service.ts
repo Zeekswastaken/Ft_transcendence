@@ -23,7 +23,7 @@ export class UserService {
 
     }
     async save(Body:Partial<User> ){
-        await this.userRepo.save(Body);
+       return await this.userRepo.save(Body);
     }
     async findBySocket(socketId:string){
         return await this.userRepo.findOne({where:{Socket: socketId}});
@@ -33,10 +33,12 @@ export class UserService {
        console.log("id = " + id);
             await this.userRepo.update(id,Body);
     }
-    async findByName(username:any): Promise<User>
+    async findByName(username:any): Promise<User | null>
     {
        const user =  await this.userRepo.findOne({where :{ username: username},relations:['stats']});
-       return user;
+       if (user)
+        return user;
+        return null;
     }
     async findByEmail(email:any): Promise<User>
     {

@@ -12,9 +12,9 @@ export class Stats{
     wins:number;
     @Column({nullable:true})
     losses:number;
-    @Column({nullable:true})
+    @Column({type:"float",nullable:true})
     level:number;
-    @Column({nullable:true})
+    @Column({type:"float", nullable:true})
     winrate:Number;
     // @Column()
     // Achievement;

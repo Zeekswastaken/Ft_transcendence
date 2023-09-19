@@ -16,7 +16,7 @@ interface addContentProps {
 
 const sendMessage = ({ addContent }: addContentProps) => {
 
-  const {token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, setNotification, setChanelType} = useMyStore();
+  const {token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, setNotification, setChanelType, chanelType} = useMyStore();
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
 
@@ -35,23 +35,30 @@ const sendMessage = ({ addContent }: addContentProps) => {
   const handlSendMessage = (e) => {
     if (e.keyCode == 13 && e.shiftKey == false) {
       e.preventDefault();
+      // console.log(chanelType);
       if (value.trim() != "") {
         // const newContent: initialContent = {
         //   id: Math.floor(Math.random() * 1000000),
         //   text: value,
         // };
         // addContent(newContent);
-        const receiver = userData.user.username;
-        const channelid = userData.channelid;
-        socket?.emit("Duo",  {token, message:value, receiver, channelid});
+        if (!chanelType){
+
+          const receiver = userData.user.username;
+          const channelid = userData.channelid;
+          socket?.emit("Duo",  {token, message:value, receiver, channelid});
+          const message = {text:value, Created_at:"15:15" };
+          const obj = {user:currUserData, message, channelid};
+          setUpdateChat(obj);
+          socket?.emit("obj", {obj, receiver});
+        }
+        else{
+          const channelid = userData.id;
+          const message = {text:value, Created_at:"15:15" };
+          const obj = {user:currUserData, message, channelid};
+          socket?.emit("ToRoom", {Token:token, message:value, channelid});
+        }
         setValue("");
-        const message = {text:value, Created_at:"15:15" };
-        const obj = {user:currUserData, message, channelid};
-        // console.log(obj);
-        setUpdateChat(obj);
-        socket?.emit("obj", {obj, receiver});
-        // console.log("BEFOOOOOOOOOOOOOOOOOOOOOOR");
-        // console.log(getChat);
       }
     }
   };

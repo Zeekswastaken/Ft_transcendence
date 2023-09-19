@@ -269,6 +269,12 @@ export class fortytwo_Controller{
         console.log(Body);
         delete Body.cookie;
         delete Body.avatar_url;
+        if (await this.usersrvice.findByName(Body.username) != null)
+        {
+            console.log("Hello from here")
+            res.send("invalid")
+            return;
+        }
         await this.usersrvice.update(Body,Body.id as number);
         const user = await this.usersrvice.findById(Body.id);
         if (user)
