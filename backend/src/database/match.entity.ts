@@ -15,7 +15,7 @@ export class Match {
     @Column()
     player2Score: number;
     @Column()
-    result:String;
+    result:Number;
     @Column()
     Date:Date;
     @ManyToOne(() => Stats, (stats) => stats.matches)

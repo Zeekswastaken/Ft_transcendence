@@ -45,7 +45,7 @@ export class UserService {
     }
     async findById(id:any): Promise<User>
     {
-       const user =  await this.userRepo.findOne({where :{ id: id}});
+        const user =  await this.userRepo.findOne({where :{ id: id},relations:['stats','stats.matches']});
        return user;
     }
     async create(User:Partial<User>)
