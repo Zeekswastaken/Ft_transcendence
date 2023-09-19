@@ -68,6 +68,7 @@ export class ChatService {
     async checkDuo(channelid:Number):Promise<Boolean>
     {
         const channel = await this.channelRepository.findOne({where:{id: Equal(channelid)}});
+        console.log("-------->", channelid);
         if (!channel)
             throw new HttpException("Channel not found", HttpStatus.FORBIDDEN);
         if (channel.Type === "Duo")
@@ -77,6 +78,7 @@ export class ChatService {
 
     async getType(channelid : Number, userid : Number) : Promise<String>
     {
+        console.log("===CHANNELID====> ", channelid, " +++++userid++++++ ", userid);
         const membership =  await this.ChannelMRepo.findOne({where:{Userid:Equal(userid), Channelid: Equal(channelid)}});
         if (membership)
             return membership.Type;

@@ -5,6 +5,8 @@ import { Socket, Server } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
+import { BlockedService } from 'src/blocked/blocked.service';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -15,7 +17,7 @@ export class ChannelGateway {
   @WebSocketServer()
   server: Server;
   constructor(private readonly channelService: ChannelService,
-              private readonly jwtService: JwtService) {}
+              private readonly jwtService: JwtService, private readonly userService: UserService) {}
 
   
   @SubscribeMessage('JoinChannel')
@@ -140,10 +142,14 @@ export class ChannelGateway {
     }
   }
   @SubscribeMessage('getChannelsJoined')
-  async getting(@MessageBody() data: { userID: Number})
+  async getting(@ConnectedSocket() client: Socket,@MessageBody() data: { userID: Number})
   {
     try{
-      return await this.channelService.getChannelsJoined(data.userID)
+      const channels =  await this.channelService.getChannelsJoined(data.userID)
+      // const user = await this.userService.findById(data.userID);
+      console.log(data.userID , " CHANNLES JOINED ====== ", channels);
+
+      this.server.to(client.id).emit('getchannelsjoined', channels);
     }
   catch (error) {
     console.error('Error getting the channels joined by the user: ', error.message);
@@ -158,6 +164,7 @@ export class ChannelGateway {
       // data.userid = 2;
         const channels = await this.channelService.getAllChannels(data.userid);
         // console.log("=-=-=-=-=-=-=channels", channels);
+        console.log("CHANNELS JOINED =======> ", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {

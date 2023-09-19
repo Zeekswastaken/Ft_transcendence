@@ -5,7 +5,7 @@ import { useGroupStore } from './page';
 import { useSocketContext } from '../socket';
 import { getCookie } from 'cookies-next';
 import jwt,{ JwtPayload } from 'jsonwebtoken';
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 
 const CreatGroup = () =>
 {
@@ -54,26 +54,35 @@ const CreatGroup = () =>
     const {group, setGroup} = useGroupStore()
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        const formData = new FormData();
-        console.log("file = ", avatar.current)
-        console.log("name = ", channelName);
-        console.log("id = ", currentUserID)
-        console.log("type = ", privacy)
-        console.log("password = ", password)
-        formData.append('file', avatar.current as any)
-        // formData.append('avatar', avatar.current as any); // Assuming 'avatar' is the field name expected by FileInterceptor
-        formData.append('userid', currentUserID as any);
-        formData.append('name', channelName);
-        formData.append('type', privacy);
-        formData.append('password', password);
+        // const formData = new FormData();
+        // console.log("file = ", avatar.current)
+        // console.log("name = ", channelName);
+        // console.log("id = ", currentUserID)
+        // console.log("type = ", privacy)
+        // console.log("password = ", password)
+        // formData.append('file', avatar.current as any)
+        // // formData.append('avatar', avatar.current as any); // Assuming 'avatar' is the field name expected by FileInterceptor
+        // formData.append('userid', currentUserID as any);
+        // formData.append('name', channelName);
+        // formData.append('type', privacy);
+        // formData.append('password', password);
         
-        formData.forEach((value, key) => {
-            console.log(`${key}: ${value}`);
-        });
-        axios.post("http://localhost:3000/channel/createChannel",{data: formData})           // avatar_URL: path
-        .then(res => {console.log(res)}).catch(err => {console.log(err)})
+        // formData.forEach((value, key) => {
+        //     console.log(`${key}: ${value}`);
+        // });
+        axios.post("http://localhost:3000/channel/createChannel", {
+            userid: currentUserID,
+            name: channelName,
+            type: privacy,
+            password: password
+        })           // avatar_URL: path
+        .then(res => {
+            if (res.status == HttpStatusCode.Created)
+                // router.refresh();
+            setGroup(!group)
+                console.log("here refresh");
+        }).catch(err => {console.log(err)})
         // socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
-        setGroup(!group)
         // router.push("/channels");
     }
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {

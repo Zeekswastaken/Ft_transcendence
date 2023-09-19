@@ -34,7 +34,7 @@ export class ChannelMembership {
   @JoinColumn({ name: 'Channelid', referencedColumnName: 'id' })
   channel: Channel;
 
-  @ManyToOne(() => User, user => user.memberships)
+  @ManyToOne(() => User, user => user.memberships, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'Userid', referencedColumnName: 'id' })
   user: User;
 

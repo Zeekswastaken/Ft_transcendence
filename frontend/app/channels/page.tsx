@@ -61,13 +61,14 @@ const token = getCookie("accessToken");
   
   useEffect(() => {
     if (currentUserID)
-      socket?.emit('getChannels', {userid: currentUserID});
+      socket?.emit('getChannels', { userid: currentUserID });
     if (socket) {
+      console.log("********************************************************");
       socket.on('channels', (data: any) => {
         setGroupsInfo(data);
       });
     }
-  },[socket, group]);  
+  }, [currentUserID, socket, group]); 
   interface GroupInfoStatesProps {
     channel: {
       Name: string;

@@ -22,6 +22,8 @@ export class User{
     gender: String;
     @Column({default:true})
     privacy:Boolean;
+    @Column({default:false})
+    ischange:Boolean;
     @Column({nullable:true})
     PlayerSocket:String;
     @Column({nullable:true})
@@ -32,7 +34,7 @@ export class User{
     Bio:String;
     @Column({default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZqtgZ2eW2F2HvvFOq9Rs0kVWiWJL7pQbA5g&usqp=CAU"})
     avatar_url: String;
-    @OneToMany(() => ChannelMembership, membership => membership.user, /*{ cascade: true, onDelete: 'CASCADE' }*/)
+    @OneToMany(() => ChannelMembership, membership => membership.user)
     memberships: ChannelMembership[];
     @OneToMany(() => UserFriends, userFriends => userFriends.sender)
     friendsassender: UserFriends[];
@@ -61,7 +63,7 @@ export class User{
     twofactorenabled: boolean;
     @Column({nullable:true})
     qr_code_url: string;
-    @OneToMany(() => Notification, notification => notification.recipient, {cascade:true, onDelete: 'CASCADE'})
+    @OneToMany(() => Notification, notification => notification.recipient)
     receivednotifications: Notification[];
     user: Promise<String>;
 }

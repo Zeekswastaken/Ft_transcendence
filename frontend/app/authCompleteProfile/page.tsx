@@ -4,37 +4,60 @@ import React, { useEffect, useState, FormEvent, useRef } from "react"
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, {  ReactDatePickerProps } from 'react-datepicker';
 import axios from "axios";
-import { getCookie, setCookie } from 'cookies-next';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { useRouter } from "next/navigation";
+import jwt,{ JwtPayload } from "jsonwebtoken";
 
 
 const completProfile = () => {
-  const cookie = getCookie('accessToken');
+  // var cookie =  getCookie('accessToken');
+  // console.log("accessToken = ", cookie);
   const [birthDay, setBirthDay] = useState<Date |  null>(null);
   const [gender, setGender] = useState("");
+  const [username, setUsername] = useState("");
+  const [currentUserID, setCurrentUserID] = useState<Number>();
   // const [avatar_URL, setAvatar_URL] = useState<File>();
   const avatar = useRef<File | undefined>(undefined);
   const router = useRouter();
-
-
+  const token = getCookie("accessToken");
+  useEffect(() => {
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUserID(user.id)
+        deleteCookie("accessToken");
+      }
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  }, [])
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     // console.log("avatar_URL = " + avatar_URL);
     const avatar_url = new FormData();
     avatar_url.append("file", avatar.current as File);
-
-    e.preventDefault();
-    await axios.put("http://localhost:3000/auth/modify-data", {
     
+    if (username === "") {
+      alert("Please enter username");
+      return;
+    }
+    
+    e.preventDefault();
+    await axios.put("http://localhost:3000/auth/complete", {
+      
       birthDay: birthDay,
       gender: gender,
-      cookie: cookie,
+      id: currentUserID,
       avatar_url: avatar_url,
+      username: username,
+      ischange: true,
     }, {headers: {
       "Content-Type": "application/json"
     }}).then(res => {
+      deleteCookie("accessToken")
+      console.log(res);
       setCookie("accessToken", res.data);
       router.push("/home");
-    }).catch(err => {});
+    }).catch(err => {console.log(err)});
   }
 
 
@@ -78,7 +101,7 @@ const completProfile = () => {
             </div>
             <p className=" font-Heading tracking-wider mt-2">Upload Image</p>
             {/* <div className=" "> */}
-            <input placeholder="Username" className=" text-[#837F7F] font-normal bg-[#1C0D16] px-6 border-transparent focus:border-transparent focus:ring-0 focus:outline-primary-pink-300 p-4 mt-2 sm:mx-0 mx-10 rounded-xl" />
+            <input onChange={e => {setUsername(e.target.value)}} value={username} placeholder="Username" className=" text-[#837F7F] font-normal bg-[#1C0D16] px-6 border-transparent focus:border-transparent focus:ring-0 focus:outline-primary-pink-300 p-4 mt-2 sm:mx-0 mx-10 rounded-xl" />
               <DatePicker placeholderText="Birth Date" className=" text-gray-400 font-normal bg-[#1C0D16] w-full px-6 border-transparent focus:border-transparent focus:ring-0 focus:outline-primary-pink-300  placeholder:text-[#837F7F] p-4  mt-2 sm:mx-0 mx-10 rounded-xl" selected={birthDay} dateFormat="dd/MM/yyyy" onChange={handleDateChange} />
               {/* <p className=" tex absolute">DD / MM / YYYY</p> */}
             {/* </div> */}

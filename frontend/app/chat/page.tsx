@@ -35,22 +35,29 @@ const page = () => {
   }, [])
   const {socket} = useSocketContext();
   const [userFriends, setUserFriends] = useState<any>([]);
+  const [userGroups, setUserGroups] = useState<any>([]);
 
   useEffect(() => {
     socket?.emit("getFriendsWithChannels", {user: currentUsername});
+    socket?.emit("getChannelsJoined", {userID: currentUserID});
   }, [currentUserID])
   useEffect(() => {
     socket?.on("getfriendswithchannels", (data:any) => {
       setUserFriends(data);
     })
-  },[userFriends, currentUsername])
+    socket?.on("getchannelsjoined", (data:any) => {
+      setUserGroups(data);
+    })
+  },[currentUsername])
   // socket?.emit("Duo", {token:token,name:'Oussama'});
-
+  // console.log("group goes heer");
+  // console.log(userGroups);
+  // console.log("group goes heer");
 
   return (
     <div className=" w-screen h-screen mx-4 max-sm:mx-0 bg-opacity-80 shadow-md">
     <div className=" mt-[100px] h-[85%] flex gap-4 justify-center my-8 mx-20 max-xl:mx-4 max-sm:mx-0 bg-opacity-80 shadow-md rounded-3xl place-items-center"> {/* chat and friends */}
-      {userFriends.length ? <ChatList userFriends={userFriends}/> : <EmptyChatList/>}
+      <ChatList userFriends={userFriends} userGroups={userGroups}/>
       {myBoolean ? <ChatContent /> : <EmptyChatContent />}
     </div>
   </div>

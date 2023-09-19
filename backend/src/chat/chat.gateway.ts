@@ -9,10 +9,11 @@ import { UserService } from 'src/user/user.service';
 import { channel } from 'diagnostics_channel';
 import { ChannelService } from 'src/channel/channel.service';
 import { Console } from 'console';
+import { BlockedService } from 'src/blocked/blocked.service';
 @Injectable()
 @WebSocketGateway()
 export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  constructor (private readonly chatservice:ChatService, private readonly jwt:JWToken,private readonly userservice:UserService,private readonly ChannelService:ChannelService ){}
+  constructor (private readonly chatservice:ChatService, private readonly jwt:JWToken,private readonly userservice:UserService,private readonly ChannelService:ChannelService, private readonly blockedService: BlockedService ){}
   users = new Map<string, string>();
    @WebSocketServer()
    server: Server;
@@ -133,8 +134,29 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
         this.server.to(client.id).emit("messages", messages);
       }
     }
+    @SubscribeMessage('getGroupMessages')
+    async getGroupMessage(client: Socket, obj: {token:String, channelid:Number}) {
+      if (await this.jwt.verify(obj.token)){
+        const sender = await this.jwt.decoded(obj.token)
+          const messages = await this.chatservice.getmessages(obj.channelid);
+          // console.log("===============>SOCKET in the chat ", sender.Socket);
+          const messagePromises = messages.map((message) =>
+          this.blockedService.isBlocked(sender.id, message.user.id)
+        );
+        
+        const isBlockedResults = await Promise.all(messagePromises);
+        
+        const messagesWithBlocked = messages.map((message, index) => ({
+          ...message,
+          isBlocked: isBlockedResults[index],
+        }));
+          this.server.to(client.id).emit("groupmessages", messagesWithBlocked);
+        }
+      }
+
     @SubscribeMessage('isDuo')
       async check(client: Socket, obj: {channelid:Number, userid:Number}){
+        
         const bool = await this.chatservice.checkDuo(obj.channelid);
         let type;
         if (!bool)
