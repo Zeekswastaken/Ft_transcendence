@@ -7,13 +7,13 @@ export class Stats{
     @PrimaryGeneratedColumn()
     id: Number;
     @Column({nullable:true})
-    matches_played:Number;
+    matches_played:number;
     @Column({nullable:true})
-    wins:Number;
+    wins:number;
     @Column({nullable:true})
-    losses:Number;
+    losses:number;
     @Column({nullable:true})
-    level:Number;
+    level:number;
     @Column({nullable:true})
     winrate:Number;
     // @Column()

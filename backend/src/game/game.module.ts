@@ -8,10 +8,13 @@ import { GameGateway } from './game.gateway';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { UserModule } from 'src/user/user.module';
+import { GameService } from './game.service';
+import { Stats } from 'src/database/stats.entity';
+import { Match } from 'src/database/match.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Channel,Message,ChannelMembership]),UserModule],
+    imports:[TypeOrmModule.forFeature([Match,Stats]),UserModule],
     controllers:[],
-    providers:[UserService,GameGateway,JWToken,JwtService]
+    providers:[UserService,GameGateway,JWToken,JwtService, GameService,UserService]
 })
 export class GameModule {}
