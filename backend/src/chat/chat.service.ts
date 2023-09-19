@@ -41,7 +41,7 @@ export class ChatService {
             throw new HttpException("The user isn't in the channel", HttpStatus.FORBIDDEN);
         const message = await this.msg.save(text);
         membership.messages.push(message);
-        await this.ChannelMRepo.save(membership);
+        return (await this.ChannelMRepo.save(membership))
     }
 
     async getmessages(channelid: Number) : Promise <{message: Message; user:User}[]>
@@ -78,6 +78,7 @@ export class ChatService {
 
     async getType(channelid : Number, userid : Number) : Promise<String>
     {
+        console.log("===CHANNELID====> ", channelid, " +++++userid++++++ ", userid);
         const membership =  await this.ChannelMRepo.findOne({where:{Userid:Equal(userid), Channelid: Equal(channelid)}});
         if (membership)
             return membership.Type;

@@ -149,6 +149,7 @@ export class FriendsGateway {
       // console.log("-------> user ", data.userID); 
       // console.log("-------> recipient ", data.recipientID);
       // console.log("HERE I AM");
+      console.log("-------> HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEH ", data.userID);
       await this.friendsService.removeFriendship(data.userID, data.recipientID);
       const message = "Unfriended successfully";
       const refusing = await this.userService.findById(data.recipientID);

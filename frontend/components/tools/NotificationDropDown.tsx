@@ -65,7 +65,7 @@ const  NotificationDropDown = () => {
     socket?.emit('getFriendNotifs', {userID: currentUserID})
     if (isClicked)
       setNewNotif(false)
-  }, [newNotif, socket])
+  }, [newNotif, socket, currentUserID, isClicked])
 
   // console.log(notification)
   const handleDecline = (idx:number) => {

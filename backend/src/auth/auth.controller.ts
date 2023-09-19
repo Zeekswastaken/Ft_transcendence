@@ -20,7 +20,7 @@ export class AuthController {
 
     @Put('modify-data')
     async modyfiy(@Body() Body,@Res() res){
-        console.log(Body);
+        console.log("Body*******************************\n",Body);
         const decode = await this.jwtservice.decoded(Body.cookie);
         delete Body.cookie;
         delete Body.avatar_url;
@@ -124,11 +124,24 @@ export class googleController{
             //console.log('error');
             const usertoken = await this.userservice.findByEmail(req.user.email);
             const cookie_token = await this.authservice.generateToken_2(usertoken);
+            if (usertoken.ischange == false)
+            {
+                res.cookie('accessToken', cookie_token, {
+                    // httpOnly: true
+                  });
+                res.redirect("http://localhost:3001/authCompleteProfile");
+                return;
+            }
             res.cookie('accessToken', cookie_token, {
                // httpOnly: true,
               });
-              
-              res.redirect("http://localhost:3001/");
+            if (usertoken.twofactorenabled == true)
+            {
+                res.cookie('accessToken', cookie_token);
+                res.redirect("http://localhost:3001/login/2fa");
+                return;
+            }
+            res.redirect("http://localhost:3001/");
             // console.log('coockie token = '+ cookie_token + "\n\n\n\n");
 
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
@@ -157,18 +170,19 @@ export class twoFactAuth_Controller{
   
     @Post('verify')
    async verifyToken(@Body() body: {QRCode: string, currentUserID: number }, @Res() res) {
-    // console.log("BODY.TOKEN -==== ", body.QRCode, " BODY.USERNAME ==== ", body.currentUserID)
+        // console.log("BODY.TOKEN -==== ", body.QRCode, " BODY.USERNAME ==== ", body.currentUserID)
       const isValid = await this.authservice.verifyToken(body.QRCode, body.currentUserID);
       if (isValid.isValid)
       {
-        // console.log("----------------------<", isValid.user);
+        console.log("----------------------<", isValid.user);
         const cookie_token = await this.authservice.generateToken_2(isValid.user);
             const user2 = await this.jwtservice.decoded(cookie_token);
+            // console.log("***************************************************>\n",user2);
             res.send({message:'success',token:cookie_token,user:user2,isValid:isValid.isValid});
       }
-    //   console.log("isvalid ", isValid)
+      console.log("isvalid ", isValid)
       return { isValid };
-    }JwtService
+    }
 
     @Post('toggletwofact')
     async Toggle(@Body() body: {currentUserID: Number }) {
@@ -222,6 +236,14 @@ export class fortytwo_Controller{
                     // httpOnly: true
                   });
                 res.redirect("http://localhost:3001/authCompleteProfile");
+                return;
+            }
+            if (usertoken.twofactorenabled == true)
+            {
+                res.cookie('accessToken', cookie_token, {
+                    // httpOnly: true
+                  });
+                res.redirect("http://localhost:3001/login/2fa");
                 return;
             }
             // console.log(usertoken);

@@ -26,7 +26,6 @@ import { ChatService } from './chat/chat.service';
 import { ChatModule } from './chat/chat.module';
 import { ProfileModule } from './profile/profile.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-// import { GameGateway } from './game/game.gateway';
 import { GameModule } from './game/game.module';
 import typeorm from './config/typeorm';
 import { BlockedModule } from './blocked/blocked.module';

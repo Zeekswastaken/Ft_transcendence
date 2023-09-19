@@ -155,9 +155,10 @@ export default function RootLayout({
   }
   const handleCancel = () => {
       socket?.emit("Unfriend", { userID: currentUserID, recipientID: userData?.id });
+      console.log("cancel");
       setIsPending(false); // Clear the pending status
       setIsClicked(!isClicked);
-    
+      router.refresh();
   };
 
   const handleAddFriend = () => {
@@ -182,7 +183,8 @@ export default function RootLayout({
   const handleUnfriend = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     socket?.emit("Unfriend", {userID: currentUserID, recipientID: Data?.user?.id});
-    router.push(`/users/${Data?.user.username}/`)
+    // router.push(`/users/${Data?.user.username}/`)
+    router.refresh();
   }
 
   const handleUnblock = (e: MouseEvent<HTMLButtonElement>) => {

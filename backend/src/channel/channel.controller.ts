@@ -17,6 +17,7 @@ export class ChannelController {
           // const avatar = await this.uploadController.uploadFile(file)
           // const { filename, originalName } = avatar;
           const channel = await this.channelService.createChannel(data, data.userid);
+          
           // console.log("=====> ", channel);
         if (channel)
         {

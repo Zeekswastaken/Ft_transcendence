@@ -78,15 +78,17 @@ const CreatGroup = () =>
         })           // avatar_URL: path
         .then(res => {
             if (res.status == HttpStatusCode.Created)
-                router.refresh()
+                // router.refresh();
+            setGroup(!group)
+                console.log("here refresh");
         }).catch(err => {console.log(err)})
         // socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
-        setGroup(!group)
         // router.push("/channels");
     }
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
         setGroup(!group);
     }
+Cancel Request
 
     return (
         <div className='rounded-xl bg-[#670647]/[0.4] items-center place-content-center mt-20 px-5 sm:px-[3rem] py-[3rem] mb-[100px]'>

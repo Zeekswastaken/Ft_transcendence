@@ -22,6 +22,7 @@ export class AuthService {
     async generateSecret(userid:Number): Promise<User> {
         const user = await this.userservice.findById(userid);
         user.twofactorsecret = otplib.authenticator.generateSecret();
+        user.twofactorenabled = true;
         await this.userservice.save(user);
         return (user);
     }
@@ -29,7 +30,7 @@ export class AuthService {
     async generateQrCodeUri(userid: Number): Promise<string> {
         // console.log("******************************************", userid);
         let user = await this.userservice.findById(userid);
-        // console.log("=----> ", user);
+         console.log("=USER IN QR CODE----> ", user);
         user = await this.generateSecret(user.id); // Await the secret generation
         // console.log("SECRET ==== ", user.twofactorsecret);
         const otpauthURL = otplib.authenticator.keyuri(
@@ -38,15 +39,15 @@ export class AuthService {
             user.twofactorsecret
         );
         const qrCodeDataURL = await qrcode.toDataURL(otpauthURL);
-        user.qr_code_url = qrCodeDataURL;
-        await this.userservice.save(user);
+        // user.qr_code_url = qrCodeDataURL;
+        // await this.userservice.save(user);
         return qrCodeDataURL;
     }
 
     async verifyToken(token: string, userid: number): Promise<any> {
         const user = await this.userservice.findById(userid);
         // console.log("------------");
-        // console.log("HERE ======> ", user.twofactorsecret);
+        // console.log("HERE ======> ", user.twofactorenabled);
         // console.log("*****", user.twofactorsecret, "********");
         // console.log("*****+", token,"********");
         const secret = user.twofactorsecret;

@@ -16,7 +16,7 @@ interface addContentProps {
 
 const sendMessage = ({ addContent }: addContentProps) => {
 
-  const {token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat} = useMyStore();
+  const {token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, setNotification, setChanelType} = useMyStore();
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
 
@@ -66,8 +66,8 @@ const sendMessage = ({ addContent }: addContentProps) => {
   //   console.log("end");
   // },[])
   useEffect(() => {
-    socket?.on( "ToDuo", (data:string) => {
-      setMessage(data);
+    socket?.on( "ToDuo", (data:any) => {
+      setNotification(data);
     })
   },[])
 
