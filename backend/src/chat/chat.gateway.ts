@@ -78,8 +78,14 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   @SubscribeMessage('ToRoom')
   async ToRoom(client:Socket,payload:{Token:String,message:String,channelid:Number})
   {
-    // await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, user, recuser);
-    this.server.to(payload.channelid.toString()).emit("MessageToRoom",payload.message);
+    if (await this.jwt.verify(payload.Token)){
+      // const recuser = await this.userservice.findByName(payload.receiver);
+      const sender = await this.jwt.decoded(payload.Token)
+    const message = await this.chatservice.saveMsg({text:payload.message as string}, payload.channelid, sender);
+    this.server.to(payload.channelid.toString()).emit("MessageToRoom",message);
+    }
+    else
+      return "Invalid Token";
     //DO THE SAME AS THE DUO ONE
   }
   @SubscribeMessage('JoinRoom')
@@ -117,7 +123,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
      if (await this.jwt.verify(obj.token)){
       const recuser = await this.userservice.findByName(obj.receiver);
       const sender = await this.jwt.decoded(obj.token)
-        client.to(recuser.Socket).emit('ToDuo',obj.message  as string);
+        client.to(recuser.Socket).emit('ToDuo',{message: obj.message  as string, id:obj.channelid});
         await this.chatservice.saveMsg({text:obj.message as string},obj.channelid, sender);
          }
       else

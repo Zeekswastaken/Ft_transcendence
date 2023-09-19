@@ -41,7 +41,7 @@ export class ChatService {
             throw new HttpException("The user isn't in the channel", HttpStatus.FORBIDDEN);
         const message = await this.msg.save(text);
         membership.messages.push(message);
-        await this.ChannelMRepo.save(membership);
+        return (await this.ChannelMRepo.save(membership))
     }
 
     async getmessages(channelid: Number) : Promise <{message: Message; user:User}[]>
