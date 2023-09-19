@@ -82,7 +82,7 @@ async deleteNotif(recipient: User, sender: User, Type: string) {
     });
 
   if (!notif)
-    throw new HttpException("No notification to delete", HttpStatus.FORBIDDEN);
+    return ;
   
   // console.log("ZEZEZEEZEZEZEEZEZEE");
 

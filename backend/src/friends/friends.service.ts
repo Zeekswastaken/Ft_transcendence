@@ -130,8 +130,12 @@ async refuseRequest(userid:Number, recipientid:Number){
 
     }
     // console.log("pepepeppepee");
-    await this.channelService.findAndDelete(friendship.id);
-    await this.userFriendsRepository.remove(friendship);
+    if (friendship.status === "accepted")
+    {
+      console.log("CHANNNENEEEEEEEL DELTETETETETETED");
+      await this.channelService.findAndDelete(friendship.channelid);
+    }
+      await this.userFriendsRepository.remove(friendship);
       // console.log("leleleleleel");
       await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
     }
