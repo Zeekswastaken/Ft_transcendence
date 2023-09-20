@@ -30,6 +30,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
     if(ball.y + ball.radius > 100 || ball.y - ball.radius < 0){
+      if(ball.y + ball.radius > 100) {
+        ball.y = 100 - ball.radius;
+      } else {
+        ball.y = ball.radius;
+      }
       ball.vY = -ball.vY;
     }
     let selectPlayer = ball.x < 100 / 2 ? player1 : player2;

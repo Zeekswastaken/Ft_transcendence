@@ -40,6 +40,11 @@ export default class Ball {
         this.y += this.vY * this.speed;
         var rad = radiansRange(45);
         if(this.y + this.radius / 2 > p5.height || this.y - this.radius / 2 < 0) {
+            if(this.y + this.radius / 2 > p5.height) {
+                this.y = p5.height - this.radius / 2;
+            } else {
+                this.y = this.radius;
+            }
             this.vY = -this.vY;
         }
         let selectPlayer = this.x < p5.width / 2 ? player : computer;
@@ -78,8 +83,9 @@ export default class Ball {
         if((player.score == 7 && computer.score == 0 ) || 
             (player.score == 0 && computer.score == 7) || 
             (player.score == 9 && computer.score <= 2) || 
-            (player.score <= 2 && computer.score <= 9) || 
+            (player.score <= 2 && computer.score == 9) || 
             player.score == 12 || computer.score == 12 ) {
+                console.log("Hello from Game Over");
             socket.emit("gameOver", {player: player.score, bot: computer.score});
         }
     }
@@ -90,11 +96,11 @@ export default class Ball {
         this.y = p5.height / 2;
         this.speed = 1;
         this.vX = 5;
+        this.direction++;
         if(!(this.direction % 2)) {
             this.vX = -this.vX;
         }
         this.vY = -5;
-        this.direction++;
     }
 
     collision(player: Paddel)
