@@ -74,7 +74,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       (player2.score == 0 && player1.score == 7)   || 
       (player2.score == 9 && player1.score <= 2)   || 
       (player2.score <= 2 && player1.score == 9)   || 
-       player2.score == 1 || player1.score == 1 ) {
+       player2.score == 12 || player1.score == 12 ) {
         this.server.to(player1.data.PlayerSocket as string).emit("gameOver");
         this.server.to(player2.data.PlayerSocket as string).emit("gameOver");
         if(player1.score > player2.score) {
@@ -94,7 +94,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (await this.jwt.verify(obj.token))
     {
       const user = await this.jwt.decoded(obj.token);
+      console.log("==============> Hello From SetSocket =======> ", user.username);
+
       user.PlayerSocket = client.id;
+      delete user.Socket;
       await this.userservice.update(user,user.id as number);
     }
   }
@@ -120,21 +123,31 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('connectPlayers')
-  async connectPlayers(obj:{p1: User, p2: User}) {
-    const player1: User = await this.userservice.findByName(obj.p1.username);
-    const player2: User = await this.userservice.findByName(obj.p2.username);
+  async connectPlayers(obj:{p1: string, p2: string}) {
     
-    const initGameData = { 
-      player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
-      player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
-      ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1}
-    };
-    const id: string = player1.username.toString() + player2.username.toString();
-    this.users.set(player1.PlayerSocket as string, id);
-    this.users.set(player2.PlayerSocket as string, id);
-    this.GamesData.set(id, initGameData);
-    this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
-    this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
+    if(obj.p1 !== undefined && obj.p2 !== undefined) {
+      // console.log("---------------+++++++++++++++ ", obj.p1 , obj.p2, "--------------++++++++++");
+      let player1: User = await this.userservice.findByName(obj.p1);
+      let player2: User = await this.userservice.findByName(obj.p2);
+      while(player1.PlayerSocket == null || player2.PlayerSocket == null)
+      {
+        player1 = await this.userservice.findByName(obj.p1);
+        player2 = await this.userservice.findByName(obj.p2);
+        console.log("---------------+++++++++++++++ ", player1.PlayerSocket , player2.PlayerSocket, "--------------++++++++++");
+      }
+      
+      const initGameData = { 
+        player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
+        player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
+        ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1}
+      };
+      const id: string = player1.username.toString() + player2.username.toString();
+      this.users.set(player1.PlayerSocket as string, id);
+      this.users.set(player2.PlayerSocket as string, id);
+      this.GamesData.set(id, initGameData);
+      this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
+      this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
+    }
   }
 
   @SubscribeMessage('getBallAndP2Positions')
@@ -178,38 +191,44 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
     }
   }
-  ismatching(username:string) {
-    for(let i = 0 ; i < this.ready.length; i++)
-    {
-      if(this.ready[i].username.toString() === username) {
-        return (false);
-      }
-    }
-    return true;
-  }
 
-  changeScore
-  @SubscribeMessage('Ready')
-  async readyToPlay(client: Socket, payload :{token:string}) {
-    let user = await this.jwt.decoded(payload.token);
-    if(this.ismatching(user.username.toString())){
-      this.ready.push(user);
-    }
-    if (this.ready.length > 1 ){
-      this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
-      this.ready.shift();
-      this.ready.shift();
-    }
-  }
+  // ismatching(username:string) {
+  //   for(let i = 0 ; i < this.ready.length; i++)
+  //   {
+  //     if(this.ready[i].username.toString() === username) {
+  //       return (false);
+  //     }
+  //   }
+  //   return true;
+  // }
+
+  // changeScore
+  // @SubscribeMessage('Ready')
+  // async readyToPlay(client: Socket, payload :{token:string}) {
+  //   let user = await this.jwt.decoded(payload.token);
+  //   if(this.ismatching(user.username.toString())){
+  //     this.ready.push(user);
+  //   }
+  //   if (this.ready.length > 1 ){
+  //     this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
+  //     this.ready.shift();
+  //     this.ready.shift();
+  //   }
+  // }
 
   @SubscribeMessage('oneVsBotChangeScore')
   async oneVsBot(client: Socket, obj:{player: number, bot: number}) {
     client.emit("changeScore", obj.player, obj.bot);
-  }
-
-  @SubscribeMessage('gameOver')
-  async gameOver(client: Socket, obj:{player: number, bot: number}) {
-    client.emit("gameOver", obj.player, obj.bot);
+    if((obj.player == 7 && obj.bot == 0 ) || 
+        (obj.player == 0 && obj.bot == 7) || 
+        (obj.player == 9 && obj.bot <= 2) || 
+        (obj.player <= 2 && obj.bot == 9) || 
+        obj.player == 12 || obj.bot == 12 ) {
+          client.emit("gameOver", obj.player, obj.bot);
+          if(obj.player > obj.bot) {
+            client.emit("celebrate");
+          }
+    }
   }
 
   @SubscribeMessage('SendInviteNotif')
@@ -234,14 +253,26 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('AddtoQueue')
   async add(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
   {
+    console.log("========================================", data.userid)
+    if (data.userid != 0) {
       const queue = await this.gameservice.addToQueue(data.userid);
       // console.log("*********** ", notif);
       console.log("----------->QEUEUUEUEEUEUE ", queue);
       this.server.to(client.id).emit("queue", queue);
       if (queue.receiver != null)
+      {
+        console.log("sendeeeeerrrrrrr================== ", queue.sender);
+        console.log("RECEIVER======================= ", queue.receiver);
+
+        this.server.to(queue.sender.Socket).emit("queue", queue);
+        await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
         await this.gameservice.DeleteQueue(queue.id);
-      const message = "The gameinvite has been sent";
+      }
+      else 
+        console.log("--------------------------------->",queue.receiver);
+        const message = "The gameinvite has been sent";
       // this.server.to(recipient.Socket).emit('message', message);
+    }
   }
 
   @SubscribeMessage('RemoveQueue')

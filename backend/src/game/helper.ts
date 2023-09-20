@@ -42,7 +42,7 @@ export const  collision = (ball: Ball, player: Player) => {
     p.right =  97.5 + 2;
   }
 
-  return (b.right > p.left && b.bottom > p.top && b.left < p.right && b.top < p.bottom );
+  return (b.right >= p.left && b.bottom >= p.top && b.left <= p.right && b.top <= p.bottom );
 }
 
 export const initBall = (ball: Ball) => {

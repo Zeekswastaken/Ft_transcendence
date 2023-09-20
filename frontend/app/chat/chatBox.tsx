@@ -13,26 +13,27 @@ function chatBox()
 {
   const {socket} = useSocketContext();
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-  const {message, getChat, setGetChat, updateChat, setUpdateChat, tempo, setTempo, userData, chanelType} = useMyStore();
+  const {message, getChat, setGetChat, updateChat, setUpdateChat, tempo, setTempo, userData, currUserData, chanelType} = useMyStore();
   useEffect(()=>{
       socket?.on("OBJ", (data:any) => {
         console.log("OBJ USE EFFECT");
         console.log(data);
           setUpdateChat(data);
         });
-        socket?.on("MessageToRoom", (data:any) => {
-            console.log("heeer");
-            console.log(data);
-            setUpdateChat(data);
-          });
+        console.log(currUserData , updateChat);
     }, [])
-
+    if(currUserData && Object.keys(currUserData).length){
+    socket?.on("MessageToRoom", (data:any) => {
+            setUpdateChat(data);
+        });
+    }
     useEffect(()=> {
         if (userData && updateChat && !chanelType){
             if (userData.channelid === updateChat.channelid) {
                 setTempo([...tempo, updateChat]);
             }
         }
+        // if (currUserData)
         if (userData && updateChat && chanelType)
         {
             if (userData.id === updateChat.channelid) {

@@ -9,6 +9,7 @@ import { BallCoordinates, User } from "../GameComponents/gameInterfaces";
 import { useRouter } from 'next/navigation';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import Confetti from 'react-confetti'
+import { useGameSocketStore } from '@/app/queue/page';
 
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
@@ -27,6 +28,8 @@ const page = () => {
         router.push("/home");
     }
 
+    // const {gameSocket, setGamesocket} = useGameSocketStore()
+
     const { width, height } = useWindowSize()
     const token = getCookie("accessToken");
 
@@ -42,8 +45,12 @@ const page = () => {
 
     useEffect(() => {
         socket?.on('getGameData', (op: User, gameId: string) => {
-            setOpponent(op);
+            console.log("hello From GetGame Data", op, gameId);
+            console.log("gameId = ", gameId);
+            console.log("opponent = ", op);
             setGameId(gameId);
+            setOpponent(op);
+
         });
         socket?.on('getBallOpponentPostion', (pos: number, ball: BallCoordinates) => {
             setOpponentPos(pos);
@@ -65,10 +72,10 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
-        setSocket(newSocket);
-        newSocket.emit('setSocket', {token: token});
-        newSocket.emit("Ready", {token: token});
+        const newsocket = io('http://localhost:3000');
+        setSocket(newsocket);
+        console.log("Hello I set the socket", newsocket);
+        newsocket.emit("setSocket", {token: token});
         return () => {
             socket?.disconnect();
         }

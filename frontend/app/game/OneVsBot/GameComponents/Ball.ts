@@ -70,6 +70,7 @@ export default class Ball {
 
     isOut(p5: P5CanvasInstance, socket: Socket, player: Paddel, computer: Paddel)
     {
+        
         if(this.x - this.radius < 0) {
             computer.score++;
             socket.emit("oneVsBotChangeScore", {player: player.score, bot: computer.score});
@@ -78,15 +79,6 @@ export default class Ball {
             player.score++;
             socket.emit("oneVsBotChangeScore", {player: player.score, bot: computer.score});
             this.reset(p5);
-        }
-
-        if((player.score == 7 && computer.score == 0 ) || 
-            (player.score == 0 && computer.score == 7) || 
-            (player.score == 9 && computer.score <= 2) || 
-            (player.score <= 2 && computer.score == 9) || 
-            player.score == 12 || computer.score == 12 ) {
-                console.log("Hello from Game Over");
-            socket.emit("gameOver", {player: player.score, bot: computer.score});
         }
     }
 
@@ -126,9 +118,9 @@ export default class Ball {
         
         p.top = player.pos.y;
         p.bottom = player.pos.y + player.height;
-        p.left = player.pos.x;
-        p.right = player.pos.x + player.width;
+        p.left = player.pos.x + player.gap;
+        p.right = player.pos.x + player.width - player.gap;
         
-        return (b.right > p.left && b.bottom > p.top && b.left < p.right && b.top < p.bottom );
+        return (b.right >= p.left && b.bottom >= p.top && b.left <= p.right && b.top <= p.bottom );
     }
 }
