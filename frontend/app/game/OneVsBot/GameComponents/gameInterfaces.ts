@@ -51,3 +51,10 @@ export interface PlayerBoundary {
     left: number;
     right: number;
 }
+
+export interface Result {
+    user: User;
+    bot: User;
+    playerScore: number;
+    bootScore: number;
+}

@@ -8,7 +8,7 @@ export class GameInvite {
     @JoinColumn({ name: "Sender_Id" })
     sender: User;
   
-    @ManyToOne(() => User, { eager: true })
+    @ManyToOne(() => User, { eager: true, nullable: true })
     @JoinColumn({ name: "Receiver_Id" })
     receiver: User;
 };

@@ -481,12 +481,14 @@ console.log("==================================================");
         await this.channelRepository.remove(channel);
     }
 
-    async getChannelMembers(channelid:Number) : Promise<ChannelMembership[]> 
+    async getChannelMembers(channelid:Number) : Promise<{owner:ChannelMembership,members:ChannelMembership[]}> 
     {
-        const memberships = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid)}, relations:['user']});
+        const memberships = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid), Type:Not('owner')}, relations:['user']});
         if (!memberships)
             throw new HttpException("Error getting the members", HttpStatus.FORBIDDEN);
         // console.log("---------->MEMBERSHIPS==== ", memberships)
-        return memberships
+        const owner = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelid), Type:'owner'}, relations:['user']})
+        const members = {owner:owner, members:memberships};
+        return members
     }
 }

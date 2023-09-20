@@ -37,6 +37,29 @@ export class NotificationsService {
         return (notifs);
     }
     
+    async createGameNotification(userID:Number, recipientID:Number)
+    {
+        const initiator = await this.userRepository.findOne({where: { id: Equal(userID)}});
+        const recipient = await this.userRepository.findOne({where: { id: Equal(recipientID)}, relations:['receivednotifications']});
+        if (!initiator || !recipient)
+          throw new HttpException("User or Recipient not found",HttpStatus.FORBIDDEN);
+        // const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userID), receiver: Equal(recipientID)},{sender: Equal(recipientID), receiver: Equal(userID)}]});
+        // if(!friendship)
+        //     throw new HttpException("Friend request not found", HttpStatus.FORBIDDEN);
+        const notifs = new Notification();
+        notifs.sender = initiator.id;
+        notifs.recipient = recipient.id;
+        notifs.type = "Game invite";
+        notifs.message = `${initiator.username} is challenging you to a game`;
+        notifs.isRead = false;
+        notifs.createdAt = new Date();
+        recipient.receivednotifications.push(notifs);
+        await this.userRepository.save(recipient);
+        await this.notificationsRepository.save(notifs);
+        // console.log("RECIPIENT ======== ", recipient.receivednotifications);
+        return (notifs);
+    }
+
     async getFriendNotifs(userID:Number): Promise<Notification[]>
     {
       console.log("-------------->", userID);

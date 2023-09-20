@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket,OnGatewayDisconnect,MessageBody ,OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JWToken } from 'src/auth/jwt.service';
 import { User } from 'src/database/user.entity';
@@ -7,6 +7,7 @@ import { UserService } from 'src/user/user.service';
 import { Ball, Player, GameData, BallCoordinates } from './gameInterfaces';
 import { collision, radiansRange, mapRange, initBall } from './helper';
 import { GameService } from './game.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 @WebSocketGateway()
@@ -16,7 +17,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   ready : Array<User> = new Array();
   @WebSocketServer()
   server: Server;
-  constructor (private readonly jwt:JWToken,private readonly userservice:UserService, private readonly gameservice:GameService){}
+  constructor (private readonly jwt:JWToken,private readonly userservice:UserService, private readonly gameservice:GameService, private readonly notifService:NotificationsService){}
   async handleConnection(client: Socket) {
   }
 
@@ -29,7 +30,12 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     ball.x += ball.vX * ball.speed;
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
-    if(ball.y + ball.radius > 100 || ball.y - ball.radius < 0){
+    if(ball.y + ball.radius >= 100 || ball.y - ball.radius <= 0){
+      if(ball.y + ball.radius >= 100) {
+        ball.y = 100 - ball.radius;
+      } else {
+        ball.y = ball.radius;
+      }
       ball.vY = -ball.vY;
     }
     let selectPlayer = ball.x < 100 / 2 ? player1 : player2;
@@ -68,7 +74,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       (player2.score == 0 && player1.score == 7)   || 
       (player2.score == 9 && player1.score <= 2)   || 
       (player2.score <= 2 && player1.score == 9)   || 
-       player2.score == 1 || player1.score == 1 ) {
+       player2.score == 12 || player1.score == 12 ) {
         this.server.to(player1.data.PlayerSocket as string).emit("gameOver");
         this.server.to(player2.data.PlayerSocket as string).emit("gameOver");
         if(player1.score > player2.score) {
@@ -172,37 +178,88 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
     }
   }
-  ismatching(username:string) {
-    for(let i = 0 ; i < this.ready.length; i++)
-    {
-      if(this.ready[i].username.toString() === username) {
-        return (false);
-      }
-    }
-    return true;
-  }
 
-  changeScore
-  @SubscribeMessage('Ready')
-  async readyToPlay(client: Socket, payload :{token:string}) {
-    let user = await this.jwt.decoded(payload.token);
-    if(this.ismatching(user.username.toString())){
-      this.ready.push(user);
-    }
-    if (this.ready.length > 1 ){
-      this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
-      this.ready.shift();
-      this.ready.shift();
-    }
-  }
+  // ismatching(username:string) {
+  //   for(let i = 0 ; i < this.ready.length; i++)
+  //   {
+  //     if(this.ready[i].username.toString() === username) {
+  //       return (false);
+  //     }
+  //   }
+  //   return true;
+  // }
+
+  // changeScore
+  // @SubscribeMessage('Ready')
+  // async readyToPlay(client: Socket, payload :{token:string}) {
+  //   let user = await this.jwt.decoded(payload.token);
+  //   if(this.ismatching(user.username.toString())){
+  //     this.ready.push(user);
+  //   }
+  //   if (this.ready.length > 1 ){
+  //     this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
+  //     this.ready.shift();
+  //     this.ready.shift();
+  //   }
+  // }
 
   @SubscribeMessage('oneVsBotChangeScore')
   async oneVsBot(client: Socket, obj:{player: number, bot: number}) {
     client.emit("changeScore", obj.player, obj.bot);
+    if((obj.player == 7 && obj.bot == 0 ) || 
+        (obj.player == 0 && obj.bot == 7) || 
+        (obj.player == 9 && obj.bot <= 2) || 
+        (obj.player <= 2 && obj.bot == 9) || 
+        obj.player == 12 || obj.bot == 12 ) {
+          client.emit("gameOver", obj.player, obj.bot);
+          if(obj.player > obj.bot) {
+            client.emit("celebrate");
+          }
+    }
   }
 
-  @SubscribeMessage('gameOver')
-  async gameOver(client: Socket, obj:{player: number, bot: number}) {
-    client.emit("gameOver", obj.player, obj.bot);
+  @SubscribeMessage('SendInviteNotif')
+  async send(@MessageBody() data: {userid:Number , recipientid:Number}, @ConnectedSocket() client: Socket)
+  {
+    const recipient = await this.userservice.findById(data.recipientid);
+    if (!recipient)
+      throw new HttpException("Recipient not found", HttpStatus.FORBIDDEN);
+    await this.notifService.createGameNotification(data.userid, data.recipientid);
+    const friendnotif = await this.notifService.getFriendNotifs(data.recipientid);
+      const gamenotif = await this.notifService.getGameNotifs(data.recipientid);
+      const notif = {
+        "friendRequest": friendnotif,
+        "gameInvite": gamenotif
+      };
+      // console.log("*********** ", notif);
+      this.server.to(recipient.Socket).emit("friend notif", notif);
+      const message = "The gameinvite has been sent";
+      this.server.to(recipient.Socket).emit('message', message);
+  }
+
+  @SubscribeMessage('AddtoQueue')
+  async add(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
+  {
+      const queue = await this.gameservice.addToQueue(data.userid);
+      // console.log("*********** ", notif);
+      console.log("----------->QEUEUUEUEEUEUE ", queue);
+      this.server.to(client.id).emit("queue", queue);
+      if (queue.receiver != null)
+        await this.gameservice.DeleteQueue(queue.id);
+      const message = "The gameinvite has been sent";
+      // this.server.to(recipient.Socket).emit('message', message);
+  }
+
+  @SubscribeMessage('RemoveQueue')
+  async remove(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
+  {
+    console.log("========================================");
+      const queue = await this.gameservice.findQueue(data.userid);
+      if (queue)
+        await this.gameservice.DeleteQueue(queue.id);
+      this.server.to(client.id).emit("queued", "queuedeleted");
+
+      const message = "The gameinvite has been sent";
+      // this.server.to(recipient.Socket).emit('message', message);
   }
 }
