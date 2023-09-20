@@ -265,10 +265,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         console.log("RECEIVER======================= ", queue.receiver);
 
         this.server.to(queue.sender.Socket).emit("queue", queue);
-        await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
+        let queueData = queue;
         await this.gameservice.DeleteQueue(queue.id);
+        await this.connectPlayers({p1: queueData.sender.username as string, p2: queueData.receiver.username as string})
       }
-      else 
         console.log("--------------------------------->",queue.receiver);
         const message = "The gameinvite has been sent";
       // this.server.to(recipient.Socket).emit('message', message);

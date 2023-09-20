@@ -60,6 +60,7 @@ export class GameService {
 
     async addToQueue(userid: Number)
     {
+      var entrance = 0;
       const User = await this.userservice.findById(userid);
       if (!User)
         throw new HttpException("User not found", HttpStatus.FORBIDDEN);
@@ -70,14 +71,18 @@ export class GameService {
       const queue = await this.GameinviteRepo.findOne({where:{receiver: null, type: 'random'}});
       if (!queue)
       {
+        entrance++;
         const game = new GameInvite();
         game.sender = user;
         game.type = 'random';
+        entrance--;
         return await this.GameinviteRepo.save(game);
       }
       else
       {
+        entrance++;
         queue.receiver = user;
+        entrance--;
         return await this.GameinviteRepo.save(queue);
       }
     }
@@ -138,7 +143,7 @@ export class GameService {
     {
         const queue = await this.GameinviteRepo.findOne({where:{id:Equal(queueid)}});
         if (queue)
-            await this.GameinviteRepo.delete(queue.id as number);
+          this.GameinviteRepo.delete(queue.id as number);
     }
 
     async findQueue(userid:Number)
