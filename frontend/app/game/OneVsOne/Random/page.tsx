@@ -9,10 +9,11 @@ import { BallCoordinates, User } from "../GameComponents/gameInterfaces";
 import { useRouter } from 'next/navigation';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import Confetti from 'react-confetti'
+import { useGameSocketStore } from '@/app/queue/page';
 
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
-    const [socket, setSocket] = useState<Socket>();
+    // const [socket, setSocket] = useState<Socket>();
     const [p1Score, setP1Score] = useState<number>(0);
     const [p2Score, setP2Score] = useState<number>(0);
     const [opponent, setOpponent] = useState<User>();
@@ -26,6 +27,8 @@ const page = () => {
     const handelExit = (e: MouseEvent<HTMLButtonElement>) => {
         router.push("/home");
     }
+
+    const {gameSocket, setGamesocket} = useGameSocketStore()
 
     const { width, height } = useWindowSize()
     const token = getCookie("accessToken");
@@ -41,38 +44,39 @@ const page = () => {
     }, [token]);
 
     useEffect(() => {
-        socket?.on('getGameData', (op: User, gameId: string) => {
-            setOpponent(op);
-            setGameId(gameId);
+        gameSocket?.on('getGameData', (op: User, gameId: string) => {
+            console.log("gameId = ", gameId);
+            console.log("opponent = ", op);
         });
-        socket?.on('getBallOpponentPostion', (pos: number, ball: BallCoordinates) => {
+        gameSocket?.on('getBallOpponentPostion', (pos: number, ball: BallCoordinates) => {
             setOpponentPos(pos);
             setBallCoordinates(ball)
         });
-        socket?.on('updateScoore', (me: number, opp: number) => {
+        gameSocket?.on('updateScoore', (me: number, opp: number) => {
             setP1Score(me);
             setP2Score(opp);
         });
-        socket?.on('gameOver', () => {
+        gameSocket?.on('gameOver', () => {
             setGameOver(true);
         });
-        socket?.on('celebrate', () => {
+        gameSocket?.on('celebrate', () => {
             setCelebrate(true);
         });
-        socket?.on('disconnect', () => {
+        gameSocket?.on('disconnect', () => {
             console.log("Hello From disconnect");
         });
-    }, [socket]);
+    }, [gameSocket]);
 
-    useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
-        setSocket(newSocket);
-        newSocket.emit('setSocket', {token: token});
-        newSocket.emit("Ready", {token: token});
-        return () => {
-            socket?.disconnect();
-        }
-    }, []);
+    // useEffect(() => { 
+    //     const newgameSocket = io('http://localhost:3000');
+    //     console.log("user = ", user?.username, "gameSocket = ", newgameSocket);
+    //     setgameSocket(newgameSocket);
+    //     newgameSocket.emit('setgameSocket', {token: token});
+    //     newgameSocket.emit("Ready", {token: token});
+    //     return () => {
+    //         gameSocket?.disconnect();
+    //     }
+    // }, []);
 
     return (
         <div className=' text-3xl text-white pt-[150px]  max-w-[1400px]  rounded-[20px]   w-full h-screen '>
@@ -100,7 +104,7 @@ const page = () => {
                 <div className=' grid place-items-center items-center'>
                     <div className='border-[2px] border-gray w-fit'>
                         <ReactP5Wrapper sketch={sketch} 
-                                        socket={socket} 
+                                        socket={gameSocket} 
                                         gameId={gameId}
                                         user={user}
                                         opponentPos={opponentPos}

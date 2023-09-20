@@ -120,21 +120,27 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('connectPlayers')
-  async connectPlayers(obj:{p1: User, p2: User}) {
-    const player1: User = await this.userservice.findByName(obj.p1.username);
-    const player2: User = await this.userservice.findByName(obj.p2.username);
+  async connectPlayers(obj:{p1: string, p2: string}) {
     
-    const initGameData = { 
-      player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
-      player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
-      ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1}
-    };
-    const id: string = player1.username.toString() + player2.username.toString();
-    this.users.set(player1.PlayerSocket as string, id);
-    this.users.set(player2.PlayerSocket as string, id);
-    this.GamesData.set(id, initGameData);
-    this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
-    this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
+    if(obj.p1 !== undefined && obj.p2 !== undefined) {
+      // console.log("---------------+++++++++++++++ ", obj.p1 , obj.p2, "--------------++++++++++");
+      const player1: User = await this.userservice.findByName(obj.p1);
+      const player2: User = await this.userservice.findByName(obj.p2);
+           
+      console.log("---------------+++++++++++++++ ", player1.PlayerSocket , player2.PlayerSocket, "--------------++++++++++");
+      
+      const initGameData = { 
+        player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
+        player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
+        ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1}
+      };
+      const id: string = player1.username.toString() + player2.username.toString();
+      this.users.set(player1.PlayerSocket as string, id);
+      this.users.set(player2.PlayerSocket as string, id);
+      this.GamesData.set(id, initGameData);
+      this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
+      this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
+    }
   }
 
   @SubscribeMessage('getBallAndP2Positions')
@@ -240,14 +246,21 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('AddtoQueue')
   async add(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
   {
+    console.log("========================================", data.userid)
+    if (data.userid != 0) {
       const queue = await this.gameservice.addToQueue(data.userid);
       // console.log("*********** ", notif);
       console.log("----------->QEUEUUEUEEUEUE ", queue);
       this.server.to(client.id).emit("queue", queue);
       if (queue.receiver != null)
+      {
+        this.server.to(queue.sender.Socket).emit("queue", queue);
+        await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
         await this.gameservice.DeleteQueue(queue.id);
-      const message = "The gameinvite has been sent";
+      }
+        const message = "The gameinvite has been sent";
       // this.server.to(recipient.Socket).emit('message', message);
+    }
   }
 
   @SubscribeMessage('RemoveQueue')
