@@ -243,4 +243,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       const message = "The gameinvite has been sent";
       // this.server.to(recipient.Socket).emit('message', message);
   }
+
+  @SubscribeMessage('RemoveQueue')
+  async remove(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
+  {
+    console.log("========================================");
+      const queue = await this.gameservice.findQueue(data.userid);
+      if (queue)
+        await this.gameservice.DeleteQueue(queue.id);
+      this.server.to(client.id).emit("queued", "queuedeleted");
+
+      const message = "The gameinvite has been sent";
+      // this.server.to(recipient.Socket).emit('message', message);
+  }
 }

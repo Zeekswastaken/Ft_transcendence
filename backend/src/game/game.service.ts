@@ -82,4 +82,9 @@ export class GameService {
         if (queue)
             await this.GameinviteRepo.delete(queue.id as number);
     }
+
+    async findQueue(userid:Number)
+    {
+        return await this.GameinviteRepo.findOne({where: {sender: Equal(userid)}});
+    }
 }
