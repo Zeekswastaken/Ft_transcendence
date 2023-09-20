@@ -11,4 +11,8 @@ export class GameInvite {
     @ManyToOne(() => User, { eager: true, nullable: true })
     @JoinColumn({ name: "Receiver_Id" })
     receiver: User;
+    @Column()
+    type:string;
+    @Column({nullable:true})
+    status:string;
 };

@@ -287,4 +287,42 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       const message = "The gameinvite has been sent";
       // this.server.to(recipient.Socket).emit('message', message);
   }
+
+  @SubscribeMessage('AddtoInviteQueue')
+  async addinvite(@MessageBody() data: {userid:Number, receiver:Number}, @ConnectedSocket() client: Socket)
+  {
+    console.log("========================================", data.userid)
+    if (data.userid != 0) {
+      const queue = await this.gameservice.addToGroupQueue(data.userid, data.receiver);
+      await this.notifService.createGameNotification(data.userid, data.receiver);
+      const friendnotif = await this.notifService.getFriendNotifs(data.receiver);
+        const gamenotif = await this.notifService.getGameNotifs(data.receiver);
+        const notif = {
+          "friendRequest": friendnotif,
+          "gameInvite": gamenotif
+        };
+        this.server.to(queue.receiver.Socket).emit("friend notif", notif);
+        this.server.to(client.id).emit("queue", queue);
+        console.log("NOTIFICATIONS ===== ", notif);
+      }
+    }
+  
+    @SubscribeMessage('AcceptInvite')
+    async accept(@MessageBody() data: {userid:Number, receiver:Number}, @ConnectedSocket() client: Socket)
+    {
+      console.log("========================================", data.receiver)
+      if (data.userid != 0) {
+        const queue = await this.gameservice.acceptInvite(data.userid, data.receiver);
+        const friendnotif = await this.notifService.getFriendNotifs(data.receiver);
+          const gamenotif = await this.notifService.getGameNotifs(data.receiver);
+          const notif = {
+            "friendRequest": friendnotif,
+            "gameInvite": gamenotif
+          };
+          this.server.to(queue.receiver.Socket).emit("friend notif", notif);
+          this.server.to(client.id).emit("queue", queue);
+          // await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
+          await this.gameservice.DeleteQueue(queue.id);
+        }
+      }
 }
