@@ -321,7 +321,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           };
           this.server.to(queue.receiver.Socket).emit("friend notif", notif);
           this.server.to(client.id).emit("queue", queue);
-          // await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
+          await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
           await this.gameservice.DeleteQueue(queue.id);
         }
       }
