@@ -230,4 +230,17 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       const message = "The gameinvite has been sent";
       this.server.to(recipient.Socket).emit('message', message);
   }
+
+  @SubscribeMessage('AddtoQueue')
+  async add(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
+  {
+      const queue = await this.gameservice.addToQueue(data.userid);
+      // console.log("*********** ", notif);
+      console.log("----------->QEUEUUEUEEUEUE ", queue);
+      this.server.to(client.id).emit("queue", queue);
+      if (queue.receiver != null)
+        await this.gameservice.DeleteQueue(queue.id);
+      const message = "The gameinvite has been sent";
+      // this.server.to(recipient.Socket).emit('message', message);
+  }
 }

@@ -14,9 +14,10 @@ import { Match } from 'src/database/match.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { Notification } from 'src/database/notifications.entity';
 import { UserFriends } from 'src/database/userFriends.entity';
+import { GameInvite } from 'src/database/gameInvite.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Match,Stats,Notification,UserFriends]),UserModule],
+    imports:[TypeOrmModule.forFeature([Match,Stats,Notification,UserFriends,GameInvite]),UserModule],
     controllers:[],
     providers:[UserService,GameGateway,JWToken,JwtService, GameService,UserService, NotificationsService]
 })
