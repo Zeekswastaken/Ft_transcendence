@@ -69,6 +69,7 @@ export class GameService {
       delete User.Socket;
       const user = await this.userservice.save(User); 
       const queue = await this.GameinviteRepo.findOne({where:{receiver: null, type: 'random'}});
+      while(entrance != 0){}
       if (!queue)
       {
         entrance++;
