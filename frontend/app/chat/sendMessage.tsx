@@ -8,6 +8,7 @@ import { useSocketContext } from '../socket';
 import initialContent, { Content } from "./content";
 import { useMyStore } from "./state";
 import { current } from "@reduxjs/toolkit";
+import { useRouter } from 'next/router';
 
 
 interface addContentProps {
@@ -16,7 +17,7 @@ interface addContentProps {
 
 const sendMessage = ({ addContent }: addContentProps) => {
 
-  const {token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, setNotification, setChanelType, chanelType} = useMyStore();
+  const {setTempo, token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, updateChat, setNotification, setChanelType, chanelType} = useMyStore();
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
 
@@ -39,10 +40,11 @@ const sendMessage = ({ addContent }: addContentProps) => {
         socket?.emit("obj", {obj, receiver});
       }
       else{
+
         const channelid = userData.id;
         const message = {text:value, Created_at:"15:15" };
         const obj = {user:currUserData, message, channelid};
-        console.log(obj);
+        setUpdateChat(obj);
         socket?.emit("ToRoom", {Token:token, message:value, channelid});
       }
       setValue("");
@@ -70,9 +72,14 @@ const sendMessage = ({ addContent }: addContentProps) => {
           socket?.emit("obj", {obj, receiver});
         }
         else{
+          // const router = useRouter();
+          // router.reload()
+          // setUpdateChat([]);
           const channelid = userData.id;
           const message = {text:value, Created_at:"15:15" };
           const obj = {user:currUserData, message, channelid};
+          console.log(obj);
+          setUpdateChat(obj);
           socket?.emit("ToRoom", {Token:token, message:value, channelid});
         }
         setValue("");
