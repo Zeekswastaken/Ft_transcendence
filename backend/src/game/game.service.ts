@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { GameInvite } from 'src/database/gameInvite.entity';
 import { Match } from 'src/database/match.entity';
 import { Stats } from 'src/database/stats.entity';
 import { User } from 'src/database/user.entity';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 
 @Injectable()
 export class GameService {
-    constructor(@InjectRepository(Stats) private readonly statsRepo: Repository<Stats>,@InjectRepository(Match) private readonly MatchRepo: Repository<Match>,private readonly userservice:UserService){}
+    constructor(@InjectRepository(Stats) private readonly statsRepo: Repository<Stats>,@InjectRepository(Match) private readonly MatchRepo: Repository<Match>,private readonly userservice:UserService, @InjectRepository(GameInvite) private readonly GameinviteRepo: Repository<GameInvite>){}
     async save(Body: any) {
         const Player1 = await this.userservice.findById(Body.player1.id);
         const Player2 = await this.userservice.findById(Body.player2.id);
@@ -55,5 +56,35 @@ export class GameService {
         user.stats.winrate = (user.stats.wins/user.stats.matches_played)*100;
         await this.statsRepo.save(user.stats);
         return (await this.userservice.save(user));
+    }
+    async addToQueue(userid: Number)
+    {
+      const user = await this.userservice.findById(userid);
+      if (!user)
+        throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+      const queue = await this.GameinviteRepo.findOne({where:{receiver: null}});
+      if (!queue)
+      {
+        const game = new GameInvite();
+        game.sender = user;
+        return await this.GameinviteRepo.save(game);
+      }
+      else
+      {
+        queue.receiver = user;
+        return await this.GameinviteRepo.save(queue);
+      }
+    }
+
+    async DeleteQueue(queueid:Number)
+    {
+        const queue = await this.GameinviteRepo.findOne({where:{id:Equal(queueid)}});
+        if (queue)
+            await this.GameinviteRepo.delete(queue.id as number);
+    }
+
+    async findQueue(userid:Number)
+    {
+        return await this.GameinviteRepo.findOne({where: {sender: Equal(userid)}});
     }
 }
