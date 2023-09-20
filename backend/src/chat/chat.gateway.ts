@@ -157,6 +157,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
           ...message,
           isBlocked: isBlockedResults[index],
         }));
+        console.log("GET MESSAGES WITH BLOCK=======", messagesWithBlocked);
           this.server.to(client.id).emit("groupmessages", messagesWithBlocked);
         }
       }
