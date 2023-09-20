@@ -29,8 +29,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     ball.x += ball.vX * ball.speed;
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
-    if(ball.y + ball.radius > 100 || ball.y - ball.radius < 0){
-      if(ball.y + ball.radius > 100) {
+    if(ball.y + ball.radius >= 100 || ball.y - ball.radius <= 0){
+      if(ball.y + ball.radius >= 100) {
         ball.y = 100 - ball.radius;
       } else {
         ball.y = ball.radius;
@@ -73,7 +73,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       (player2.score == 0 && player1.score == 7)   || 
       (player2.score == 9 && player1.score <= 2)   || 
       (player2.score <= 2 && player1.score == 9)   || 
-       player2.score == 1 || player1.score == 1 ) {
+       player2.score == 12 || player1.score == 12 ) {
         this.server.to(player1.data.PlayerSocket as string).emit("gameOver");
         this.server.to(player2.data.PlayerSocket as string).emit("gameOver");
         if(player1.score > player2.score) {
@@ -177,37 +177,43 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
     }
   }
-  ismatching(username:string) {
-    for(let i = 0 ; i < this.ready.length; i++)
-    {
-      if(this.ready[i].username.toString() === username) {
-        return (false);
-      }
-    }
-    return true;
-  }
 
-  changeScore
-  @SubscribeMessage('Ready')
-  async readyToPlay(client: Socket, payload :{token:string}) {
-    let user = await this.jwt.decoded(payload.token);
-    if(this.ismatching(user.username.toString())){
-      this.ready.push(user);
-    }
-    if (this.ready.length > 1 ){
-      this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
-      this.ready.shift();
-      this.ready.shift();
-    }
-  }
+  // ismatching(username:string) {
+  //   for(let i = 0 ; i < this.ready.length; i++)
+  //   {
+  //     if(this.ready[i].username.toString() === username) {
+  //       return (false);
+  //     }
+  //   }
+  //   return true;
+  // }
+
+  // changeScore
+  // @SubscribeMessage('Ready')
+  // async readyToPlay(client: Socket, payload :{token:string}) {
+  //   let user = await this.jwt.decoded(payload.token);
+  //   if(this.ismatching(user.username.toString())){
+  //     this.ready.push(user);
+  //   }
+  //   if (this.ready.length > 1 ){
+  //     this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
+  //     this.ready.shift();
+  //     this.ready.shift();
+  //   }
+  // }
 
   @SubscribeMessage('oneVsBotChangeScore')
   async oneVsBot(client: Socket, obj:{player: number, bot: number}) {
     client.emit("changeScore", obj.player, obj.bot);
-  }
-
-  @SubscribeMessage('gameOver')
-  async gameOver(client: Socket, obj:{player: number, bot: number}) {
-    client.emit("gameOver", obj.player, obj.bot);
+    if((obj.player == 7 && obj.bot == 0 ) || 
+        (obj.player == 0 && obj.bot == 7) || 
+        (obj.player == 9 && obj.bot <= 2) || 
+        (obj.player <= 2 && obj.bot == 9) || 
+        obj.player == 12 || obj.bot == 12 ) {
+          client.emit("gameOver", obj.player, obj.bot);
+          if(obj.player > obj.bot) {
+            client.emit("celebrate");
+          }
+    }
   }
 }
