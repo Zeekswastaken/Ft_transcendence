@@ -487,7 +487,7 @@ console.log("==================================================");
         if (!memberships)
             throw new HttpException("Error getting the members", HttpStatus.FORBIDDEN);
         // console.log("---------->MEMBERSHIPS==== ", memberships)
-        const owner membership = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid), Type:'owner'}, relations:['user']})
+        const owner = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid), Type:'owner'}, relations:['user']})
         const members = {owner:owner, members:memberships};
         return members
     }
