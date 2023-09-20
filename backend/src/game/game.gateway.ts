@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, ConnectedSocket,OnGatewayDisconnect,MessageBody ,OnGatewayInit, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JWToken } from 'src/auth/jwt.service';
 import { User } from 'src/database/user.entity';
@@ -7,6 +7,7 @@ import { UserService } from 'src/user/user.service';
 import { Ball, Player, GameData, BallCoordinates } from './gameInterfaces';
 import { collision, radiansRange, mapRange, initBall } from './helper';
 import { GameService } from './game.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 @Injectable()
 @WebSocketGateway()
@@ -16,7 +17,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   ready : Array<User> = new Array();
   @WebSocketServer()
   server: Server;
-  constructor (private readonly jwt:JWToken,private readonly userservice:UserService, private readonly gameservice:GameService){}
+  constructor (private readonly jwt:JWToken,private readonly userservice:UserService, private readonly gameservice:GameService, private readonly notifService:NotificationsService){}
   async handleConnection(client: Socket) {
   }
 
@@ -29,8 +30,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     ball.x += ball.vX * ball.speed;
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
-    if(ball.y + ball.radius > 100 || ball.y - ball.radius < 0){
-      if(ball.y + ball.radius > 100) {
+    if(ball.y + ball.radius >= 100 || ball.y - ball.radius <= 0){
+      if(ball.y + ball.radius >= 100) {
         ball.y = 100 - ball.radius;
       } else {
         ball.y = ball.radius;
@@ -209,5 +210,24 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('gameOver')
   async gameOver(client: Socket, obj:{player: number, bot: number}) {
     client.emit("gameOver", obj.player, obj.bot);
+  }
+
+  @SubscribeMessage('SendInviteNotif')
+  async send(@MessageBody() data: {userid:Number , recipientid:Number}, @ConnectedSocket() client: Socket)
+  {
+    const recipient = await this.userservice.findById(data.recipientid);
+    if (!recipient)
+      throw new HttpException("Recipient not found", HttpStatus.FORBIDDEN);
+    await this.notifService.createGameNotification(data.userid, data.recipientid);
+    const friendnotif = await this.notifService.getFriendNotifs(data.recipientid);
+      const gamenotif = await this.notifService.getGameNotifs(data.recipientid);
+      const notif = {
+        "friendRequest": friendnotif,
+        "gameInvite": gamenotif
+      };
+      // console.log("*********** ", notif);
+      this.server.to(recipient.Socket).emit("friend notif", notif);
+      const message = "The gameinvite has been sent";
+      this.server.to(recipient.Socket).emit('message', message);
   }
 }

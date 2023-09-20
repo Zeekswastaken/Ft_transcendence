@@ -38,7 +38,7 @@ export class ChannelService {
             throw new HttpException("Channel name or Type not specified", HttpStatus.FORBIDDEN);
         channel.Name = data.name;
         channel.Type = data.type;
-        // channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
+        // channel.avatar = 'http://10.14.2.7:3000/src/uploads/' + avatar;
         // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
         console.log("HEEERE1");
@@ -447,7 +447,7 @@ console.log("==================================================");
     const token = `${channelID}-${timestamp}-${randomData}`;
 
     //Construct the full invitation link URL
-    const invitationLink = `https://localhost.com:3001/join-channel?token=${token}`;
+    const invitationLink = `https://10.14.2.7.com:3001/join-channel?token=${token}`;
 
     return invitationLink;
   }
@@ -483,7 +483,7 @@ console.log("==================================================");
 
     async getChannelMembers(channelid:Number) : Promise<ChannelMembership[]> 
     {
-        const memberships = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid)}, relations:['user']});
+        const memberships = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid), Type:Not('owner')}, relations:['user']});
         if (!memberships)
             throw new HttpException("Error getting the members", HttpStatus.FORBIDDEN);
         // console.log("---------->MEMBERSHIPS==== ", memberships)

@@ -39,8 +39,8 @@ export default class Ball {
         this.x += this.vX * this.speed;
         this.y += this.vY * this.speed;
         var rad = radiansRange(45);
-        if(this.y + this.radius / 2 > p5.height || this.y - this.radius / 2 < 0) {
-            if(this.y + this.radius / 2 > p5.height) {
+        if(this.y + this.radius / 2 >= p5.height || this.y - this.radius / 2 <= 0) {
+            if(this.y + this.radius / 2 >= p5.height) {
                 this.y = p5.height - this.radius / 2;
             } else {
                 this.y = this.radius;

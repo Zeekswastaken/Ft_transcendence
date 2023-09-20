@@ -11,10 +11,13 @@ import { UserModule } from 'src/user/user.module';
 import { GameService } from './game.service';
 import { Stats } from 'src/database/stats.entity';
 import { Match } from 'src/database/match.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { Notification } from 'src/database/notifications.entity';
+import { UserFriends } from 'src/database/userFriends.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Match,Stats]),UserModule],
+    imports:[TypeOrmModule.forFeature([Match,Stats,Notification,UserFriends]),UserModule],
     controllers:[],
-    providers:[UserService,GameGateway,JWToken,JwtService, GameService,UserService]
+    providers:[UserService,GameGateway,JWToken,JwtService, GameService,UserService, NotificationsService]
 })
 export class GameModule {}
