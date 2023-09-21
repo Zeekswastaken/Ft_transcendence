@@ -367,9 +367,9 @@ console.log("==================================================");
 
     async getInfos(channelID:Number, userID:Number)
     {
-        const stats = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelID), Userid: Equal(channelID)}});
+        const stats = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelID), Userid: Equal(userID)}});
         if (!stats)
-            throw new HttpException("Memebership not found", HttpStatus.FORBIDDEN);
+            throw new HttpException("Membership not found", HttpStatus.FORBIDDEN);
         return ({Type:stats.Type, isMuted:stats.isMuted, isBanned:stats.isBanned, userID:stats.Userid});
     }
 

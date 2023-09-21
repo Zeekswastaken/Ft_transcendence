@@ -7,11 +7,9 @@ import { useMyStore } from "./state";
 import { useRouter } from "next/navigation";
 
 const groupBar = ({friend}:any) => {
-    const {setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
+    const {setMuted,setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
     const {socket} = useSocketContext();
     const router = useRouter();
-    console.log(friend);
-    console.log(currUserData);
     const setMyGroupStor = (e: MouseEvent<HTMLButtonElement>) =>{
       e.preventDefault();
       setMyBoolean(true);
@@ -29,14 +27,15 @@ const groupBar = ({friend}:any) => {
       //   setChanelType(data.bool);
       // });
       // console.log("Done");
+      socket?.on("state", (data:any) => {
+        console.log(data);
+        setMuted(data);
+      });
+
       socket?.on("groupmessages", (data:any) => {
         console.log(data);
         setGetChat(data);
-      })
-      socket?.on("groupmessages", (data:any) => {
-        console.log(data);
-        setGetChat(data);
-      })
+      });
       
       socket?.emit("getChannelMembers", {channelid:friend.id})
       socket?.on("members", (data:any) => {

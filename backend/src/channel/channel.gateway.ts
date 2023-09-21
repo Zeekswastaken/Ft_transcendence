@@ -218,6 +218,7 @@ export class ChannelGateway {
   async getInfos(@ConnectedSocket() client: Socket,@MessageBody() data: {channelID: Number, userID: Number})
   {
     try{
+      console.log("POOPOPOPOPOPOPOPOPOPOPOPOPP",data)
       const state = await this.channelService.getInfos(data.channelID, data.userID);
       console.log("STATIISISISISURERER==== ",state);
       this.server.to(client.id).emit("state", state);
