@@ -6,10 +6,10 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import sketch from '../GameComponents/Game';
 import io, {Socket} from 'socket.io-client';
 import Winning from '../../component/winning';
-import { User } from '../GameComponents/gameInterfaces';
 import Losing from '../../component/losing';
+import { User } from '../GameComponents/gameInterfaces';
 
-const COM_LEVEL = 0.03;
+const COM_LEVEL = 0.04;
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
     const [playerScore, setPlayerScore] = useState<number>(0);
@@ -18,7 +18,7 @@ const page = () => {
     const [gameOver, setGameOver] = useState < boolean> (false);
     const [celebration, setCelebration] = useState <boolean> (false);
 
-    const bot: User = {username: "Easy Bot", avatar_url: "/easy.jpeg"};
+    const bot: User = {username: "Easy Bot", avatar_url: "/easyBot.jpeg"};
     const token = getCookie("accessToken");
 
     useEffect(() => {
@@ -46,7 +46,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newSocket = io('http://10.14.2.9:3000');
+        const newSocket = io('http://localhost:3000');
         setSocket(newSocket);
         return () => {
             socket?.disconnect();
@@ -74,7 +74,7 @@ const page = () => {
                         <div className=' flex justify-center items-center space-x-3'>
                             <span className=' font-Bomb text-xl sm:text-3xl'>Easy Bot</span>
                             <div className="h-[40px] sm:h-[60px] w-[40px] sm:w-[60px] bg-cover bg-center overflow-hidden rounded-full mr-[10px] border-[3px] border-primary-pink-300">
-                                <img src='/easy.jpeg' alt="" className=' w-full h-full ' />
+                                <img src='/easyBot.jpeg' alt="" className=' w-full h-full ' />
                             </div>
                         </div>
                     </div>

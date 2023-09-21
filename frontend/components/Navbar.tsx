@@ -41,7 +41,7 @@ const Navbar = () => {
 		const [user, setUser] = useState<JwtPayload>()
 		
 		const token = getCookie("accessToken");
-		axios.post("http://10.14.2.9:3000", {
+		axios.post("http://localhost:3000", {
 		token: token
 		}).then(res => {
 		if (res.data.status === "unauthorized")
@@ -77,7 +77,7 @@ const Navbar = () => {
 	
 		const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
 			e.preventDefault()
-			axios.get(`http://10.14.2.9:3000/profile/${searchForUser}`).then(res => {
+			axios.get(`http://localhost:3000/profile/${searchForUser}`).then(res => {
 				if (res.data.message === "not-found") {
 					setUserNotFound("User Not Found")
 					return ;

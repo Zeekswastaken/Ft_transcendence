@@ -7,9 +7,8 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import sketch from '../GameComponents/Game';
 import { BallCoordinates, User } from "../GameComponents/gameInterfaces";
 import { useRouter } from 'next/navigation';
-import useWindowSize from 'react-use/lib/useWindowSize';
-import Confetti from 'react-confetti'
-import { useGameSocketStore } from '@/app/queue/page';
+import Losing from '../../component/losing';
+import Winning from '../../component/winning';
 
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
@@ -28,9 +27,6 @@ const page = () => {
         router.push("/home");
     }
 
-    // const {gameSocket, setGamesocket} = useGameSocketStore()
-
-    const { width, height } = useWindowSize()
     const token = getCookie("accessToken");
 
     useEffect(() => {
@@ -67,18 +63,6 @@ const page = () => {
         });
     }, [socket]);
 
-<<<<<<< HEAD
-    // useEffect(() => { 
-    //     const newgameSocket = io('http://10.14.2.9:3000');
-    //     console.log("user = ", user?.username, "gameSocket = ", newgameSocket);
-    //     setgameSocket(newgameSocket);
-    //     newgameSocket.emit('setgameSocket', {token: token});
-    //     newgameSocket.emit("Ready", {token: token});
-    //     return () => {
-    //         gameSocket?.disconnect();
-    //     }
-    // }, []);
-=======
     useEffect(() => { 
         const newsocket = io('http://localhost:3000');
         setSocket(newsocket);
@@ -87,11 +71,11 @@ const page = () => {
             socket?.disconnect();
         }
     }, []);
->>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
 
     return (
-        <div className=' text-3xl text-white pt-[150px]  max-w-[1400px]  rounded-[20px]   w-full h-screen '>
-            {celebrate && <Confetti width={width}height={height}/>}
+        gameOver ? celebrate ? <Winning user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username, avatar_url: opponent?.avatar_url}} playerScore={p1Score} bootScore={p2Score}></Winning>
+                 :             <Losing user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username!, avatar_url:opponent?.avatar_url!}} playerScore={p1Score} bootScore={p2Score}></Losing>
+        :<div className=' text-3xl text-white pt-[150px]  max-w-[1400px]  rounded-[20px]   w-full h-screen '>
             <div className=' glass mx-3 w-auto rounded-[20px] grid place-content-center border-[2px] border-[#FF1382] p-3 min-w-[350px]' >
                 <div className='mb-[10px] grid grid-cols-3 justify-between place-content-center'>
                     <div className='flex justify-center items-center space-x-3'>
@@ -122,11 +106,6 @@ const page = () => {
                                         ballCoordinates={ballCoordinates}
                                         gameOver={gameOver}
                                         />
-                    </div>
-                </div>
-                <div className='mt-[20px] flex justify-center font-Heading tracking-wide '>
-                    <div className='ml-[20px]'>
-                        <button className='bg-primary-pink-300 hover:bg-primary-pink-300/[0.7] duration-300 rounded-[10px] px-[20px] py-[10px]' onClick={handelExit}>Exit</button>
                     </div>
                 </div>
             </div>

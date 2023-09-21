@@ -5,8 +5,6 @@ import Ball from "../GameComponents/Ball";
 import { GameProps} from "../GameComponents/gameInterfaces";
 import { Socket } from "socket.io-client";
 
-
-
 export default function sketch(p5: P5CanvasInstance) {
     let player: Paddel;
     let computer: Paddel;
@@ -19,8 +17,11 @@ export default function sketch(p5: P5CanvasInstance) {
 
     p5.setup = () => {
       if (p5.windowWidth > 1500) {
-        p5.createCanvas(1300, 700);
-      } else if (p5.windowWidth <= 350 ) {
+        p5.createCanvas(1200, 700);
+      } else if (p5.windowWidth < 1300){
+        p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
+      }
+       else if (p5.windowWidth <= 350 ) {
           p5.createCanvas(300, 150);
       } else {
         p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
@@ -39,13 +40,13 @@ export default function sketch(p5: P5CanvasInstance) {
       {
         p5.background(0);
         net.drow(p5);
-        ball.drow(p5);
-        ball.update(p5, player, computer);
-        ball.isOut(p5, socket, player, computer);
         player.drow(p5, 0);
         player.updatePlayer(p5);
         computer.drow(p5, 0);
         computer.updateComputer(p5, ball, COM_LEVEL);
+        ball.drow(p5);
+        ball.update(p5, player, computer);
+        ball.isOut(p5, socket, player, computer);
       }
       else {
         p5.fill(255);
