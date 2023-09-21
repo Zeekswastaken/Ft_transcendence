@@ -31,10 +31,6 @@ const friendBar = ({friend}:any) => {
   }
   useEffect(() => {
     socket?.on( "ToDuo", (data:any) => {
-<<<<<<< HEAD
-        // setId(data.id);
-=======
->>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
         setDelevred(true);
         setNotification(data);
     })
