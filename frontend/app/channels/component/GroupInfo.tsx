@@ -1,6 +1,7 @@
  import { useSocketContext } from '@/app/socket';
 import { getCookie } from 'cookies-next';
 import jwt,{ JwtPayload } from 'jsonwebtoken';
+import { useRouter } from 'next/navigation';
 import React, { MouseEvent, useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { BeatLoader } from 'react-spinners';
@@ -49,15 +50,20 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
     const [errorMessage, setErrorMessage] = useState<string>("")
     const [done , setDone] = useState<boolean>(false)
     console.log("pass = ", channelPass)
+    const router = useRouter()
     const handleJoinChannel = (e: MouseEvent<HTMLButtonElement>) => {
         console.log("id = ", Id , "user = ", currentUserID)
         if (currentUserID !== undefined) {
             socket.emit("JoinChannel", {channelID: Id, userID: currentUserID, Pass: channelPass})
+            // setTimeout(() => {
+            //     console.log("kakakakakakaka");
+            // }, 500)
             setLoading(true);
             setIsclicked(!isclicked);
             socket.on("isjoined", (data:any) => {
                 console.log("data = ", data)
                 if (data) {
+                    socket.emit("JoinRoom", {token: token});
                     setErrorMessage("")
                     setTimeout(() => {
                         setLoading(false);
@@ -73,6 +79,7 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
                             icon: '✅',
                         })
                     }, 1000);
+                    // router.refresh()
                 }
                 else {
                     setErrorMessage("Wrong Password")

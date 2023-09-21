@@ -84,7 +84,7 @@ export default function RootLayout({
   const [Status, setStatus] = useState();
   const [isBlocking, setIsBlocking] = useState<boolean>(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
-  // const socket = io("http://localhost:3000", {
+  // const socket = io("http://10.14.2.9:3000", {
   // transports: ["websocket"],
   // autoConnect: false,
   // });

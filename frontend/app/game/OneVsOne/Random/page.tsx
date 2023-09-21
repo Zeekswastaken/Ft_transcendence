@@ -68,7 +68,7 @@ const page = () => {
     }, [gameSocket]);
 
     // useEffect(() => { 
-    //     const newgameSocket = io('http://localhost:3000');
+    //     const newgameSocket = io('http://10.14.2.9:3000');
     //     console.log("user = ", user?.username, "gameSocket = ", newgameSocket);
     //     setgameSocket(newgameSocket);
     //     newgameSocket.emit('setgameSocket', {token: token});

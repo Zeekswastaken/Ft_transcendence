@@ -1,9 +1,10 @@
 "use client";
-import reaact, { MouseEvent, useState } from "react";
+import reaact, { MouseEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import GroupList from "./groupList";
 import { useMyStore } from "./state";
 import { useSocketContext } from '../socket';
+import { useRouter } from "next/navigation";
 
 
 
@@ -22,7 +23,23 @@ function chatMembers() {
   //   socket?.on("members", (data:any) => {
   //     console.log(data);
   //   })
-  // }      
+  // }
+  // if(chatMembers.length == 0)
+  //   return null;
+  // console.log(chatMembers.owner.user.username);
+  const [mem, setMem] = useState<any[]>([]);
+  const [owner, setOwner] = useState<any[]>([]);
+  useEffect(() => {
+    setMem(chatMembers?.members)
+    setOwner(chatMembers?.owner)
+    console.log("mem = ", mem)
+  }, [chatMembers])
+
+  const router = useRouter();
+  function redirectToProfile() {
+    router.push("/users/" + owner?.user?.username)
+  }
+
   return (
     <div className="drawer drawer-end absolute w-[60%] max-2xl:w-[70%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">
       <input
@@ -57,7 +74,7 @@ function chatMembers() {
               </div>
               <div className="bg-yellow-500 col-span-3 rounded-2xl relative h-[40px]">
                 <p className="font-Bomb text-2xl max-sm:text-lg absolute py-1 max-sm:py-2 px-4">
-                  joseph elaouny
+                  {owner?.user?.username}
                 </p>
                 <div className="float-right">
                   <div className="dropdown dropdown-left mx-2 my-1">
@@ -84,7 +101,9 @@ function chatMembers() {
                       className="dropdown-content menu p-2 shadow rounded-box w-52 bg-pink-900 opacity-20 z-40"
                     >
                       <li className="place-content-center font-Bomb">
-                        <a>View profile</a>
+                        <button onClick={redirectToProfile}>
+                          View profile
+                          </button>
                       </li>
                       <li className=" place-content-center font-Bomb">
                         <a>Chaleng</a>
@@ -97,7 +116,7 @@ function chatMembers() {
           </div>
           <div className=" h-[55%] overflow-y-scroll no-scrollbar bg-[#4C2556]">
             <ul className=" flex flex-col whitespace-no-wrap p-4 max-sm:p-0">
-              {chatMembers.map((mem, id) => (
+              {mem?.map((mem, id) => (
                 <GroupList key={id} member={mem} />
               ))}
             </ul>

@@ -20,7 +20,7 @@ export const useGameSocketStore = create<Store>((set) => ({
 
 // export const gameSocket = () => {
   
-//   const newSocket = io('http://localhost:3000');
+//   const newSocket = io('http://10.14.2.9:3000');
 //   // console.log("user = ", currentUser?.username, "socket = ", newSocket);
 //  setGameSocket(newSocket);
 // //   newSocket.emit('setSocket', {token: token});
@@ -37,7 +37,7 @@ const page = () => {
   
   useEffect(() => {
     // Create a socket connection when the component mounts
-    const newSocket = io("http://localhost:3000");
+    const newSocket = io("http://10.14.2.9:3000");
 
     // Emit an event to set any necessary data on the server, like a token
     newSocket.emit('setSocket', { token: token });

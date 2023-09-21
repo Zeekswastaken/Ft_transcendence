@@ -39,12 +39,10 @@ const friendBar = ({friend}:any) => {
   }
   useEffect(() => {
     socket?.on( "ToDuo", (data:any) => {
-           console.log('ToDuo', data.id ) 
         // setId(data.id);
         setDelevred(true);
 
         setNotification(data);
-        console.log(delevred);
     })
   },[])
 

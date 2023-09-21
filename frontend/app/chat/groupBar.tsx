@@ -4,10 +4,12 @@ import Image from "next/image";
 import ChatContent from "./chatContent";
 import { useSocketContext } from '../socket';
 import { useMyStore } from "./state";
+import { useRouter } from "next/navigation";
 
 const groupBar = ({friend}:any) => {
     const {token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
     const {socket} = useSocketContext();
+    const router = useRouter();
     const setMyGroupStor = (e: MouseEvent<HTMLButtonElement>) =>{
       e.preventDefault();
       setMyBoolean(true);
@@ -25,8 +27,11 @@ const groupBar = ({friend}:any) => {
       // });
       // console.log("Done");
       socket?.on("groupmessages", (data:any) => {
+        console.log(data);
         setGetChat(data);
       })
+      console.log("refreshinggGGGDRSGWEERFDFFFFFFF");
+      // router.refresh();
     }
     return (
       <button onClick={setMyGroupStor}>
