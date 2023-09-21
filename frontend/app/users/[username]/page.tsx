@@ -77,6 +77,10 @@ const WinRate: React.FC<Props> = ({ styles, title }) => {
 }
 
 const MatchHistory: React.FC<Props> = ({ styles, title }) => {
+  const matchHistory = useUserDataContext()?.user.stats.matches;
+  const userData = useUserDataContext()?.user;
+  console.log ("userData = ", userData)
+  console.log("matchHistory = ", matchHistory)
   return (
     <div
       className={` glass animate-fade-right animate-delay-150 no-scrollbar h-autoData 2xl:h-[350px] overflow-auto ${styles}`}
@@ -92,11 +96,23 @@ const MatchHistory: React.FC<Props> = ({ styles, title }) => {
 						</tr>
 					</thead>
 					<tbody className=" font-bold overflow-auto text-xl">
-						<Row opponent="Hawkins" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar1.png "style="animate-fade-up animate-delay-[200ms]" />
+            {matchHistory?.map((match:any) => {
+              console.log("result = ", match.result, " id = ", userData?.id)
+              let score = match.player1Score + "-" + match.player2Score
+              let result;
+              if (match.result === userData?.id){
+                result = "win"
+              }else{result="lost"}
+              let opponent;let avatar; if (match.player1.id === userData?.id){
+                opponent=match.player2.username;avatar=match.player2.avatar_url
+              }else {opponent=match.player1.username;avatar=match.player1.avatar_url}
+              return <Row key={match.id} opponent={opponent} score={score} date={match.Date} result={result} avatar={avatar} style="animate-fade-up animate-delay-[400ms]" />
+            } )}
+						{/* <Row opponent="Hawkins" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar1.png "style="animate-fade-up animate-delay-[200ms]" />
 						<Row opponent="Gloria" score="5-2" date="May 30, 2023" result="win" avatar="/avatars/avatar2.png "style="animate-fade-up animate-delay-[400ms]" />
 						<Row opponent="Colleen" score="6-3" date="May 30, 2023" result="win" avatar="/avatars/avatar3.png "style="animate-fade-up animate-delay-[600ms]" />
 						<Row opponent="Karim" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar4.png "style="animate-fade-up animate-delay-[800ms]" />
-						<Row opponent="Samir" score="6-3" date="May 30, 2023" result="win" avatar="/avatars/avatar5.png "style="animate-fade-up animate-delay-[1000ms]" />
+						<Row opponent="Samir" score="6-3" date="May 30, 2023" result="win" avatar="/avatars/avatar5.png "style="animate-fade-up animate-delay-[1000ms]" /> */}
 					</tbody>
 				</table>
 			</div>

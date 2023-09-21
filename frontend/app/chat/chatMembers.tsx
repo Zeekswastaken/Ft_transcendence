@@ -10,8 +10,7 @@ import { useRouter } from "next/navigation";
 
 
 function chatMembers() {
-  const {setMyBoolean , myBoolean, userData, chatMembers} = useMyStore();
-<<<<<<< HEAD
+  const {setMyBoolean , myBoolean, userData, chatMembers, currUserData} = useMyStore();
   // const {socket} = useSocketContext();
   // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
@@ -31,17 +30,15 @@ function chatMembers() {
   const [mem, setMem] = useState<any[]>([]);
   const [owner, setOwner] = useState<any[]>([]);
   useEffect(() => {
-    setMem(chatMembers?.members)
-    setOwner(chatMembers?.owner)
-    console.log("mem = ", mem)
+    setMem(chatMembers?.members);
+    setOwner(chatMembers?.owner);
   }, [chatMembers])
 
   const router = useRouter();
+
   function redirectToProfile() {
     router.push("/users/" + owner?.user?.username)
   }
-=======
->>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
 
   return (
     <div className="drawer drawer-end absolute w-[60%] max-2xl:w-[70%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">
@@ -80,6 +77,7 @@ function chatMembers() {
                   {owner?.user?.username}
                 </p>
                 <div className="float-right">
+                    {currUserData.id != chatMembers?.owner?.Userid ?(
                   <div className="dropdown dropdown-left mx-2 my-1">
                     <button
                       tabIndex={0}
@@ -113,6 +111,7 @@ function chatMembers() {
                       </li>
                     </ul>
                   </div>
+                    ):null}
                 </div>
               </div>
             </div>

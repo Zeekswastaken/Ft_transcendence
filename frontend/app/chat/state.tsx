@@ -12,6 +12,7 @@ export  interface MyStore {
     chanelType:boolean;
     notification:any;
     chatMembers:any[];
+    muted:any;
     setMyBoolean: (value: Boolean) => void;
     setCurrUserData: (data: any) => void;
     setUserData: (data: any) => void;
@@ -23,6 +24,7 @@ export  interface MyStore {
     setChanelType: (value: boolean) => void;
     setNotification: (value: any) => void;
     setChatMembers: (value: any) => void;
+    setMuted: (value: any) => void;
   }
   
   export const useMyStore = create<MyStore>((set) => ({
@@ -37,6 +39,7 @@ export  interface MyStore {
     chanelType:false,
     notification:[],
     chatMembers:[],
+    muted:[],
     setMyBoolean: (value: Boolean) => set({ myBoolean: value }),
     setCurrUserData: (data: any) => set({ currUserData: data }),
     setUserData: (data: any) => set({ userData: data }),
@@ -48,4 +51,5 @@ export  interface MyStore {
     setChanelType: (value: boolean) => set({ chanelType: value }),
     setNotification: (value: any) => set({ notification: value }),
     setChatMembers: (data) => set({ chatMembers: data }),
+    setMuted: (value: any) => set({ muted: value }),
   }));
