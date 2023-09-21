@@ -97,9 +97,9 @@ function chatMembers() {
           </div>
           <div className=" h-[55%] overflow-y-scroll no-scrollbar bg-[#4C2556]">
             <ul className=" flex flex-col whitespace-no-wrap p-4 max-sm:p-0">
-              {chatMembers.map((mem, id) => (
+              {/* {chatMembers.map((mem, id) => (
                 <GroupList key={id} member={mem} />
-              ))}
+              ))} */}
             </ul>
           </div>
           <div className="menu h-[15%] rounded-b-2xl place-items-center max-sm:mb-8 flex items-center justify-center">

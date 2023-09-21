@@ -6,7 +6,7 @@ import ChatContent from './chatContent';
 import EmptyChatContent from './emptyChatContent';
 import { getCookie } from 'cookies-next';
 import { io } from 'socket.io-client';
-import { useSocketContext } from '../socket';
+import { SocketProvider, useSocketContext } from '../socket';
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useMyStore } from "./state";
 
@@ -37,10 +37,13 @@ const page = () => {
   const [userGroups, setUserGroups] = useState<any>([]);
 
   useEffect(() => {
+    const token = getCookie("accessToken");
     socket?.emit("getFriendsWithChannels", {user: currentUsername});
     socket?.emit("getChannelsJoined", {userID: currentUserID});
+    socket?.emit("getSocketId&JoinRoom", {token: token});
   }, [currentUserID])
   useEffect(() => {
+    socket?.on
     socket?.on("getfriendswithchannels", (data:any) => {
       setUserFriends(data);
     })

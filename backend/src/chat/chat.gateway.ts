@@ -34,6 +34,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       await this.userservice.update(user,user.id as number);
       const user2 = await this.userservice.findByName(user.username);
       const channels = await this.ChannelService.getChannelsJoined(user2.id);
+      console.log("CHANNEL NEAR GET SOCKET BLABLA== ", channels);
       this.users.set(client.id,await this.jwt.generateToken_2(user2) as string);
         channels.forEach((room)=>{
           client.join(room.id.toString());
@@ -82,7 +83,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       // const recuser = await this.userservice.findByName(payload.receiver);
       const sender = await this.jwt.decoded(payload.Token)
     const message = await this.chatservice.saveMsg({text:payload.message as string}, payload.channelid, sender);
-    console.log("PAAAAAAYLOAAAAAAD ->>>>>>>>>>>>>>>>> PAAAAAAAY YOUUUUUR BILLLLL ", {message: message, user:sender, channelid:payload.channelid})
+    // console.log("PAAAAAAYLOAAAAAAD ->>>>>>>>>>>>>>>>> PAAAAAAAY YOUUUUUR BILLLLL ", {message: message, user:sender, channelid:payload.channelid})
     this.server.to(payload.channelid.toString()).emit("MessageToRoom",{message: message, user:sender, channelid:payload.channelid});
     }
     else
@@ -95,6 +96,8 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     {
       const user = await this.jwt.decoded(payload.token);
       const channels = await this.ChannelService.getChannelsJoined(user.id);
+      console.log("CHANNEL NEAR GET JOINROOM== ", channels);
+
       channels.forEach((room)=>{
         client.join(room.Name);
       })
