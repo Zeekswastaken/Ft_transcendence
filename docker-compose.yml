@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  frontend:
+    container_name: frontend
+    build: ./frontend/
+    restart: always
+    networks:
+      - PingPong
+    # env_file:
+    #   - ./.env
+    ports:
+      - 3001:3001
+  backend:
+    container_name: backend
+    build: ./backend/
+    restart: always
+    networks:
+      - PingPong
+    # env_file:
+    #   - ./.env
+    depends_on:
+      - my-postgres
+    ports:
+      - 3000:3000
+  my-postgres:
+    image: postgres:latest
+    restart: always
+    container_name: my-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - PingPong
+
+networks:
+  PingPong:
+
+volumes:
+  pgdata:

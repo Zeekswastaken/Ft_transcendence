@@ -86,14 +86,22 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('muteUser')
-  async mute(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
+  async mute(@ConnectedSocket() client: Socket, @MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
   {
     try{
       const channelID = data.channelID; 
       const userID = data.userID;
       const initiatorID = data.initiatorID;
       const amount = data.amount;
-      return await this.channelService.muteUser(channelID, userID, initiatorID, amount)
+      let bool = false;
+      const check = await this.channelService.muteUser(channelID, userID, initiatorID, amount)
+      if (check)
+          bool = true;
+      // const members = await this.channelService.getChannelMembers(data.channelID);
+      // console.log("CHECKING IN LE MUTE", members, "CHAKAKAKKAKA", data.channelID);
+      // const user = await this.userService.findById(data.userID);
+      // console.log("USER SOCJKETRTTT=======" , user.Socket);
+      client.to(channelID.toString()).emit("newmembership", {isMuted:bool, userID:userID});
     }
   catch (error) {
     console.error('Error muting user: ', error.message);
@@ -102,12 +110,17 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('unmuteUser')
-  async unmute(@MessageBody() data: { channelID: Number, userID: Number})
+  async unmute(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number})
   {
     try{
       const channelID = data.channelID; 
       const userID = data.userID;
-      return await this.channelService.unmuteUser(channelID, userID)
+      let bool = true;
+      const check = await this.channelService.unmuteUser(channelID, userID)
+      if (check)
+        bool = false;
+      // const members = await this.channelService.getChannelMembers(data.channelID);
+      client.to(channelID.toString()).emit("newmembership", {isMuted:bool, userID:userID});
     }
   catch (error) {
     console.error('Error unmuting user: ', error.message);
@@ -116,14 +129,19 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('banUser')
-  async ban(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
+  async ban(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
   {
     try{
       const channelID = data.channelID; 
       const userID = data.userID;
       const initiatorID = data.initiatorID;
       const amount = data.amount;
-      return await this.channelService.banUser(channelID, userID, initiatorID, amount)
+      let bool = false;
+      const check = await this.channelService.banUser(channelID, userID, initiatorID, amount)
+      if (check)
+        bool = true;
+      // const members = await this.channelService.getChannelMembers(data.channelID);
+      client.to(data.channelID.toString()).emit("newmembership3", {isBanned:bool, userID:userID});
     }
   catch (error) {
     console.error('Error banning user: ', error.message);
@@ -132,12 +150,17 @@ export class ChannelGateway {
   }
 
   @SubscribeMessage('unbanUser')
-  async unban(@MessageBody() data: { channelID: Number, userID: Number})
+  async unban(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number})
   {
     try{
       const channelID = data.channelID; 
       const userID = data.userID;
-      return await this.channelService.unbanUser(channelID, userID)
+      let bool = true;
+      const check = await this.channelService.unbanUser(channelID, userID)
+      if (check)
+        bool = false;
+      // const members = await this.channelService.getChannelMembers(data.channelID);
+      client.to(data.channelID.toString()).emit("newmembership4", {isBanned:bool, userID:userID});
     }
   catch (error) {
     console.error('Error unbanning user: ', error.message);
@@ -183,6 +206,21 @@ export class ChannelGateway {
     try{
       const channels = await this.channelService.getChannelMembers(data.channelid);
       this.server.to(client.id).emit("members", channels);
+    }
+    catch(error)
+    {
+      console.error('Error getting all the channels by the user: ', error.message);
+      throw error;  
+    }
+  }
+
+  @SubscribeMessage('getInfos')
+  async getInfos(@ConnectedSocket() client: Socket,@MessageBody() data: {channelID: Number, userID: Number})
+  {
+    try{
+      const state = await this.channelService.getInfos(data.channelID, data.userID);
+      console.log("STATIISISISISURERER==== ",state);
+      this.server.to(client.id).emit("state", state);
     }
     catch(error)
     {

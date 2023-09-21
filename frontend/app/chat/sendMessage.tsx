@@ -8,7 +8,7 @@ import { useSocketContext } from '../socket';
 import initialContent, { Content } from "./content";
 import { useMyStore } from "./state";
 import { current } from "@reduxjs/toolkit";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation";
 
 
 interface addContentProps {
@@ -17,9 +17,11 @@ interface addContentProps {
 
 const sendMessage = ({ addContent }: addContentProps) => {
 
-  const {tempo, setTempo, token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, updateChat, setNotification, setChanelType, chanelType} = useMyStore();
+  const {muted, tempo, setTempo, token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, updateChat, setNotification, setChanelType, chanelType} = useMyStore();
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
+  const router = useRouter();
+
 
   const submitSendMessage = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -91,23 +93,11 @@ const sendMessage = ({ addContent }: addContentProps) => {
       setNotification(data);
     })
   },[])
-
-  return (
+  console.log(muted);
+  return ((!muted.isMuted) && (currUserData.id != muted.userID)? (
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
       <div className="flex justify-center absolute bottom-3 w-full h-16">
         <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">
-          {/* <button
-            type="button"
-            className="p-2 text-gray-500 rounded-lg cursor-pointer hover:bg-[#2D0130]"
-          >
-            <Image
-              src="/avatars/avatar1.png"
-              width={35}
-              height={35}
-              alt="icon"
-              className=" bottom-4 space-y-2"
-            />
-          </button> */}
           <textarea
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -119,8 +109,8 @@ const sendMessage = ({ addContent }: addContentProps) => {
           <SendButton />
         </div>
       </div>
-    </form>
-  );
+    </form>):null
+  )
 };
 
 export default sendMessage;

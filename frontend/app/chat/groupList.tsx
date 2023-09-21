@@ -1,6 +1,10 @@
 "use client";
-import reaact from "react";
+import reaact, { useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useMyStore } from "./state";
+import { Socket } from "socket.io-client";
+import { useSocketContext } from "../socket";
 
 interface members
 {
@@ -8,7 +12,31 @@ interface members
 }
 
 function groupList({member}:members) {
+
+  const {currUserData, chatMembers, setChatMembers, userData, setMuted} = useMyStore();
+  const {socket} = useSocketContext();
+  const router = useRouter();
+  function redirectToProfile() {
+    router.push("/users/" + member.user.username)
+  }
+  function muteMember(){
+    socket?.emit("muteUser", {channelID:userData.id, userID:member.user.id, initiatorID:currUserData.id, amount:0});
+  }
+  function unMuteMember (){
+    socket?.emit("unmuteUser",{channelID:userData.id, userID:member.user.id } )
+  }
+  useEffect(()=>{
+    socket?.on("newmembership", (data:any) => {
+      setMuted(data);
+    })
+    
+  },[])
+
+  // console.log(currUserData, chatMembers);
+  console.log(member);
+  // console.log(chatMembers?.members?.isMuted);
   return (
+    member.user.id != currUserData.id ?(
     <li className=" p-2 rounded-xl place-items-center">
       <div className="relative h-[60px] flex-shrink-0 rounded-2xl bg-[#673E6A] space-x-4 max-sm:space-x-0 ">
         <img
@@ -42,20 +70,35 @@ function groupList({member}:members) {
             className="dropdown-content menu p-2 shadow rounded-box w-52 bg-pink-900 opacity-20 z-40"
           >
             <li className="place-content-center font-Bomb">
-              <a>View profile</a>
-            </li>
-            <li className=" place-content-center font-Bomb">
-              <a>Kick out</a>
+              <button onClick={redirectToProfile}> View profile </button>
             </li>
             <li className=" place-content-center font-Bomb ">
-              <a>Chaleng</a>
+              <a>Challenge</a>
             </li>
+            {currUserData.id === chatMembers?.owner?.Userid ?(<div>
+
+            {!member?.isMuted ? (<li className=" place-content-center font-Bomb">
+              <button onClick={muteMember}>mute</button>
+            </li>):(
+              <li className=" place-content-center font-Bomb">
+              <button onClick={unMuteMember}>unmute</button>
+              </li>
+            )}
+            <li className=" place-content-center font-Bomb">
+              <button>Ban</button>
+            </li>
+            <li className=" place-content-center font-Bomb">
+              <button>assign admin</button>
+            </li>
+            </div>
+            ):null}
           </ul>
         </div>
         </div>
       </div>
     </li>
-  );
+  ):null
+  )
 }
 
 export default groupList;
