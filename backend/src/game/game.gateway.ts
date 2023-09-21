@@ -94,7 +94,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (await this.jwt.verify(obj.token))
     {
       const user = await this.jwt.decoded(obj.token);
+      console.log("==============> Hello From SetSocket =======> ", user.username);
+
       user.PlayerSocket = client.id;
+      delete user.Socket;
       await this.userservice.update(user,user.id as number);
     }
   }
@@ -124,10 +127,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     
     if(obj.p1 !== undefined && obj.p2 !== undefined) {
       // console.log("---------------+++++++++++++++ ", obj.p1 , obj.p2, "--------------++++++++++");
-      const player1: User = await this.userservice.findByName(obj.p1);
-      const player2: User = await this.userservice.findByName(obj.p2);
-           
-      console.log("---------------+++++++++++++++ ", player1.PlayerSocket , player2.PlayerSocket, "--------------++++++++++");
+      let player1: User = await this.userservice.findByName(obj.p1);
+      let player2: User = await this.userservice.findByName(obj.p2);
+      while(player1.PlayerSocket == null || player2.PlayerSocket == null)
+      {
+        player1 = await this.userservice.findByName(obj.p1);
+        player2 = await this.userservice.findByName(obj.p2);
+        console.log("---------------+++++++++++++++ ", player1.PlayerSocket , player2.PlayerSocket, "--------------++++++++++");
+      }
       
       const initGameData = { 
         player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
@@ -254,10 +261,15 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.server.to(client.id).emit("queue", queue);
       if (queue.receiver != null)
       {
+        console.log("sendeeeeerrrrrrr================== ", queue.sender);
+        console.log("RECEIVER======================= ", queue.receiver);
+
         this.server.to(queue.sender.Socket).emit("queue", queue);
         await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
         await this.gameservice.DeleteQueue(queue.id);
       }
+      else 
+        console.log("--------------------------------->",queue.receiver);
         const message = "The gameinvite has been sent";
       // this.server.to(recipient.Socket).emit('message', message);
     }

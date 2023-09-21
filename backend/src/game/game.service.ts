@@ -59,19 +59,29 @@ export class GameService {
     }
     async addToQueue(userid: Number)
     {
-      const user = await this.userservice.findById(userid);
-      if (!user)
+      var entrance = 0;
+      const User = await this.userservice.findById(userid);
+      if (!User)
         throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+      User.PlayerSocket = null;
+      console.log("**********************************************************************************,",User.Socket,"**********************************************************");
+      delete User.Socket;
+      const user = await this.userservice.save(User); 
       const queue = await this.GameinviteRepo.findOne({where:{receiver: null}});
+      while(entrance != 0){}
       if (!queue)
       {
+        entrance++;
         const game = new GameInvite();
         game.sender = user;
+        entrance--;
         return await this.GameinviteRepo.save(game);
       }
       else
       {
+        entrance++;
         queue.receiver = user;
+        entrance--;
         return await this.GameinviteRepo.save(queue);
       }
     }
