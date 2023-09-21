@@ -54,6 +54,7 @@ const CreatGroup = () =>
     const {group, setGroup} = useGroupStore()
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+<<<<<<< HEAD
         // const formData = new FormData();
         // console.log("file = ", avatar.current)
         // console.log("name = ", channelName);
@@ -71,19 +72,19 @@ const CreatGroup = () =>
         //     console.log(`${key}: ${value}`);
         // });
         axios.post("http://10.14.2.9:3000/channel/createChannel", {
+=======
+        axios.post("http://localhost:3000/channel/createChannel", {
+>>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
             userid: currentUserID,
             name: channelName,
             type: privacy,
             password: password
-        })           // avatar_URL: path
+        })
         .then(res => {
             if (res.status == HttpStatusCode.Created)
-                // router.refresh();
             setGroup(!group)
                 console.log("here refresh");
         }).catch(err => {console.log(err)})
-        // socket?.emit("createChannel", {userid: currentUserID, name: channelName, type: privacy, password:password, avatar_URL: path});
-        // router.push("/channels");
     }
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
         setGroup(!group);

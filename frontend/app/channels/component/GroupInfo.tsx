@@ -18,7 +18,6 @@ interface GroupsStateprops {
 }
 
 const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) => {
-    console.log("Im here !!!!!!!!!!!");
     const [currentUserID, setCurrentUserID] = useState<number>()
     const token = getCookie("accessToken");
     useEffect(() => {
@@ -49,10 +48,12 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
     const {socket} = useSocketContext()
     const [errorMessage, setErrorMessage] = useState<string>("")
     const [done , setDone] = useState<boolean>(false)
+<<<<<<< HEAD
     console.log("pass = ", channelPass)
     const router = useRouter()
+=======
+>>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
     const handleJoinChannel = (e: MouseEvent<HTMLButtonElement>) => {
-        console.log("id = ", Id , "user = ", currentUserID)
         if (currentUserID !== undefined) {
             socket.emit("JoinChannel", {channelID: Id, userID: currentUserID, Pass: channelPass})
             // setTimeout(() => {
@@ -61,7 +62,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
             setLoading(true);
             setIsclicked(!isclicked);
             socket.on("isjoined", (data:any) => {
-                console.log("data = ", data)
                 if (data) {
                     socket.emit("JoinRoom", {token: token});
                     setErrorMessage("")
@@ -90,11 +90,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
         }
 
     }
-    // const handleJoinProtectedChannel = (e: MouseEvent<HTMLButtonElement>) => {
-
-    // }
-
-    console.log("id = ", Id , "user = ", currentUserID)
     const handleLeaveChannel = (e: MouseEvent<HTMLButtonElement>) => {
             
             // setLoading(false);

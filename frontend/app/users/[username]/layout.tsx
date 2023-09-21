@@ -57,19 +57,20 @@ export default function RootLayout({
 }) {
   const User = useParams().username;
   const [currentUsername, setCurrentUsername] = useState<string>("");
-  const [currentUserID, setCurrentUserID] = useState<number>(0);
+  const [currentUserID, setCurrentUserID] = useState<number>();
   const Data = useUserDataContext();
   const {socket} = useSocketContext();
-  // console.log("socket", socket?.id);
   const userData = Data?.user ;
   const token = getCookie("accessToken");
   useEffect(() => {
     try {
       const user = jwt.decode(token as string) as JwtPayload
-      if (user) {
-        setCurrentUsername(user.username)
-        setCurrentUserID(user.id)
-      }
+      console.log("userid = ", user.id)
+      // if (user) {
+        console.log("Im here")
+        setCurrentUsername(user.username as string)
+        setCurrentUserID(user.id as number)
+      // }
     } catch (error) {
       console.error('Error decoding token:');
     }
@@ -77,22 +78,25 @@ export default function RootLayout({
 
   const router = useRouter();
   const isPrivate = !userData?.privacy;
-  const [isFriend, setIsFriend] = useState<boolean>();
+  const [isFriend, setIsFriend] = useState<boolean>(false);
   const [isPending, setIsPending] = useState<boolean>(false);
   const [isClicked, setIsClicked] = React.useState(true);
   const [receiver, setReceiverUsername] = useState("");
   const [Status, setStatus] = useState();
   const [isBlocking, setIsBlocking] = useState<boolean>(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
+<<<<<<< HEAD
   // const socket = io("http://10.14.2.9:3000", {
   // transports: ["websocket"],
   // autoConnect: false,
   // });
 
   // Connect the socket when the app initializes
+=======
+  
+>>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
   
   useEffect(() => {
-    // socket?.connect();
   socket?.on("ispending", (data:any) => {
     if (!data) {
       setIsPending(false);
@@ -100,7 +104,6 @@ export default function RootLayout({
       setReceiverUsername(data.receiver_username);
       setIsPending(data.state);
       setIsClicked(data.state);
-      console.log("isPending = ", data.state)
     }
   });
   socket?.on("isfriend", (data:any) => {
@@ -113,14 +116,12 @@ export default function RootLayout({
   
   socket?.on('GetUserStatus', (data: any) => {
     if (data) {
-      // console.log('data = ', data)
       setStatus(data.status);
     }
   });
 
   socket?.on('isblocking', (data: any) => {
     if (data) {
-      // console.log('data = ', data)
       setIsBlocking(data);
     }
   });
@@ -132,11 +133,6 @@ export default function RootLayout({
       setIsBlocked(data);
     }
   });
-  // Fetch initial state for isClicked from the WebSocket response
-
-  // Emit the initial checkPending event if currentUserID and userData.id are available
-  
-  // Clean up the socket listener when the component unmounts
   return () => {
     socket?.off("isfriend")
     socket?.off("ispending");
@@ -145,22 +141,23 @@ export default function RootLayout({
 
 
 useEffect(() => {
-    if (currentUserID && userData?.id) {
+  if (currentUserID && userData?.id) {
+      console.log("currentUserID = ", currentUserID, "userData = ", userData?.id, "username = ", currentUsername);
       socket?.emit("checkPending", {
         userID: currentUserID,
         recipientID: userData.id,
       });
     
+      // console.log("llllllllllll")
       socket?.emit("checkFriend", {
         userID: currentUserID,
         recipientID: userData.id,
       });
     }
-  }, [currentUserID, userData?.id])
+  }, [currentUserID, userData, isPending, isFriend])
 
   const handleCancel = () => {
       socket?.emit("Unfriend", { userID: currentUserID, recipientID: userData?.id });
-      console.log("cancel");
       setIsPending(false); // Clear the pending status
       setIsClicked(!isClicked);
       router.refresh();
@@ -374,14 +371,14 @@ useEffect(() => {
                         </>
                       )}
                       { currentUsername !== User && isFriend ? (
-                        <div className=" mt-20 flex space-x-5">
+                        <div className=" mt-20 mb-5 flex space-x-5">
                           <button onClick={handleUnfriend} className="text-white font-Bomb text-xl px-5 pt-2 pb-1 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300 w-[135px]">
                             <p className=" py-1 px-2">UnFriend</p>
                           </button>
                           {/* <SetButtonText styles="text-white font-Bomb text-xl px-5 pt-2 pb-1 rounded-2xl bg-[#6E4778] hover:text-gray-100 hover:bg-[#8d549c] shadow-inner duration-300 w-[135px]" initialText="Friends" newText="Add Friend" /> */}
-                          <button className=" text-white font-Bomb text-xl px-5 pt-3 pb-2 rounded-2xl bg-[#AF0D63] hover:text-gray-100 hover:bg-[#cd237e] shadow-inner duration-300 w-[135px]">
+                          <Link href={"/chat"} className=" text-white text-center font-Bomb text-xl px-5 pt-3 pb-2 rounded-2xl bg-[#AF0D63] hover:text-gray-100 hover:bg-[#cd237e] shadow-inner duration-300 w-[135px]">
                             Message
-                          </button>
+                          </Link>
                         </div>
                       ) : ("")}
                     </div>

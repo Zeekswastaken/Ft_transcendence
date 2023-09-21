@@ -54,24 +54,9 @@ interface userDataProviderProps {
 
 
 export function UserDataProvider({ children, }: userDataProviderProps) {
-  // let e: Event
-  // e.preventDefault()
   let User = useParams().username;
-  // console.log('User =', User )
   const [user, setUser] = useState<userData | undefined>({} as userData)
   useEffect(() => {
-    // if (!User)
-    // {
-    //   const token = getCookie("accessToken");
-    //   try {
-    //     const user = jwt.decode(token as string) as JwtPayload
-    //     if (user)
-    //       User = user?.username
-    //     // setCurrentUsername(jwt.decode(token).username);
-    //   } catch (error) {
-    //     console.error('Error decoding token:');
-    //   }
-    // }
     if (User) {
       axios.get(`http://10.14.2.9:3000/profile/${User}`).then((res) =>{
         if(res.data.message === "not-found"){
@@ -86,11 +71,6 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
     }
     
   }, [User])
-  // const dispatch = useAppDispatch();
-  // useEffect(() => {
-  //   dispatch(setUserData(user));
-  // }, [dispatch, user]);
-
   return (
     <userDataContext.Provider value={user}>
       {children}

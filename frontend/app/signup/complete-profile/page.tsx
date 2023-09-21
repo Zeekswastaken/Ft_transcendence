@@ -18,7 +18,6 @@ const completProfile = () => {
 
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    // console.log("avatar_URL = " + avatar_URL);
     const formData = new FormData();
     formData.append("file", avatar.current as File);
     formData.append("birthDay", birthDay as unknown as string);
@@ -53,10 +52,6 @@ const completProfile = () => {
       }
     }
   };
-
-  // const imageUpdate = (e: any) => {
-  // }
-  // console.log(gender);
   return (
     <div className=" grid place-items-center h-screen ">
       <div className=" bg-[#1B071C]/[0.8] min-w-[300px] overflow-auto h-[600px] w-[500px] mt-[140px] rounded-2xl border-[#D16ACE] border">

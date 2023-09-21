@@ -40,13 +40,8 @@ const  NotificationDropDown = () => {
   }, [])
 
   useEffect(() => {
-    // console.log(socket)
-    // if (socket) {
       socket?.on('friend notif', (data:any) => {
-        // console.log('Received friend notification:', data);
-        // console.log("rec = " + data?.friendRequest[0]?.recipient)
         if (data) {
-          console.log("data = ", data)
           setRecipientId(data?.friendRequest[0]?.recipient.id)
           setSenderId(data?.friendRequest[0]?.sender.id)
         }
@@ -68,13 +63,11 @@ const  NotificationDropDown = () => {
       setNewNotif(false)
   }, [newNotif, socket, currentUserID, isClicked])
 
-  // console.log(notification)
   const handleDecline = (sender:number) => {
     setDecline(true)
     setDecIdx(sender)
     setNewNotif(false)
     socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: sender});
-    // router.push(`/home`)
     router.refresh()
     
   }
@@ -88,6 +81,15 @@ const  NotificationDropDown = () => {
     // if (!isClicked)
       setNewNotif(false)
       setIsClicked(true)
+  }
+
+  const handleInvite = (sender:string) => {
+    socket.emit("AcceptInvite", {userid:currentUserID, receiver:sender})
+    socket.on("acceptedqueue", (data:any) => {
+      if (data.status === "accepted")
+        router.push("/game/OneVsOne/Random")
+    })
+    // console.log("username = ", sender)
   }
 
   return (
@@ -134,11 +136,11 @@ const  NotificationDropDown = () => {
                       >
                             <div className=' space-x-4 flex justify-between'>
                               {post.type !== "Friend Request" ? (
-                                <Link href="/game">
-                                <h3 className="text-sm  leading-5">
+                                // <Link href="/game">
+                                <h3 onClick={e => handleInvite(post.sender.username)} className="text-sm cursor-pointer w-full h-full leading-5">
                                   {post?.message}
                                 </h3>
-                                </Link>
+                                // </Link>
                               ) : (
                                 <div className=' flex justify-between space-x-4 w-full'>
                                       <h3 className="text-sm  leading-5">

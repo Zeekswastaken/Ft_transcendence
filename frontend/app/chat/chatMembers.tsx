@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 
 function chatMembers() {
   const {setMyBoolean , myBoolean, userData, chatMembers} = useMyStore();
+<<<<<<< HEAD
   // const {socket} = useSocketContext();
   // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
@@ -39,6 +40,8 @@ function chatMembers() {
   function redirectToProfile() {
     router.push("/users/" + owner?.user?.username)
   }
+=======
+>>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
 
   return (
     <div className="drawer drawer-end absolute w-[60%] max-2xl:w-[70%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">

@@ -66,70 +66,12 @@ const MatchHistory = () => {
 			  return;
 			}
 			else{
-				// console.log(res.data);
 				setUserFriends(res.data.friends);
 			}
 		  }).catch((err) => {
 			console.log(err);
 		  })
 	  }, [User])
-	  
-	// const Data = useUserDataContext()
-	// useEffect(() => {
-	// 	setUserFriends(Data?.friends);
-	// }, [Data])
-	// console.log("userFriends = ", userFriends)
-	// const [userFriends, setUserFriends] = useState<any>(undefined)
-	// const {socket} = useSocketContext()
-
-	// useEffect(() => {
-	// 	if (socket) {
-	// 	  socket.on('GetUserStatus', (data:any) => {
-	// 		setUserFriends(data)
-	// 	  });
-	// 	}
-	
-	// 	// Clean up the event listener when the component unmounts
-	// 	return () => {
-	// 	  if (socket) {
-	// 		socket.off('GetUserStatus');
-	// 	  }
-	// 	};
-	//   }, [socket]);
-	// socket?.emit("UserStatus");
-	
-	// console.log(userFriends)
-	// const [userFriends, setUserFriends] = useState<any>(undefined);
-	// const [pendingUserFriends, setPendingUserFriends] = useState<any>(undefined);
-  
-	// useEffect(() => {
-	//   if (socket) {
-	// 	socket.on('GetUserStatus', (data: any) => {
-	// 	  setPendingUserFriends(data);
-	// 	});
-	//   }
-  
-	//   return () => {
-	// 	if (socket) {
-	// 	  socket.off('GetUserStatus');
-	// 	}
-	//   };
-	// }, [socket]);
-  
-	// useEffect(() => {
-	//   if (pendingUserFriends !== undefined) {
-	// 	setUserFriends(pendingUserFriends);
-	//   }
-	// }, [pendingUserFriends]);
-  
-	// useEffect(() => {
-	//   if (socket) {
-	// 	socket.emit('UserStatus');
-	//   }
-	// }, [socket]);
-	
-	// const data = [userFriends]
-	// console.log(userFriends);
 	return (
 		
 		<div className=" min-w-[350px]  my-16 mx-2 sm:mx-20 grid grid-cols-1 lg:grid-cols-2 lg:max-w-[1400px] ">

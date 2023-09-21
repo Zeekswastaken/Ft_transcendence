@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { BlockedService } from 'src/blocked/blocked.service';
+import { SocketReadyState } from 'net';
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -27,6 +28,7 @@ export class ChannelGateway {
     const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
     console.log("--------**********------> ", await this.channelService.getChannelsJoined(data.userID));
     this.server.to(client.id).emit("isjoined", bool);
+    this.server.to(data.channelID.toString()).emit("members", await this.channelService.getChannelMembers(data.channelID));
     }catch (error) {
       console.error('Error joining channel: ', error.message);
       this.server.to(client.id).emit("isjoined", false);
@@ -181,6 +183,18 @@ export class ChannelGateway {
     try{
       const channels = await this.channelService.getChannelMembers(data.channelid);
       this.server.to(client.id).emit("members", channels);
+    }
+    catch(error)
+    {
+      console.error('Error getting all the channels by the user: ', error.message);
+      throw error;  
+    }
+  }
+  @SubscribeMessage('switchPrivacy')
+  async switchPrivacy(@ConnectedSocket() client: Socket, @MessageBody() data:{channelid: Number, Type: String})
+  {
+    try{
+
     }
     catch(error)
     {

@@ -26,7 +26,6 @@ const page = () => {
   const {group, setGroup} = useGroupStore()
 
 
-  // const [group, setGroup] = useState(true);
   const [search, setSearch] = useState('');
 
   const handleOnChangeSearch = (entredSearch :any) => {
@@ -49,12 +48,8 @@ const token = getCookie("accessToken");
             console.error('Error decoding token:');
         }
     }, [])
-// const updateGroup = group((state:any) => state.group)
   const handleClick = () => {
-    // group((state:any) => state.group)
     setGroup(!group);
-    // setGroup(!group);
-    // group.setGroup(!group);
   };
   const {socket} = useSocketContext();
   const [groupsInfo, setGroupsInfo] = useState<GroupInfoStatesProps[]>([]);
@@ -63,7 +58,6 @@ const token = getCookie("accessToken");
     if (currentUserID)
       socket?.emit('getChannels', { userid: currentUserID });
     if (socket) {
-      console.log("********************************************************");
       socket.on('channels', (data: any) => {
         setGroupsInfo(data);
       });

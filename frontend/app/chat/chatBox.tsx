@@ -9,6 +9,7 @@ import { channel } from "diagnostics_channel";
 
 
 
+<<<<<<< HEAD
 function chatBox() {
     const { socket } = useSocketContext();
     const [windowHeight, setWindowHeight] = useState(window.innerHeight);
@@ -16,6 +17,20 @@ function chatBox() {
     useEffect(() => {
         socket?.on("OBJ", (data: any) => {
             console.log("hollla");
+=======
+function chatBox()
+{
+  const {socket} = useSocketContext();
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const {message, getChat, setGetChat, updateChat, setUpdateChat, tempo, setTempo, userData, currUserData, chanelType} = useMyStore();
+  useEffect(()=>{
+      socket?.on("OBJ", (data:any) => {
+          setUpdateChat(data);
+        });
+    }, [])
+    if(currUserData && Object.keys(currUserData).length){
+    socket?.on("MessageToRoom", (data:any) => {
+>>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
             setUpdateChat(data);
         });
         socket?.on("MessageToRoom", (data:any) =>{

@@ -8,85 +8,28 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import jwt,{ JwtPayload } from 'jsonwebtoken';
 import { getCookie } from 'cookies-next';
 import { useSocketContext } from '@/app/socket';
-
-type People = {
-  id : number
-  name: string
-  avatar: string
-}
-
-// const people = [
-//   {
-//     id: 1,
-//     name: 'Wade Cooper',
-//     avatar:
-//       'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     id: 2,
-//     name: 'Arlene Mccoy',
-//     avatar:
-//       'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     id: 3,
-//     name: 'Devon Webb',
-//     avatar:
-//       'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80',
-//   },
-//   {
-//     id: 4,
-//     name: 'Tom Cook',
-//     avatar:
-//       'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     id: 5,
-//     name: 'Tanya Fox',
-//     avatar:
-//       'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     id: 6,
-//     name: 'Hellen Schmidt',
-//     avatar:
-//       'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     id: 7,
-//     name: 'Caroline Schultz',
-//     avatar:
-//       'https://images.unsplash.com/photo-1568409938619-12e139227838?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//     id: 8,
-//     name: 'Mason Heaney',
-//     avatar:
-//       'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//       id: 9,
-//     name: 'Claudie Smitham',
-//     avatar:
-//       'https://images.unsplash.com/photo-1584486520270-19eca1efcce5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-//   {
-//       id: 10,
-//     name: 'Emil Schaefer',
-//     avatar:
-//     'https://images.unsplash.com/photo-1561505457-3bcad021f8ee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//   },
-// ]
+import { create } from 'zustand';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
+
+type Store = {
+  username: string
+  setUsername: (username: string) => void;
+};
+
+export const useSelectFriendStore = create<Store>((set) => ({
+  username: "",
+  setUsername: (username) => set({username}),
+}));
 
 export default function SelectFriend() {
   const {socket} = useSocketContext();
   
   const [people, setPeople] = useState<any[]>([]);
   const [currentUserID, setCurrentUserID] = useState<Number>();
+  const [currentUserAvatar, setCurrentUserAvatar] = useState("");
   
   const token = getCookie("accessToken");
   useEffect(() => {
@@ -94,6 +37,7 @@ export default function SelectFriend() {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
         setCurrentUserID(user.id)
+        setCurrentUserAvatar(user.avatar_url)
       }
     } catch (error) {
       console.error('Error decoding token:');
@@ -108,14 +52,13 @@ export default function SelectFriend() {
       });
     }
   }, [currentUserID])
-
-  console.log("currentUserID = ", currentUserID);
-  console.log("people = ", people);
-  const dispatch = useAppDispatch();
   const [selected, setSelected] = useState(people[1])
+  const dispatch = useAppDispatch();
+  const {username, setUsername} = useSelectFriendStore()
   useEffect(() => {
+    setUsername(selected?.username)
     dispatch(setOpponentAvatar(selected?.avatar_url));
-  }, [dispatch, selected?.avatar_url]);
+  }, [dispatch, selected?.avatar_url, selected?.username]);
     
     return (
       
@@ -127,7 +70,7 @@ export default function SelectFriend() {
                 <span className="flex items-center">
                   <img src={selected?.avatar_url} alt="" className="flex-shrink-0 h-8 w-8 rounded-full" />
                   {/* {setSelectedAvatar(selected.avatar)} */}
-                  <span className="ml-3 text-lg font-normal text-white block truncate">{selected?.username}</span>
+                  <span className="ml-3 text-lg font-Bomb tracking-wider text-white block truncate">{selected?.username}</span>
                   <img src="/drop.svg" className=" right-2 absolute" width={18} height={18} alt="" />
                 </span>
                 {/* <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"> */}

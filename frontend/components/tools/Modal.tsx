@@ -1,5 +1,5 @@
 import React, { Children, useEffect, useState } from 'react'
-import SelectFriend from './SelectFriend'
+import SelectFriend, { useSelectFriendStore } from './SelectFriend'
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from 'next/navigation';
 // import ionicon from 'ionicons';
@@ -12,9 +12,10 @@ import 'swiper/css/effect-cards';
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { JwtPayload } from 'jsonwebtoken';
+import jwt,{ JwtPayload } from 'jsonwebtoken';
 import { getCookie } from 'cookies-next';
 import { useSocketContext } from '@/app/socket';
+import { create } from 'zustand';
 // import { Navigation, Pagination, EffectCoverflow } from 'swiper';
 
 interface Props {
@@ -22,23 +23,68 @@ interface Props {
 
 }
 
+type Store = {
+  inviteFriendData: any;
+  buttonType: string
+  setButtonType: (buttonType:string) => void;
+  setInviteFriendData: (inviteFriendData: any) => void;
+};
+
+export const useInviteFriendData = create<Store>((set) => ({
+  inviteFriendData: undefined,
+  buttonType: "",
+  setButtonType: (buttonType) => set({ buttonType }),
+  setInviteFriendData: (inviteFriendData) => set({ inviteFriendData }),
+}));
+
 const OneVsOne:React.FC<Props> = ({ title }) => {
   const router = useRouter();
   const {socket} = useSocketContext();
   const [clicked, setClicked] = useState(false);
   const token = getCookie("accessToken");
+  const {inviteFriendData, setInviteFriendData, buttonType, setButtonType} = useInviteFriendData();
+  const [currentUserAvatar, setCurrentUserAvatar] = useState("");
+  const [currentUserID, setCurrentUserID] = useState<Number>();
+  const avatar = useAppSelector((state) => state.avatarReducer.value);
+  const {username} = useSelectFriendStore()
+  
+// const token = getCookie("accessToken");
+  useEffect(() => {
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUserID(user.id)
+        setCurrentUserAvatar(user.avatar_url)
+      }
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  }, [])
+    
   const handleRandomlyOpponent= (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
+    setButtonType("random");
     router.push("/queue");
   }
   const handleFriendOpponent = (e: React.MouseEvent<HTMLElement>) => {
+    setButtonType("friend");
     setClicked(true);
   }
   const changeState = (state:boolean) => {
     setClicked(state);
   }
 
-  const avatar = useAppSelector((state) => state.avatarReducer.value);
+  const handleFriendInvite = (e : React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("reciever = ", username)
+    socket.emit("AddtoInviteQueue", {userid: currentUserID, receiver: username});
+    socket.on("pendingqueue", (data:any) => {
+      console.log(data);
+      setInviteFriendData(data);
+      router.push("/queue")
+    })
+  }
+  // console.log("username = ", username)
   return (
     <div className=" w-auto place-content-center backdrop-blur-sm">
       <h3 className="text-[40px] mt-2 font-Bomb leading-6 text-white tracking-wide"> {title} </h3>
@@ -48,16 +94,20 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
             </svg>
             <div className=' flex items-center justify-between my-10 space-x-6'>
-              <img className=' rounded-xl' src="/Spectate.png" height={120} width={120} alt="" />
+              <div className=' w-[120px] h-[120px] rounded-xl'>
+                <img className=' rounded-xl w-full h-full' src={currentUserAvatar}alt="" />
+              </div>
               <p className=' text-white text-[50px] font-Bomb'>VS</p>
-              <img className=' rounded-xl' src={avatar} alt="avatar" height={120} width={120} />
+              <div className=' w-[120px] h-[120px] rounded-xl'>
+                <img className=' rounded-xl w-full h-full' src={avatar} alt="avatar" />
+              </div>
             </div>
             <SelectFriend />
           <div className="mt-4 space-x-4">
             <button
               type="button"
               className="inline-flex text-white rounded-lg tracking-wide font-Bomb justify-center text-2xl p-2 bg-primary-pink-300 capitalize shadow duration-300 hover:shadow-black/60"
-              onClick={handleRandomlyOpponent}
+              onClick={handleFriendInvite}
             >
               Invite Friend!
             </button>

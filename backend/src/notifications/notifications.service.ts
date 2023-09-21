@@ -56,7 +56,8 @@ export class NotificationsService {
         recipient.receivednotifications.push(notifs);
         await this.userRepository.save(recipient);
         await this.notificationsRepository.save(notifs);
-        // console.log("RECIPIENT ======== ", recipient.receivednotifications);
+        console.log("LEMME SMASH====== ", notifs.sender);
+        console.log("RECIPIENT ======== ", recipient.receivednotifications[0].recipient);
         return (notifs);
     }
 
@@ -74,16 +75,12 @@ export class NotificationsService {
 
     async getGameNotifs(userID:Number): Promise<any>
     {
-       const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications']});
+       const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications', 'receivednotifications.sender', 'receivednotifications.recipient']});
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
-        const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Game Invite").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-        // console.log(sortedNotifs);
-        const object = {
-            "sortedNotifs":sortedNotifs,
-            "User":user
-        }
-        return (object);
+        const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Game invite").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        // console.log("I PUT A HOLE JELLYBEAN UP MY TIIIIIIIIIIT = ",user.receivednotifications[0].sender);
+        return (sortedNotifs);
     }
 
 async deleteNotif(recipient: User, sender: User, Type: string) {
@@ -105,8 +102,10 @@ async deleteNotif(recipient: User, sender: User, Type: string) {
     });
 
   if (!notif)
+  {
+    console.log("Dunno");
     return ;
-  
+  }
   // console.log("ZEZEZEEZEZEZEEZEZEE");
 
   await this.notificationsRepository.remove(notif);
