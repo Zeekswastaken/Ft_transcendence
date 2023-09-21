@@ -20,7 +20,7 @@ const page = () => {
     e.preventDefault()
     console.log("QRCode", QRCode);
      if (currentUserID != 0) {
-      axios.post("http://10.14.2.9:3000/auth/verify", {
+      axios.post("http://localhost:3000/auth/verify", {
          QRCode,
          currentUserID
        }).then(res => {
@@ -48,7 +48,7 @@ const page = () => {
   }, [])
   useEffect(() => {
     if (currentUserID != 0) {
-      axios.post("http://10.14.2.9:3000/auth/qr-code", {
+      axios.post("http://localhost:3000/auth/qr-code", {
         currentUserID,
       }).then(res => {
         console.log(res.data.qrCodeUri);

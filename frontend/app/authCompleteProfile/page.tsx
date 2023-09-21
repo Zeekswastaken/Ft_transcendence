@@ -40,7 +40,7 @@ const completProfile = () => {
 
     
     e.preventDefault();
-    await axios.put("http://10.14.2.9:3000/auth/complete", {
+    await axios.put("http://localhost:3000/auth/complete", {
       
       birthDay: birthDay,
       gender: gender,

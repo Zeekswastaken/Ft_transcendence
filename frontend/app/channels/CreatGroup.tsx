@@ -71,7 +71,7 @@ const CreatGroup = () =>
         // formData.forEach((value, key) => {
         //     console.log(`${key}: ${value}`);
         // });
-        axios.post("http://10.14.2.9:3000/channel/createChannel", {
+        axios.post("http://localhost:3000/channel/createChannel", {
 =======
         axios.post("http://localhost:3000/channel/createChannel", {
 >>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90

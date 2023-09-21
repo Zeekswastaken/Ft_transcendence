@@ -24,9 +24,10 @@ export default function sketch(p5: P5CanvasInstance) {
     };
   
     p5.setup = () => {
-      if(p5.windowWidth > 1500)
-      {
-        p5.createCanvas(1300, 700);
+      if (p5.windowWidth > 1500) {
+        p5.createCanvas(1200, 700);
+      } else if (p5.windowWidth < 1300){
+        p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
       }else if(p5.windowWidth <= 350 ) {
           p5.createCanvas(300, 150);
       }
