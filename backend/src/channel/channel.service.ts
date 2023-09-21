@@ -241,11 +241,14 @@ export class ChannelService {
         const userinit = await this.userRepository.findOne({where: {id: Equal(initiatorID)}});
         if (!channel || !user || !userinit)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
-        
+        console.log("----------->INITIATOR ===== ", initiatorID);
         const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member'}});
         if (user2)
+        {
+            console.log("===============>USER IN MUTE", user2);
             throw new HttpException("This User doesn't have the rights to perform this action", HttpStatus.FORBIDDEN);
-        const membership = await this.channelMembershipRepository.findOne({
+        }
+            const membership = await this.channelMembershipRepository.findOne({
             where: [
               {
                 user: { id: Equal(user.id) },
@@ -360,7 +363,15 @@ console.log("==================================================");
             
           }));
         return (channelsWithStatus);  
-    }   
+    } 
+
+    async getInfos(channelID:Number, userID:Number)
+    {
+        const stats = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelID), Userid: Equal(channelID)}});
+        if (!stats)
+            throw new HttpException("Memebership not found", HttpStatus.FORBIDDEN);
+        return ({Type:stats.Type, isMuted:stats.isMuted, isBanned:stats.isBanned, userID:stats.Userid});
+    }
 
 
 
