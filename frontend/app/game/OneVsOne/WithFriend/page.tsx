@@ -50,7 +50,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
+        const newSocket = io('http://10.14.3.9:3000');
         setSocket(newSocket);
         newSocket.emit('setSocket', {token: token});
         newSocket.emit("Ready", {token: token});

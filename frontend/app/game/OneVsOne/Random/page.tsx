@@ -68,7 +68,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newsocket = io('http://localhost:3000');
+        const newsocket = io('http://10.14.3.9:3000');
         setSocket(newsocket);
         newsocket.emit("setSocket", {token: token});
         return () => {

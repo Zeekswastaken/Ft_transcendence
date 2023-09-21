@@ -18,6 +18,17 @@ export const useGameSocketStore = create<Store>((set) => ({
   setGamesocket: (gameSocket) => set({ gameSocket }),
 }));
 
+<<<<<<< HEAD
+=======
+// export const gameSocket = () => {
+  
+//   const newSocket = io('http://10.14.3.9:3000');
+//   // console.log("user = ", currentUser?.username, "socket = ", newSocket);
+//  setGameSocket(newSocket);
+// //   newSocket.emit('setSocket', {token: token});
+// //   newSocket.emit("Ready", {token: token});
+// }
+>>>>>>> f7b0ef1d8492303e66ea80a17d74dd6053779a89
 const page = () => {
   const {gameSocket, setGamesocket} = useGameSocketStore()
   const [currentUser, setCurrentUser] = useState<any>({})
@@ -25,6 +36,26 @@ const page = () => {
   const {socket} = useSocketContext();
   const [currentUserId , setCurrentUserId] = useState(0)
   const [queue, setQueue] = useState<any>({})
+<<<<<<< HEAD
+=======
+  // const [gameSocket, setGameSocket] = useState<Socket>();
+  
+  // useEffect(() => {
+  //   // Create a socket connection when the component mounts
+  //   const newSocket = io("http://10.14.3.9:3000");
+
+  //   // Emit an event to set any necessary data on the server, like a token
+  //   newSocket.emit('setSocket', { token: token });
+
+  //   // Set the socket in the component's state
+  //   setGamesocket(newSocket);
+
+  //   // Clean up the socket connection when the component unmounts
+  //   return () => {
+  //     newSocket.disconnect();
+  //   };
+  // }, []);
+>>>>>>> f7b0ef1d8492303e66ea80a17d74dd6053779a89
 
   useEffect(() => {
     try {

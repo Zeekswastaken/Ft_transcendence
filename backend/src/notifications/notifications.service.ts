@@ -77,7 +77,7 @@ export class NotificationsService {
        const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications']});
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
-        const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Game Invite").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        const sortedNotifs = user.receivednotifications.filter(notifs => notifs.type == "Game invite").sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
         // console.log(sortedNotifs);
         const object = {
             "sortedNotifs":sortedNotifs,
@@ -105,8 +105,10 @@ async deleteNotif(recipient: User, sender: User, Type: string) {
     });
 
   if (!notif)
+  {
+    console.log("Dunno");
     return ;
-  
+  }
   // console.log("ZEZEZEEZEZEZEEZEZEE");
 
   await this.notificationsRepository.remove(notif);

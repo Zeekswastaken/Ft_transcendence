@@ -38,10 +38,9 @@ export class ChannelService {
             throw new HttpException("Channel name or Type not specified", HttpStatus.FORBIDDEN);
         channel.Name = data.name;
         channel.Type = data.type;
-        // channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
+        // channel.avatar = 'http://10.14.3.9:3000/src/uploads/' + avatar;
         // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
-        console.log("HEEERE1");
         if (checkChannel)
             throw new HttpException("Channel already exists with the same name", HttpStatus.FORBIDDEN);
         if (data.type === "protected" && data.password)
@@ -49,26 +48,22 @@ export class ChannelService {
             const hashedPass = await this.hashPassword(data.password);
             channel.Password = hashedPass;
         }
-        console.log("HEEERE2");
         if (data.type === "protected" && !data.password)
             throw new HttpException('Password required', HttpStatus.FORBIDDEN); 
         // if (createChannelDto.type === "private")
         // {
                 //TRY TO THINK OF A WAY FOR INVITATION LINKS TO WORK HERE/// FRIEND LIST
         // }
-        console.log("HEEERE3");
         const membership = new ChannelMembership();
         membership.Userid = owner;
         membership.Type = "owner";
         channel.memberships = [];
         // console.log("----- ", membership);
         const savedChannel = await this.channelRepository.save(channel);
-        console.log("HEEERE4");
         membership.Channelid = savedChannel.id
         // console.log("------->", savedChannel)
         channel.memberships.push(membership)
         await this.channelMembershipRepository.save(membership);
-        console.log("HEEERE5");
         console.log("CHANNELS IN CREATE ======> ", await this.channelRepository.find());
         return savedChannel;
     }
@@ -447,7 +442,7 @@ console.log("==================================================");
     const token = `${channelID}-${timestamp}-${randomData}`;
 
     //Construct the full invitation link URL
-    const invitationLink = `https://localhost.com:3001/join-channel?token=${token}`;
+    const invitationLink = `https://10.14.3.9.com:3001/join-channel?token=${token}`;
 
     return invitationLink;
   }
