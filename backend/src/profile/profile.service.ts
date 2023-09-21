@@ -11,7 +11,7 @@ export class ProfileService {
         if (await  this.userRepo.findOne({where :{ username: username}}) != null)
         {
             // console.log(await  this.userRepo.findOne({where :{ username: username}}));
-            const user =  await this.userRepo.findOne({where :{ username: username},relations:['stats']});
+            const user =  await this.userRepo.findOne({where :{ username: username},relations:['stats', 'stats.matches','stats.matches.player1', 'stats.matches.player2']});
             return user;
         }
     }

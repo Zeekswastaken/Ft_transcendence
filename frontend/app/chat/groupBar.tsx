@@ -7,7 +7,7 @@ import { useMyStore } from "./state";
 import { useRouter } from "next/navigation";
 
 const groupBar = ({friend}:any) => {
-    const {token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
+    const {setMuted,setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
     const {socket} = useSocketContext();
     const router = useRouter();
     const setMyGroupStor = (e: MouseEvent<HTMLButtonElement>) =>{
@@ -17,6 +17,7 @@ const groupBar = ({friend}:any) => {
       setChanelType(true);
       const channelid = friend.id;
       const userid = currUserData.id;
+      socket?.emit("getInfos",  {channelID:friend.id, userID:currUserData.id});
       socket?.emit("getGroupMessages",  {token, channelid});
     socket?.emit("isDuo",{channelid, userid} );
       setUpdateChat([]);
@@ -26,12 +27,21 @@ const groupBar = ({friend}:any) => {
       //   setChanelType(data.bool);
       // });
       // console.log("Done");
+      socket?.on("state", (data:any) => {
+        console.log(data);
+        setMuted(data);
+      });
+
       socket?.on("groupmessages", (data:any) => {
         console.log(data);
         setGetChat(data);
+      });
+      
+      socket?.emit("getChannelMembers", {channelid:friend.id})
+      socket?.on("members", (data:any) => {
+        setChatMembers(data);
       })
-      console.log("refreshinggGGGDRSGWEERFDFFFFFFF");
-      // router.refresh();
+      
     }
     return (
       <button onClick={setMyGroupStor}>
