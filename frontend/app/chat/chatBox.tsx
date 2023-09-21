@@ -16,11 +16,8 @@ function chatBox()
   const {message, getChat, setGetChat, updateChat, setUpdateChat, tempo, setTempo, userData, currUserData, chanelType} = useMyStore();
   useEffect(()=>{
       socket?.on("OBJ", (data:any) => {
-        console.log("OBJ USE EFFECT");
-        console.log(data);
           setUpdateChat(data);
         });
-        console.log(currUserData , updateChat);
     }, [])
     if(currUserData && Object.keys(currUserData).length){
     socket?.on("MessageToRoom", (data:any) => {

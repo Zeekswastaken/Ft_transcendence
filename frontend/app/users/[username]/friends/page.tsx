@@ -114,7 +114,6 @@ const BlockedCard = ( {id, username, avatar_url}:Props ) => {
   const [isBlocked, setIsBlocked] = useState(true);
   const unBlocked = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("unblocked")
     setIsBlocked(false)
     socket?.emit("Unblock", {userID: currentUserID, recipientID: id});
     router.push(`/users/${userData?.user.username}/friends`)
@@ -190,7 +189,6 @@ const Friends = () => {
     }
   }, [])
   const User = useParams().username;
-  console.log("User Id = ", User)
   useEffect(() => {
     socket?.on("getfriends", (data:any) => {
       setUserFriends(data);
@@ -198,17 +196,11 @@ const Friends = () => {
     socket?.on("getblocked", (data:any) => {
       setUserBlocked(data);
     })
-  }, [userFriends, userBlocked])
+  }, [userFriends, userBlocked, friends, blocked, socket])
   useEffect(() => {
-    // socket?.emit("getFriends", {userID: currentUserID});
-    // socket?.emit("getBlocked", {userID: currentUserID});
     socket?.emit("getFriends", {user: User});
     socket?.emit("getBlocked", {userID: currentUserID});
-  }, [currentUserID])
-  // console.log("blocked = ", userBlocked)
-  
-  // console.log("friends = ", userFriends)
-  // console.log("blocked = ", userBlocked)
+  }, [currentUserID, friends, blocked])
   const [currentUsername, setCurrentUsername] = useState<string>("");
 
 

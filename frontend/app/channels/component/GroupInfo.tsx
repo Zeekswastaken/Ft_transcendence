@@ -17,7 +17,6 @@ interface GroupsStateprops {
 }
 
 const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) => {
-    console.log("Im here !!!!!!!!!!!");
     const [currentUserID, setCurrentUserID] = useState<number>()
     const token = getCookie("accessToken");
     useEffect(() => {
@@ -48,15 +47,12 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
     const {socket} = useSocketContext()
     const [errorMessage, setErrorMessage] = useState<string>("")
     const [done , setDone] = useState<boolean>(false)
-    console.log("pass = ", channelPass)
     const handleJoinChannel = (e: MouseEvent<HTMLButtonElement>) => {
-        console.log("id = ", Id , "user = ", currentUserID)
         if (currentUserID !== undefined) {
             socket.emit("JoinChannel", {channelID: Id, userID: currentUserID, Pass: channelPass})
             setLoading(true);
             setIsclicked(!isclicked);
             socket.on("isjoined", (data:any) => {
-                console.log("data = ", data)
                 if (data) {
                     setErrorMessage("")
                     setTimeout(() => {
@@ -83,11 +79,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
         }
 
     }
-    // const handleJoinProtectedChannel = (e: MouseEvent<HTMLButtonElement>) => {
-
-    // }
-
-    console.log("id = ", Id , "user = ", currentUserID)
     const handleLeaveChannel = (e: MouseEvent<HTMLButtonElement>) => {
             
             // setLoading(false);

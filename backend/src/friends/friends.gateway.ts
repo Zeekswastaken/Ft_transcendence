@@ -40,6 +40,8 @@ export class FriendsGateway {
       };
       // console.log("*********** ", notif);
       this.server.to(recipient.Socket).emit("friend notif", notif);
+      this.server.to(recipient.Socket).emit("ispending", notif);
+      this.server.to(client.id).emit("ispending", notif);
       const message = "The friend request has been sent";
       this.server.to(recipient.Socket).emit('message', message);
     } catch (error)
@@ -108,6 +110,8 @@ export class FriendsGateway {
       this.server.to(accepting.Socket).emit("friend notif", notif);
       this.server.to(accepting.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
       this.server.to(waiting.Socket).emit('isfriend', await this.friendsService.isFriend(data.recipientID, data.userID));
+      this.server.to(accepting.Socket).emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
+      this.server.to(waiting.Socket).emit('ispending', await this.friendsService.isPending(data.recipientID, data.userID));
       // console.log("--*-*-*-*-*-*- ", test);
 
     } catch (error)
@@ -135,6 +139,8 @@ export class FriendsGateway {
       this.server.to(refusing.Socket).emit("friend notif", notif);
       this.server.to(refusing.Socket).emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
       this.server.to(waiting.Socket).emit('ispending', await this.friendsService.isPending(data.recipientID, data.userID));
+      this.server.to(refusing.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
+      this.server.to(waiting.Socket).emit('isfriend', await this.friendsService.isFriend(data.recipientID, data.userID));
     }  catch (error)
     {
       console.error('Error refusing the friend request: ',error.message);
@@ -161,7 +167,11 @@ export class FriendsGateway {
       };
       this.server.to(refusing.Socket).emit("friend notif", notif);
       this.server.to(refusing.Socket).emit('message', message);
-      // client.emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
+      this.server.to(refusing.Socket).emit('ispending', await this.friendsService.isPending(data.userID, data.recipientID));
+      this.server.to(client.id).emit('ispending', await this.friendsService.isPending(data.recipientID,data.userID));
+      this.server.to(refusing.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
+      this.server.to(client.id).emit('isfriend', await this.friendsService.isFriend(data.recipientID, data.userID));
+
     } catch (error)
     {
       // console.log("wa33333333333333333333333333333");

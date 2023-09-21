@@ -10,13 +10,10 @@ import jwt,{ JwtPayload } from "jsonwebtoken";
 
 
 const completProfile = () => {
-  // var cookie =  getCookie('accessToken');
-  // console.log("accessToken = ", cookie);
   const [birthDay, setBirthDay] = useState<Date |  null>(null);
   const [gender, setGender] = useState("");
   const [username, setUsername] = useState("");
   const [currentUserID, setCurrentUserID] = useState<Number>();
-  // const [avatar_URL, setAvatar_URL] = useState<File>();
   const avatar = useRef<File | undefined>(undefined);
   const router = useRouter();
   const token = getCookie("accessToken");
@@ -33,7 +30,6 @@ const completProfile = () => {
   }, [])
   const [invalidUsername, setInvalidUsername] = useState(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    // console.log("avatar_URL = " + avatar_URL);
     const avatar_url = new FormData();
     avatar_url.append("file", avatar.current as File);
     
@@ -56,7 +52,6 @@ const completProfile = () => {
       "Content-Type": "application/json"
     }}).then(res => {
       deleteCookie("accessToken")
-      console.log(res);
       if (res.data == "invalid") {
         setInvalidUsername(true)
         return
@@ -67,8 +62,6 @@ const completProfile = () => {
     }).catch(err => {console.log(err)});
   }
 
-
-  // const [birthDay, setBirthDay] = useState("");
   const handleDateChange: ReactDatePickerProps['onChange'] = (date) => {
     setBirthDay(date);
     
@@ -88,9 +81,6 @@ const completProfile = () => {
     }
   };
 
-  // const imageUpdate = (e: any) => {
-  // }
-  // console.log(gender);
   return (
     <div className=" grid place-items-center h-screen ">
       <div className=" bg-[#1B071C]/[0.8] min-w-[300px] overflow-auto h-[600px] w-[500px] mt-[140px] rounded-2xl border-[#D16ACE] border">
@@ -107,14 +97,11 @@ const completProfile = () => {
               <input onChange={handleImageChange} className="hidden" id="uploadImage" accept="image/*" type="file" name="avatar" /> 
             </div>
             <p className=" font-Heading tracking-wider mt-2">Upload Image</p>
-            {/* <div className=" "> */}
             <>
               <input onChange={e => {setUsername(e.target.value)}} value={username} placeholder="Username" className=" text-[#837F7F] font-normal bg-[#1C0D16] px-6 border-transparent focus:border-transparent focus:ring-0 focus:outline-primary-pink-300 p-4 mt-2 sm:mx-0 mx-10 rounded-xl" />
               {invalidUsername && <p className=" text-red-500 text-xs pt-1 text-left">Invalid Username</p>}
             </>
             <DatePicker placeholderText="Birth Date" className=" text-gray-400 font-normal bg-[#1C0D16] w-full px-6 border-transparent focus:border-transparent focus:ring-0 focus:outline-primary-pink-300  placeholder:text-[#837F7F] p-4  mt-2 sm:mx-0 mx-10 rounded-xl" selected={birthDay} dateFormat="dd/MM/yyyy" onChange={handleDateChange} />
-              {/* <p className=" tex absolute">DD / MM / YYYY</p> */}
-            {/* </div> */}
             <select onChange={e => setGender(e.target.value)} defaultValue="G" placeholder="Gender" className=" text-[#837F7F] font-normal bg-[#1C0D16] px-6 border-transparent focus:border-transparent focus:ring-0 focus:outline-primary-pink-300 p-4 mt-2 sm:mx-0 mx-10 rounded-xl">
               <option className="" value="G" disabled>Gender</option>
               <option className="" value="Female">Female</option>

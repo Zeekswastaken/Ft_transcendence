@@ -100,11 +100,9 @@ const Settings = () => {
   const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [bio, setBio] = useState("");
-  const [isEnable, setIsEnable] = useState<boolean | undefined>(undefined)
+  const [isEnable, setIsEnable] = useState<boolean>(false)
   const userData = useUserDataContext()?.user;
-
-  console.log("2fa = ", isEnable)
-  const handle2fa = (e: MouseEvent<HTMLInputElement>) => {
+  const handle2fa = () => {
     setIsEnable(!isEnable)
   }
 
@@ -225,7 +223,7 @@ const Settings = () => {
                   </label>
                 <div className=" items-center flex ">
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input onClick={handle2fa} type="checkbox" value="" className="sr-only peer" checked={isEnable}/>
+                    <input onChange={handle2fa} type="checkbox" value="" className="sr-only peer" checked={isEnable}/>
                     <div className="w-14 h-7 bg-gray-200  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
                     <span className="ml-3 text-base text-white font-Bomb pt-1 dark:text-gray-300">{isEnable ? ("Disable 2FA") : ("Enable 2FA")}</span>
                   </label>

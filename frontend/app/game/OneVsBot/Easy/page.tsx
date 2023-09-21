@@ -36,7 +36,6 @@ const page = () => {
         socket?.on('changeScore', (player: number, bot: number) => {
             setPlayerScore(player);
             setBootScore(bot);
-            console.log("ChangeScore", playerScore, bootScore);
         });
         socket?.on('gameOver', (player: number, bot: number) => {
             setGameOver(true);

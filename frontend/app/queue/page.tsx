@@ -18,14 +18,6 @@ export const useGameSocketStore = create<Store>((set) => ({
   setGamesocket: (gameSocket) => set({ gameSocket }),
 }));
 
-// export const gameSocket = () => {
-  
-//   const newSocket = io('http://localhost:3000');
-//   // console.log("user = ", currentUser?.username, "socket = ", newSocket);
-//  setGameSocket(newSocket);
-// //   newSocket.emit('setSocket', {token: token});
-// //   newSocket.emit("Ready", {token: token});
-// }
 const page = () => {
   const {gameSocket, setGamesocket} = useGameSocketStore()
   const [currentUser, setCurrentUser] = useState<any>({})
@@ -33,23 +25,6 @@ const page = () => {
   const {socket} = useSocketContext();
   const [currentUserId , setCurrentUserId] = useState(0)
   const [queue, setQueue] = useState<any>({})
-  // const [gameSocket, setGameSocket] = useState<Socket>();
-  
-  // useEffect(() => {
-  //   // Create a socket connection when the component mounts
-  //   const newSocket = io("http://localhost:3000");
-
-  //   // Emit an event to set any necessary data on the server, like a token
-  //   newSocket.emit('setSocket', { token: token });
-
-  //   // Set the socket in the component's state
-  //   setGamesocket(newSocket);
-
-  //   // Clean up the socket connection when the component unmounts
-  //   return () => {
-  //     newSocket.disconnect();
-  //   };
-  // }, []);
 
   useEffect(() => {
     try {
@@ -64,27 +39,12 @@ const page = () => {
   }, [])
 
 
-  console.log(currentUser)
   const router = useRouter()
-  // useEffect(() => {
-  //   // if (queue) {
-  //     if (queue.receiver) {
-  //       console.log("receiver = ", queue.receiver.username);
-  //       console.log("sender = ", queue.sender.username);
-  //       router.push('/game/OneVsOne/Random');
-  //       socket.emit("connectPlayers", {p1: queue.sender.username, p2: queue.receiver.username });
-  //     }
-  //   // }
-  // }, [queue, socket, currentUserId])
   useEffect(() => {
     if (socket) {
-      console.log("hhhhhhhhhhhhhhhhhhhhh", currentUserId);
       socket.emit('AddtoQueue', {userid: currentUserId})
       socket.on('queue', (data: any) => {
         if (data.receiver) {
-          console.log("receiver = ", data.receiver);
-          console.log("sender = ", data.sender);
-          // socket.emit("connectPlayers", {p1: data.sender.username, p2: data.receiver.username})
           router.push('/game/OneVsOne/Random');
         }
         setQueue(data)
@@ -92,7 +52,6 @@ const page = () => {
     }
   }, [socket, currentUserId])
   
-  console.log("queue = ",  queue);
   return (
   <div className=" flex place-content-center items-center w-full pt-0 lg:pt-[200px] h-screen max-w-[1300px] min-w-[350px] ">
       <div className=" flex pb-10 items-center place-content-center w-full mx-1 h-[480px]  xl:h-[700px] glass rounded-xl ">

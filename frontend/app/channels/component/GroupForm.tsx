@@ -8,7 +8,6 @@ interface searchGroupsStateProps
 }
 
 const GroupFrom = ({handleOnChangeSearch, handleOnClickSearch, search}: searchGroupsStateProps) => {
-    console.log(search);
     return (
         <div>
             <form>

@@ -133,7 +133,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       {
         player1 = await this.userservice.findByName(obj.p1);
         player2 = await this.userservice.findByName(obj.p2);
-        console.log("---------------+++++++++++++++ ", player1.PlayerSocket , player2.PlayerSocket, "--------------++++++++++");
+        // console.log("---------------+++++++++++++++ ", player1.PlayerSocket , player2.PlayerSocket, "--------------++++++++++");
       }
       
       const initGameData = { 
