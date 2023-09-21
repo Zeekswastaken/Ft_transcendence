@@ -54,27 +54,7 @@ const CreatGroup = () =>
     const {group, setGroup} = useGroupStore()
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-<<<<<<< HEAD
-        // const formData = new FormData();
-        // console.log("file = ", avatar.current)
-        // console.log("name = ", channelName);
-        // console.log("id = ", currentUserID)
-        // console.log("type = ", privacy)
-        // console.log("password = ", password)
-        // formData.append('file', avatar.current as any)
-        // // formData.append('avatar', avatar.current as any); // Assuming 'avatar' is the field name expected by FileInterceptor
-        // formData.append('userid', currentUserID as any);
-        // formData.append('name', channelName);
-        // formData.append('type', privacy);
-        // formData.append('password', password);
-        
-        // formData.forEach((value, key) => {
-        //     console.log(`${key}: ${value}`);
-        // });
-        axios.post("http://10.14.2.9:3000/channel/createChannel", {
-=======
         axios.post("http://localhost:3000/channel/createChannel", {
->>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
             userid: currentUserID,
             name: channelName,
             type: privacy,

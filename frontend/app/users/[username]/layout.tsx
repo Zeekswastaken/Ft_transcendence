@@ -85,16 +85,7 @@ export default function RootLayout({
   const [Status, setStatus] = useState();
   const [isBlocking, setIsBlocking] = useState<boolean>(false);
   const [isBlocked, setIsBlocked] = useState<boolean>(false);
-<<<<<<< HEAD
-  // const socket = io("http://10.14.2.9:3000", {
-  // transports: ["websocket"],
-  // autoConnect: false,
-  // });
-
-  // Connect the socket when the app initializes
-=======
   
->>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
   
   useEffect(() => {
   socket?.on("ispending", (data:any) => {
