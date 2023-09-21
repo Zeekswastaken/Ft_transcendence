@@ -24,6 +24,15 @@ export type userData = {
       wins:number
       winrate:number
       level: number
+      matches: [
+        Date:string,
+        id:number,
+        player1:Object,
+        player2:Object,
+        player1Score:number,
+        player2Score:number,
+        result:number
+      ]
     }
   }
   friends: Array<{

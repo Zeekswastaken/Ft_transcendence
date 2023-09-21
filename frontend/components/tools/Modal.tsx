@@ -86,13 +86,15 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
   }
   // console.log("username = ", username)
   return (
-    <div className=" w-auto place-content-center backdrop-blur-sm">
+    <div className=" w-o place-content-center backdrop-blur-sm">
+      {clicked && (
+        <svg onClick={e => changeState(false)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className=" cursor-pointer absolute sm:right-[350px] right-[290px] w-8 h-8 ">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+        </svg>
+      )}
       <h3 className="text-[40px] mt-2 font-Bomb leading-6 text-white tracking-wide"> {title} </h3>
       {clicked ? (
         <div className="">
-            <svg onClick={e => changeState(false)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className=" cursor-pointer ase-in duration-20 ml-10 w-6 h-6  absolute left-10 top-8">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-            </svg>
             <div className=' flex items-center justify-between my-10 space-x-6'>
               <div className=' w-[120px] h-[120px] rounded-xl'>
                 <img className=' rounded-xl w-full h-full' src={currentUserAvatar}alt="" />
@@ -114,14 +116,14 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
           </div>
         </div>
         ) : (
-          <div className=" flex justify-between items-center space-x-[50px] my-10 ">
+          <div className=" flex justify-between items-center space-x-[25px] sm:space-x-[50px] my-10 ">
 
-            <button onClick={handleFriendOpponent} className=" animate-fade-right animate-delay-100 duration-300 hover:drop-shadow-[6px_5px_0_rgba(0,0,00.15)] hover:brightness-100 brightness-90 w-[200px] h-[200px] bg-[url('/playWithFriend.jpg')]  bg-cover bg-center rounded-2xl">
-              <p className=' text-white text-3xl font-Bomb'> Choose Friend </p>
+            <button onClick={handleFriendOpponent} className=" animate-fade-right animate-delay-100 duration-300 hover:drop-shadow-[6px_5px_0_rgba(0,0,00.15)] hover:brightness-100 brightness-90 w-[120px] h-[120px] sm:w-[200px] sm:h-[200px] bg-[url('/playWithFriend.jpg')]  bg-cover bg-center rounded-2xl">
+              <p className=' text-white text-xl sm:text-3xl font-Bomb'> Choose Friend </p>
             </button>
-            <p className=" font-Bomb text-[50px] text-primary-pink-400 ">OR</p>
-            <button onClick={handleRandomlyOpponent} className=" animate-fade-right animate-delay-1000 duration-300 hover:drop-shadow-[6px_5px_0_rgba(0,0,00.15)] hover:brightness-100 brightness-90 w-[200px] hover:from-50% h-[200px] bg-[url('/playwithRandom.jpg')] bg-cover bg-center rounded-2xl  ">
-              <p className=' text-white text-3xl font-Bomb'> Choose Randomly </p>
+            <p className=" font-Bomb text-[25px] sm:text-[50px] text-primary-pink-400 ">OR</p>
+            <button onClick={handleRandomlyOpponent} className=" animate-fade-right animate-delay-1000 duration-300 hover:drop-shadow-[6px_5px_0_rgba(0,0,00.15)] hover:brightness-100 brightness-90 w-[120px] h-[120px] sm:w-[200px] sm:h-[200px] hover:from-50% bg-[url('/playwithRandom.jpg')] bg-cover bg-center rounded-2xl  ">
+              <p className=' text-white text-xl sm:text-3xl font-Bomb'> Choose Randomly </p>
             </button>
           </div>
         )}
@@ -150,13 +152,13 @@ const OneVsBot:React.FC<Props> = ({ title }) => {
     <div className=" w-auto place-content-center backdrop-blur-sm">
       <h3 className="text-[40px] mt-2 font-Bomb leading-6 text-gray-100 tracking-wide"> {title} </h3>
       <div className='font-Bomb text-3xl tracking-wide text-white  my-10 flex space-x-6 '>
-            <button onClick={handelEasyBot} className=" animate-fade-up animate-delay-100 shadow-xl hover:shadow-green-300 hover:text-green-100 duration-300 brightness-100 bg-[url('/easy.jpeg')]  bg-cover bg-center  h-[250px] w-[180px] rounded-3xl">
+            <button onClick={handelEasyBot} className=" animate-fade-up animate-delay-100 shadow-xl hover:shadow-green-300 hover:text-green-100 duration-300 brightness-100 bg-[url('/easy.jpeg')]  bg-cover bg-center  h-[180px] w-[100px] md:h-[250px] sm:w-[180px] rounded-3xl">
               <p className=" mt-[200px]">EASY</p>
             </button>
-            <button onClick={handelMediumBot} className=" animate-fade-up animate-delay-500 shadow-xl hover:shadow-yellow-300 hover:text-yellow-100 duration-300 brightness-100 bg-[url('/meduim.jpeg')] bg-cover bg-center h-[250px] w-[180px] rounded-3xl ">
+            <button onClick={handelMediumBot} className=" animate-fade-up animate-delay-500 shadow-xl hover:shadow-yellow-300 hover:text-yellow-100 duration-300 brightness-100 bg-[url('/meduim.jpeg')] bg-cover bg-center h-[180px] w-[100px] md:h-[250px] sm:w-[180px] rounded-3xl ">
               <p className="mt-[200px]" >Medium</p>
             </button>
-            <button onClick={handelHardBot} className=" animate-fade-up animate-delay-[900ms] shadow-xl hover:shadow-red-400 hover:text-red-100 duration-300 brightness-100 bg-[url('/hard.jpeg')] bg-cover bg-center h-[250px] w-[180px] rounded-3xl">
+            <button onClick={handelHardBot} className=" animate-fade-up animate-delay-[900ms] shadow-xl hover:shadow-red-400 hover:text-red-100 duration-300 brightness-100 bg-[url('/hard.jpeg')] bg-cover bg-center h-[180px] w-[100px] md:h-[250px] sm:w-[180px] rounded-3xl">
               <p className="mt-[200px]">Hard</p>
             </button>
           <div className="slider-container">

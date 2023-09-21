@@ -6,7 +6,7 @@ import ChatContent from './chatContent';
 import EmptyChatContent from './emptyChatContent';
 import { getCookie } from 'cookies-next';
 import { io } from 'socket.io-client';
-import { useSocketContext } from '../socket';
+import { SocketProvider, useSocketContext } from '../socket';
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useMyStore } from "./state";
 import { useRouter } from 'next/navigation';
@@ -54,6 +54,7 @@ const page = () => {
   }, [currentUserID]);
 
   useEffect(() => {
+    socket?.on
     socket?.on("getfriendswithchannels", (data:any) => {
       setUserFriends(data);
     })

@@ -12,11 +12,11 @@ const Losing = (props: Result) => {
     }
     return (
         <div className=' text-3xl text-white pt-[150px]  max-w-[1400px]  rounded-[20px]   w-full h-screen '>
-            <div className=' glass mx-3 w-auto rounded-[20px] grid place-content-center border-[2px] border-[#FF1382] p-3 min-w-[350px]' >
+            <div className=' glass pt-[10%] mx-3 w-auto rounded-[20px] grid place-content-center border-[2px] border-[#FF1382] p-3 min-w-[350px]' >
                 <div className='mb-[10px] grid grid-cols-3 justify-between place-content-center'>
                     <div className='flex justify-center items-center space-x-3'>
-                        <div className={`w-[100px] lg:w-[200px] h-[100px] lg:h-[200px] bg-cover bg-center overflow-hidden rounded-full border-[3px] border-[#6E4778]`} >
-                            <img src={props?.user.avatar_url} alt="" className=' w-full h-full ' />
+                        <div className={`w-[100px] lg:w-[200px] h-[100px] lg:h-[200px] rounded-full`} >
+                            <img src={props?.user.avatar_url} alt="" className=' w-full h-full rounded-full' />
                         </div>
                         <span className='font-Bomb text-xl sm:text-3xl'>You</span>
                     </div>
@@ -27,11 +27,11 @@ const Losing = (props: Result) => {
                     </div>
                     <div className=' flex justify-center items-center space-x-3'>
                         <span className=' font-Bomb text-xl sm:text-3xl'>Easy Bot</span>
-                        <div className="w-[100px] lg:w-[200px] h-[100px] lg:h-[200px] bg-cover bg-center overflow-hidden rounded-full mr-[10px] border-[3px] border-primary-pink-300">
-                            <img src={props?.bot.avatar_url} alt="" className=' w-full h-full ' />
+                        <div className="w-[100px] lg:w-[200px] h-[100px] lg:h-[200px] rounded-full">
+                            <img src={props?.bot.avatar_url} alt="" className='  w-full h-full rounded-full' />
                         </div>
                     </div>
-                    <div className="flex justify-center col-span-3">
+                    <div className="flex justify-center col-span-3 mt-[100px]">
                         <h5 className="font-Bomb text-xl sm:text-4xl">You Lose</h5>
                     </div>
                 </div>

@@ -29,6 +29,8 @@ export class ProfileController {
             // console.log(details);
             // console.log("**************************");
             // console.log(details2);
+            console.log("user matches is == ",user.stats.matches);
+            
             const info = {
                 user:user, 
                 friends:details,

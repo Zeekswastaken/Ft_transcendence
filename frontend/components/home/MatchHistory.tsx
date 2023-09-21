@@ -21,7 +21,7 @@ const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
 	const onOrOffColor = status === "Online" ? "text-[#22C55E]" : "text-[#FF4747]";
 	return (
 		<Link href={`/users/${name}`}>
-		<ul className={` ${styles} hover:bg-primary-pink-200/[0.6] transition-all duration-500 hover:rounded-3xl hover:drop-shadow-2xl pt-4 lg:pt-6  divide-y divide-gray-200 dark:divide-gray-700 tracking-widest text-[24px] text-white font-Heading`}>
+		<ul className={` ${styles} hover:bg-primary-pink-200/[0.6] transition-all duration-500 hover:rounded-3xl hover:drop-shadow-2xl pt-4 lg:pt-6  divide-y divide-gray-200 dark:divide-gray-700 tracking-wider text-[24px] text-white font-bold`}>
 			<li className="pb-3 sm:pb-4 mx-10 ">
 				<div className="flex items-center space-x-6">
 					{/* <div className="flex"> */}
@@ -30,7 +30,7 @@ const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
 					<div className=" flex-1 min-w-0">
 						<p className="  duration-300 cursor-pointer truncat ">{name}</p>
 					</div>
-					<div className= {`inline-flex items-center tracking-wider text-lg ${onOrOffColor}`}>
+					<div className= {`inline-flex items-center font-Heading tracking-wider text-lg ${onOrOffColor}`}>
 						{status}
 					</div>
 				</div>
