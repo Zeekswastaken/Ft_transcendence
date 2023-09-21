@@ -4,12 +4,13 @@ import { GameInvite } from 'src/database/gameInvite.entity';
 import { Match } from 'src/database/match.entity';
 import { Stats } from 'src/database/stats.entity';
 import { User } from 'src/database/user.entity';
+import { NotificationsService } from 'src/notifications/notifications.service';
 import { UserService } from 'src/user/user.service';
 import { Equal, Repository } from 'typeorm';
 
 @Injectable()
 export class GameService {
-    constructor(@InjectRepository(Stats) private readonly statsRepo: Repository<Stats>,@InjectRepository(Match) private readonly MatchRepo: Repository<Match>,private readonly userservice:UserService, @InjectRepository(GameInvite) private readonly GameinviteRepo: Repository<GameInvite>){}
+    constructor(@InjectRepository(Stats) private readonly statsRepo: Repository<Stats>,@InjectRepository(Match) private readonly MatchRepo: Repository<Match>,private readonly userservice:UserService, @InjectRepository(GameInvite) private readonly GameinviteRepo: Repository<GameInvite>, private readonly notifService: NotificationsService){}
     async save(Body: any) {
         const Player1 = await this.userservice.findById(Body.player1.id);
         const Player2 = await this.userservice.findById(Body.player2.id);
@@ -52,11 +53,11 @@ export class GameService {
     {
         user.stats.losses++;
         user.stats.matches_played++;
-        user.stats.level += 0.25;
         user.stats.winrate = (user.stats.wins/user.stats.matches_played)*100;
         await this.statsRepo.save(user.stats);
         return (await this.userservice.save(user));
     }
+
     async addToQueue(userid: Number)
     {
       var entrance = 0;
@@ -67,13 +68,14 @@ export class GameService {
       console.log("**********************************************************************************,",User.Socket,"**********************************************************");
       delete User.Socket;
       const user = await this.userservice.save(User); 
-      const queue = await this.GameinviteRepo.findOne({where:{receiver: null}});
+      const queue = await this.GameinviteRepo.findOne({where:{receiver: null, type: 'random'}});
       while(entrance != 0){}
       if (!queue)
       {
         entrance++;
         const game = new GameInvite();
         game.sender = user;
+        game.type = 'random';
         entrance--;
         return await this.GameinviteRepo.save(game);
       }
@@ -86,11 +88,63 @@ export class GameService {
       }
     }
 
+    async addToGroupQueue(userid: Number, receiverid:Number)
+    {
+      const User = await this.userservice.findById(userid);
+      const receiver = await this.userservice.findById(receiverid);
+      if (!User || !receiver)
+        throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+      User.PlayerSocket = null;
+      console.log("**********************************************************************************,",User.Socket,"**********************************************************");
+      delete User.Socket;
+      const user = await this.userservice.save(User); 
+      const queue = await this.GameinviteRepo.findOne({where:[{sender:Equal(userid), receiver: Equal(receiverid), type: 'invite'},{sender:Equal(receiverid), receiver: Equal(userid), type: 'invite'}]});
+      if (!queue)
+      {
+        const game = new GameInvite();
+        game.sender = user;
+        game.receiver = receiver;
+        game.type = 'invite';
+        game.status = 'pending';
+        return await this.GameinviteRepo.save(game);
+      }
+    }
+    async acceptInvite(userid:Number, senderid:Number)
+    {
+      const User = await this.userservice.findById(userid);
+      const sender = await this.userservice.findById(senderid);
+      if (!User || !sender)
+        throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+        const queue = await this.GameinviteRepo.findOne({where:{sender:Equal(senderid), receiver: Equal(userid), type: 'invite', status:'pending'}});
+        if (!queue)
+          throw new HttpException("Queue not found", HttpStatus.FORBIDDEN);
+        queue.status = 'accepted'
+        await this.notifService.deleteNotif(queue.sender, queue.receiver ,"Game invite");
+        return await this.GameinviteRepo.save(queue);
+    }
+
+    async acceptQueue(inviteid:Number, userid:Number)
+    {
+      const User = await this.userservice.findById(userid);
+      if (!User)
+        throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+        User.PlayerSocket = null;
+        const user = await this.userservice.save(User); 
+        const queue = await this.GameinviteRepo.findOne({where:{sender: Equal(userid),receiver: null, type: 'invite'}});
+        
+        if (queue)
+        {
+          queue.receiver = user;
+          queue.status = 'accepted'
+          return await this.GameinviteRepo.save(queue);
+        }
+    }
+
     async DeleteQueue(queueid:Number)
     {
         const queue = await this.GameinviteRepo.findOne({where:{id:Equal(queueid)}});
         if (queue)
-            await this.GameinviteRepo.delete(queue.id as number);
+          this.GameinviteRepo.delete(queue.id as number);
     }
 
     async findQueue(userid:Number)

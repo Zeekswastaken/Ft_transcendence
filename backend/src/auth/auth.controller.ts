@@ -34,7 +34,7 @@ export class AuthController {
             const cookie_token = await this.authservice.generateToken_2(user);
             // console.log(await this.jwtservice.decoded(cookie_token));
             res.send(cookie_token)
-            //res.redirect('localhost:3001/home')
+            //res.redirect('10.14.3.9:3001/home')
         }
         else
             res.send('Error');
@@ -79,7 +79,7 @@ export class AuthController {
         // const decode = await this.jwtservice.decoded(Body.cookie);
         res.clearCookie('accessToken');
         res.status(200)
-        // .redirect('localhost:3001/login');
+        // .redirect('10.14.3.9:3001/login');
     }
 }
 
@@ -91,7 +91,7 @@ export class googleController{
     @Get('google')
     googlelogin(){
         // console.log("Auth/google");
-        //response.redirect('https://accounts.google.com/v3/signin/identifier?opparams=%253F&dsh=S688648157%3A1690628583384724&client_id=154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com&o2v=2&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Ffrom-google&response_type=code&scope=email+Profile&service=lso&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPGR2GqJKOJkkWG3gupm3W4L17g5-s-sQUjYdX252QPpvXeXcIxoHprz5jC5MeQqrTjvRkO9YUVj6IYV-hkvHdjISC9BmDveISvbv3jxN7DKvhzYAszlocGYx8ZYsbJ2cmFJjM_KY1D-J3O2A1Rc5Bwf-KWwrRIgfl8h20gD0uwWYc2tRYrbSX-Gd1DM7X_lZDkVx0aar6ABgIfviRXRe3ywIqaZNCC1TwalgolwmL5rBvxNt4PUE2QqPvhUrxt6EZOovckEdDSMkqetQ54tlZkaePYYnkAmem-jkAy4yFgx2dn18HkLMC8rNPg5rtanNdlYMlvqCwqwu4O4s3eYnU7RO6QBSGA8W35slYr06J4Y6Bxn1jHqypPD9eIabbR_4pay-0Wn7J_84dihPqT8TLb4_ulV0imSJYu9e6RTcxup609X3p5FTvxW_DIzJGdf11KFEIFzLkVw0jryd22tfW48j5kkA%26as%3DS688648157%253A1690628583384724%26client_id%3D154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com%23&app_domain=http%3A%2F%2Flocalhost%3A3000&rart=ANgoxcdyRNwbgwnx4WL0BaKJ3lZkHaKfZx2HPFGhkw88O02V5z_0G19q6MtRyNpDdtXQINFZ7tBKgmnTcEBdnW_7YcLCCbG06g')
+        //response.redirect('https://accounts.google.com/v3/signin/identifier?opparams=%253F&dsh=S688648157%3A1690628583384724&client_id=154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com&o2v=2&redirect_uri=http%3A%2F%2F10.14.3.9%3A3000%2Fauth%2Ffrom-google&response_type=code&scope=email+Profile&service=lso&flowName=GeneralOAuthFlow&continue=https%3A%2F%2Faccounts.google.com%2Fsignin%2Foauth%2Fconsent%3Fauthuser%3Dunknown%26part%3DAJi8hAPGR2GqJKOJkkWG3gupm3W4L17g5-s-sQUjYdX252QPpvXeXcIxoHprz5jC5MeQqrTjvRkO9YUVj6IYV-hkvHdjISC9BmDveISvbv3jxN7DKvhzYAszlocGYx8ZYsbJ2cmFJjM_KY1D-J3O2A1Rc5Bwf-KWwrRIgfl8h20gD0uwWYc2tRYrbSX-Gd1DM7X_lZDkVx0aar6ABgIfviRXRe3ywIqaZNCC1TwalgolwmL5rBvxNt4PUE2QqPvhUrxt6EZOovckEdDSMkqetQ54tlZkaePYYnkAmem-jkAy4yFgx2dn18HkLMC8rNPg5rtanNdlYMlvqCwqwu4O4s3eYnU7RO6QBSGA8W35slYr06J4Y6Bxn1jHqypPD9eIabbR_4pay-0Wn7J_84dihPqT8TLb4_ulV0imSJYu9e6RTcxup609X3p5FTvxW_DIzJGdf11KFEIFzLkVw0jryd22tfW48j5kkA%26as%3DS688648157%253A1690628583384724%26client_id%3D154782931535-ftdo0053qmtsbcjb8rtpep6m13rhn7du.apps.googleusercontent.com%23&app_domain=http%3A%2F%2F10.14.3.9%3A3000&rart=ANgoxcdyRNwbgwnx4WL0BaKJ3lZkHaKfZx2HPFGhkw88O02V5z_0G19q6MtRyNpDdtXQINFZ7tBKgmnTcEBdnW_7YcLCCbG06g')
     }
 
     @UseGuards(AuthGuard('google'))
@@ -109,10 +109,10 @@ export class googleController{
             //httpOnly: true,
               });
               
-            res.redirect("http://localhost:3001/authCompleteProfile");
+            res.redirect("http://10.14.3.9:3001/authCompleteProfile");
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
             // console.log('coockie token = '+ cookie_token);
-            //res.status(200).redirect("http://localhost:3001/");
+            //res.status(200).redirect("http://10.14.3.9:3001/");
             return {
                 status:200,
                 token : cookie_token,
@@ -129,7 +129,7 @@ export class googleController{
                 res.cookie('accessToken', cookie_token, {
                     // httpOnly: true
                   });
-                res.redirect("http://localhost:3001/authCompleteProfile");
+                res.redirect("http://10.14.3.9:3001/authCompleteProfile");
                 return;
             }
             res.cookie('accessToken', cookie_token, {
@@ -138,14 +138,14 @@ export class googleController{
             if (usertoken.twofactorenabled == true)
             {
                 res.cookie('accessToken', cookie_token);
-                res.redirect("http://localhost:3001/login/2fa");
+                res.redirect("http://10.14.3.9:3001/login/2fa");
                 return;
             }
-            res.redirect("http://localhost:3001/");
+            res.redirect("http://10.14.3.9:3001/");
             // console.log('coockie token = '+ cookie_token + "\n\n\n\n");
 
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
-            //res.status(200).redirect("http://localhost:3001/");
+            //res.status(200).redirect("http://10.14.3.9:3001/");
             return{
                 status:200,
                 token: cookie_token,
@@ -219,8 +219,8 @@ export class fortytwo_Controller{
                 // httpOnly: true,
               });
               
-              //res.redirect("http://localhost:3001/");
-              res.redirect("http://localhost:3001/authCompleteProfile");
+              //res.redirect("http://10.14.3.9:3001/");
+              res.redirect("http://10.14.3.9:3001/authCompleteProfile");
             const user_data = {token: cookie_token,
                 user:newUser,
                 message:'success'}
@@ -235,7 +235,7 @@ export class fortytwo_Controller{
                 res.cookie('accessToken', cookie_token, {
                     // httpOnly: true
                   });
-                res.redirect("http://localhost:3001/authCompleteProfile");
+                res.redirect("http://10.14.3.9:3001/authCompleteProfile");
                 return;
             }
             if (usertoken.twofactorenabled == true)
@@ -243,7 +243,7 @@ export class fortytwo_Controller{
                 res.cookie('accessToken', cookie_token, {
                     // httpOnly: true
                   });
-                res.redirect("http://localhost:3001/login/2fa");
+                res.redirect("http://10.14.3.9:3001/login/2fa");
                 return;
             }
             // console.log(usertoken);
@@ -255,8 +255,8 @@ export class fortytwo_Controller{
             //res.status(201);
             //res.setHeader('Authorization', `Bearer ${cookie_token}`);
             //res.sendFile('/Users/orbiay/Desktop/App2/app/views/home.html');
-            //res.redirect("http://localhost:3001/");
-            res.redirect("http://localhost:3001/");
+            //res.redirect("http://10.14.3.9:3001/");
+            res.redirect("http://10.14.3.9:3001/");
             const user_data = {token: cookie_token,
                 user:usertoken,
                 message:'user already exist'}
@@ -282,7 +282,7 @@ export class fortytwo_Controller{
             const cookie_token = await this.authservice.generateToken_2(user);
             // console.log(await this.jwtservice.decoded(cookie_token));
             res.send(cookie_token)
-            //res.redirect('localhost:3001/home')
+            //res.redirect('10.14.3.9:3001/home')
         }
         else
             res.send('Error');
