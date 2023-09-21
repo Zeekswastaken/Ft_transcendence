@@ -8,16 +8,28 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import jwt,{ JwtPayload } from 'jsonwebtoken';
 import { getCookie } from 'cookies-next';
 import { useSocketContext } from '@/app/socket';
+import { create } from 'zustand';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
+
+type Store = {
+  username: string
+  setUsername: (username: string) => void;
+};
+
+export const useSelectFriendStore = create<Store>((set) => ({
+  username: "",
+  setUsername: (username) => set({username}),
+}));
 
 export default function SelectFriend() {
   const {socket} = useSocketContext();
   
   const [people, setPeople] = useState<any[]>([]);
   const [currentUserID, setCurrentUserID] = useState<Number>();
+  const [currentUserAvatar, setCurrentUserAvatar] = useState("");
   
   const token = getCookie("accessToken");
   useEffect(() => {
@@ -25,6 +37,7 @@ export default function SelectFriend() {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
         setCurrentUserID(user.id)
+        setCurrentUserAvatar(user.avatar_url)
       }
     } catch (error) {
       console.error('Error decoding token:');
@@ -39,11 +52,13 @@ export default function SelectFriend() {
       });
     }
   }, [currentUserID])
-  const dispatch = useAppDispatch();
   const [selected, setSelected] = useState(people[1])
+  const dispatch = useAppDispatch();
+  const {username, setUsername} = useSelectFriendStore()
   useEffect(() => {
+    setUsername(selected?.username)
     dispatch(setOpponentAvatar(selected?.avatar_url));
-  }, [dispatch, selected?.avatar_url]);
+  }, [dispatch, selected?.avatar_url, selected?.username]);
     
     return (
       
@@ -55,7 +70,7 @@ export default function SelectFriend() {
                 <span className="flex items-center">
                   <img src={selected?.avatar_url} alt="" className="flex-shrink-0 h-8 w-8 rounded-full" />
                   {/* {setSelectedAvatar(selected.avatar)} */}
-                  <span className="ml-3 text-lg font-normal text-white block truncate">{selected?.username}</span>
+                  <span className="ml-3 text-lg font-Bomb tracking-wider text-white block truncate">{selected?.username}</span>
                   <img src="/drop.svg" className=" right-2 absolute" width={18} height={18} alt="" />
                 </span>
                 {/* <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"> */}

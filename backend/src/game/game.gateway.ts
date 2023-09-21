@@ -289,38 +289,43 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('AddtoInviteQueue')
-  async addinvite(@MessageBody() data: {userid:Number, receiver:Number}, @ConnectedSocket() client: Socket)
+  async addinvite(@MessageBody() data: {userid:Number, receiver:string}, @ConnectedSocket() client: Socket)
   {
     console.log("========================================", data.userid)
+    console.log("========================================", data.receiver)
     if (data.userid != 0) {
-      const queue = await this.gameservice.addToGroupQueue(data.userid, data.receiver);
-      await this.notifService.createGameNotification(data.userid, data.receiver);
-      const friendnotif = await this.notifService.getFriendNotifs(data.receiver);
-        const gamenotif = await this.notifService.getGameNotifs(data.receiver);
+      const receiver = await this.userservice.findByName(data.receiver);
+      const queue = await this.gameservice.addToGroupQueue(data.userid, receiver.id);
+      await this.notifService.createGameNotification(data.userid, receiver.id);
+      const friendnotif = await this.notifService.getFriendNotifs(receiver.id);
+        const gamenotif = await this.notifService.getGameNotifs(receiver.id);
         const notif = {
           "friendRequest": friendnotif,
           "gameInvite": gamenotif
         };
+        console.log("QUEUE= ====== ", queue);
         this.server.to(queue.receiver.Socket).emit("friend notif", notif);
-        this.server.to(client.id).emit("queue", queue);
+        this.server.to(client.id).emit("pendingqueue", queue);
         console.log("NOTIFICATIONS ===== ", notif);
       }
     }
   
     @SubscribeMessage('AcceptInvite')
-    async accept(@MessageBody() data: {userid:Number, receiver:Number}, @ConnectedSocket() client: Socket)
+    async accept(@MessageBody() data: {userid:Number, receiver:string}, @ConnectedSocket() client: Socket)
     {
       console.log("========================================", data.receiver)
       if (data.userid != 0) {
-        const queue = await this.gameservice.acceptInvite(data.userid, data.receiver);
-        const friendnotif = await this.notifService.getFriendNotifs(data.receiver);
-          const gamenotif = await this.notifService.getGameNotifs(data.receiver);
+        const receiver = await this.userservice.findByName(data.receiver);
+        const queue = await this.gameservice.acceptInvite(data.userid, receiver.id);
+        const friendnotif = await this.notifService.getFriendNotifs(receiver.id);
+          const gamenotif = await this.notifService.getGameNotifs(receiver.id);
           const notif = {
             "friendRequest": friendnotif,
             "gameInvite": gamenotif
           };
-          this.server.to(queue.receiver.Socket).emit("friend notif", notif);
-          this.server.to(client.id).emit("queue", queue);
+          this.server.to(client.id).emit("friend notif", notif);
+          this.server.to(client.id).emit("acceptedqueue", queue);
+          this.server.to(receiver.Socket).emit("acceptedqueue", queue);
           await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
           await this.gameservice.DeleteQueue(queue.id);
         }

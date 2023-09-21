@@ -108,6 +108,8 @@ export class GameService {
         game.status = 'pending';
         return await this.GameinviteRepo.save(game);
       }
+      else
+        throw new HttpException("Queue already exists", HttpStatus.FORBIDDEN);
     }
     async acceptInvite(userid:Number, senderid:Number)
     {
