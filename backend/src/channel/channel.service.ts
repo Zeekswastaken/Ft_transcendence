@@ -367,9 +367,9 @@ console.log("==================================================");
 
     async getInfos(channelID:Number, userID:Number)
     {
-        const stats = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelID), Userid: Equal(channelID)}});
+        const stats = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelID), Userid: Equal(userID)}});
         if (!stats)
-            throw new HttpException("Memebership not found", HttpStatus.FORBIDDEN);
+            throw new HttpException("Membership not found", HttpStatus.FORBIDDEN);
         return ({Type:stats.Type, isMuted:stats.isMuted, isBanned:stats.isBanned, userID:stats.Userid});
     }
 
@@ -498,5 +498,24 @@ console.log("==================================================");
         const owner = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelid), Type:'owner'}, relations:['user']})
         const members = {owner:owner, members:memberships};
         return members
+    }
+
+    async switchPrivacy(channelID :Number, Type:String, Password:String)
+    {
+        const channel = await this.channelRepository.findOne({where:{id:Equal(channelID)}});
+        if (!channel)
+            throw new HttpException("Channel not found", HttpStatus.FORBIDDEN);
+        if (channel.Type == 'public' && Password)
+        {
+            channel.Type = 'protected';
+            const hashedPass = await this.hashPassword(Password);
+            channel.Password = hashedPass;
+        }
+        else
+        {
+            channel.Type = 'public'
+            channel.Password = null;
+        }
+        return await this.channelRepository.save(channel);
     }
 }

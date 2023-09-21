@@ -93,8 +93,9 @@ const sendMessage = ({ addContent }: addContentProps) => {
       setNotification(data);
     })
   },[])
-  console.log(muted);
-  return ((!muted.isMuted) && (currUserData.id != muted.userID)? (
+  // console.log(muted);
+  // console.log(currUserData);
+  return (chanelType ?((!muted.isMuted) && (currUserData.id === muted.userID)? (
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
       <div className="flex justify-center absolute bottom-3 w-full h-16">
         <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">
@@ -110,7 +111,21 @@ const sendMessage = ({ addContent }: addContentProps) => {
         </div>
       </div>
     </form>):null
-  )
+  ):(<form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
+    <div className="flex justify-center absolute bottom-3 w-full h-16">
+      <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">
+        <textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          type="text"
+          rows="1"
+          className=" my-1 py-4 resize-none text-white mx-4 p-2.5 w-full text-sm  bg-[#4F2150] rounded-lg focus:outline-none no-scrollbar "
+          placeholder="Type here ..."
+        ></textarea>
+        <SendButton />
+      </div>
+    </div>
+  </form>))
 };
 
 export default sendMessage;
