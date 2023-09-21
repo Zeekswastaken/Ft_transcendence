@@ -9,7 +9,6 @@ import { channel } from "diagnostics_channel";
 
 
 
-<<<<<<< HEAD
 function chatBox() {
     const { socket } = useSocketContext();
     const [windowHeight, setWindowHeight] = useState(window.innerHeight);
@@ -17,29 +16,17 @@ function chatBox() {
     useEffect(() => {
         socket?.on("OBJ", (data: any) => {
             console.log("hollla");
-=======
-function chatBox()
-{
-  const {socket} = useSocketContext();
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-  const {message, getChat, setGetChat, updateChat, setUpdateChat, tempo, setTempo, userData, currUserData, chanelType} = useMyStore();
-  useEffect(()=>{
-      socket?.on("OBJ", (data:any) => {
-          setUpdateChat(data);
-        });
-    }, [])
-    if(currUserData && Object.keys(currUserData).length){
-    socket?.on("MessageToRoom", (data:any) => {
->>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
             setUpdateChat(data);
         });
         socket?.on("MessageToRoom", (data:any) =>{
-            console.log("chanelllsCHANELLSSS data", data, currUserData);
             // if (currUserData.user){
 
                 if(currUserData.id != data.user.id){
-                    console.log("IAMMMM HEEEEER, ", currUserData, data);
-                    setUpdateChat(data);
+                    socket?.emit("isBlocked", {userID:currUserData.id, recipientID:data.user.id});
+                    socket?.on("isblocked", (bool:boolean)=>{
+                        setUpdateChat({message:data.message, user:data.user, channelid:data.channelid,isBlocked:bool});
+                        
+                    })
                     // setTempo([...tempo, data]);
                 }
             // }
@@ -47,7 +34,6 @@ function chatBox()
     }, [])
 
     useEffect(() => {
-        console.log("IAMMMM HEEEEER, ", userData, updateChat);
         if (userData.user && updateChat.user) {
             if (userData.user.id === updateChat.user.id) {
                 console.log("tste");
@@ -58,7 +44,7 @@ function chatBox()
     useEffect(() => {
         if(updateChat&& updateChat.user ){
             if(userData.id == updateChat.channelid){
-            // console.log("chanelllsCHANELLSSS data", updateChat);
+            console.log("LOOOOOOOOOOOOOOOOOOOL");
             // console.log("chanelllsCHANELLSSS curr", currUserData);
             setTempo([...tempo, updateChat]);
         }
@@ -76,7 +62,7 @@ function chatBox()
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-    // console.log("TEEEEEEMpo RENDERING",tempo)
+    console.log("TEEEEEEMpo RENDERING",updateChat)
 
     return <div className={`${windowHeight >= 1200 ? "h-[83%]" : windowHeight <= 800 ? "h-[70%]" : "h-[77%]"} overflow-y-scroll flex flex-col-reverse no-scrollbar`}>
         {!chanelType ? (<ul>

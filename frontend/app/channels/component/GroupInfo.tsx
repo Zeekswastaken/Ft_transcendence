@@ -48,11 +48,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
     const {socket} = useSocketContext()
     const [errorMessage, setErrorMessage] = useState<string>("")
     const [done , setDone] = useState<boolean>(false)
-<<<<<<< HEAD
-    console.log("pass = ", channelPass)
-    const router = useRouter()
-=======
->>>>>>> b5c79bb59f757561bb6881fdab61584ec2b46d90
     const handleJoinChannel = (e: MouseEvent<HTMLButtonElement>) => {
         if (currentUserID !== undefined) {
             socket.emit("JoinChannel", {channelID: Id, userID: currentUserID, Pass: channelPass})
