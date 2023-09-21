@@ -10,19 +10,7 @@ import { useSocketContext } from '../socket';
 
 function chatMembers() {
   const {setMyBoolean , myBoolean, userData, chatMembers} = useMyStore();
-  // const {socket} = useSocketContext();
-  // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
-  // const getMembers = (e: MouseEvent<HTMLButtonElement>) => {
-  //   e.preventDefault();
-  //   setIsDrawerOpen(!isDrawerOpen);
-  //   console.log(userData);
-  //   console.log(userData.id);
-  //   socket?.emit("getChannelMembers", {channelid:userData.id})
-  //   socket?.on("members", (data:any) => {
-  //     console.log(data);
-  //   })
-  // }      
+
   return (
     <div className="drawer drawer-end absolute w-[60%] max-2xl:w-[70%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">
       <input

@@ -13,7 +13,6 @@ function classNames(...classes:any) {
 }
 function chatList({userFriends, userGroups}:any)
 {
-  // console.log(userGroups)
   const {setMyBoolean , myBoolean} = useMyStore();
   return (
     <div className={` w-[500px] h-[90%]  max-w-md px-2  p-1 m-4 glass ${myBoolean ? "max-md:hidden" : "max-md:w-full"}`}>

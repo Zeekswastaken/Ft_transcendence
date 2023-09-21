@@ -15,7 +15,6 @@ const profile = ({friend}:any) =>
     setMyBoolean(true);
     setUserData(friend);
     const channelid = friend.channelid;
-    console.log(friend);
     socket?.emit("getmessages",  {token, channelid});
     socket?.emit("isDuo",{channelid} );
     setUpdateChat([]);

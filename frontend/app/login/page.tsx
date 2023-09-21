@@ -28,7 +28,6 @@ const login = ({response}:any) => {
         // setEmpty("");
         return;
       }
-      console.log("user = " , res.data.user)
       setCookie("accessToken", res.data.token);
       if (res.data.user.twofactorenabled) {
         setCookie("accessToken", res.data.token);

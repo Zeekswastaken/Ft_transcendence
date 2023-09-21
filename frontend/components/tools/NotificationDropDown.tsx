@@ -40,13 +40,8 @@ const  NotificationDropDown = () => {
   }, [])
 
   useEffect(() => {
-    // console.log(socket)
-    // if (socket) {
       socket?.on('friend notif', (data:any) => {
-        // console.log('Received friend notification:', data);
-        // console.log("rec = " + data?.friendRequest[0]?.recipient)
         if (data) {
-          console.log("data = ", data)
           setRecipientId(data?.friendRequest[0]?.recipient.id)
           setSenderId(data?.friendRequest[0]?.sender.id)
         }
@@ -68,13 +63,11 @@ const  NotificationDropDown = () => {
       setNewNotif(false)
   }, [newNotif, socket, currentUserID, isClicked])
 
-  // console.log(notification)
   const handleDecline = (sender:number) => {
     setDecline(true)
     setDecIdx(sender)
     setNewNotif(false)
     socket?.emit("denyFriendRequest", {userID: currentUserID, recipientID: sender});
-    // router.push(`/home`)
     router.refresh()
     
   }

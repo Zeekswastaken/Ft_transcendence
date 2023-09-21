@@ -22,29 +22,17 @@ const friendBar = ({friend}:any) => {
     socket?.emit("isDuo",{channelid, userid} );
     setUpdateChat([]);
     setTempo([]);
-    // setDelevred(false);
     if (notification.id == friend.channelid){
-      // setChanelType(true);
-      // setChanelType(true);
       setNotification([]);
     }
-    // else if (!notification)
-    //   setDelevred(true);
     socket?.on("messages", (data:any) => {
       setGetChat(data);
     })
-    // socket?.on("isduo", (data:any)=>{
-    //   setChanelType(data.bol);
-    // });
   }
   useEffect(() => {
     socket?.on( "ToDuo", (data:any) => {
-           console.log('ToDuo', data.id ) 
-        // setId(data.id);
         setDelevred(true);
-
         setNotification(data);
-        console.log(delevred);
     })
   },[])
 

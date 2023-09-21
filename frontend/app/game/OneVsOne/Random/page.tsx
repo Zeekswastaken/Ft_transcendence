@@ -45,9 +45,6 @@ const page = () => {
 
     useEffect(() => {
         socket?.on('getGameData', (op: User, gameId: string) => {
-            console.log("hello From GetGame Data", op, gameId);
-            console.log("gameId = ", gameId);
-            console.log("opponent = ", op);
             setGameId(gameId);
             setOpponent(op);
 
@@ -67,14 +64,12 @@ const page = () => {
             setCelebrate(true);
         });
         socket?.on('disconnect', () => {
-            console.log("Hello From disconnect");
         });
     }, [socket]);
 
     useEffect(() => { 
         const newsocket = io('http://localhost:3000');
         setSocket(newsocket);
-        console.log("Hello I set the socket", newsocket);
         newsocket.emit("setSocket", {token: token});
         return () => {
             socket?.disconnect();
