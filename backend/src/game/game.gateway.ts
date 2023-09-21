@@ -295,6 +295,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     console.log("========================================", data.receiver)
     if (data.userid != 0) {
       const receiver = await this.userservice.findByName(data.receiver);
+      console.log("WE ARE HERE TO HAVE A FEAST===", receiver);
       const queue = await this.gameservice.addToGroupQueue(data.userid, receiver.id);
       await this.notifService.createGameNotification(data.userid, receiver.id);
       const friendnotif = await this.notifService.getFriendNotifs(receiver.id);
@@ -306,7 +307,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         console.log("QUEUE= ====== ", queue);
         this.server.to(queue.receiver.Socket).emit("friend notif", notif);
         this.server.to(client.id).emit("pendingqueue", queue);
-        console.log("NOTIFICATIONS ===== ", notif);
+        // console.log("NOTIFICATIONS ===== ", notif);
       }
     }
   
@@ -321,7 +322,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           const gamenotif = await this.notifService.getGameNotifs(receiver.id);
           const notif = {
             "friendRequest": friendnotif,
-            "gameInvite": gamenotif
+            "gameInvite": gamenotif,
           };
           this.server.to(client.id).emit("friend notif", notif);
           this.server.to(client.id).emit("acceptedqueue", queue);
