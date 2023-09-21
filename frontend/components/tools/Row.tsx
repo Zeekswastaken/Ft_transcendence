@@ -19,7 +19,7 @@ const Row = ( {opponent, score, date, result, avatar, style} : TableDataRow ) =>
 			<td className="p-3 ">
 				<div className="  flex align-items-center ">
 					<img className="rounded-full h-12 w-12  object-cover " src={avatar} alt="avatar" />
-					<div className=" ml-3 mt-3 font-Heading tracking-wider ">{opponent}</div>
+					<div className=" ml-3 mt-3 font-bold tracking-wider ">{opponent}</div>
 				</div>
 			</td>
 			<td className="px-5 font-Bomb tracking-wide text-2xl">{score}</td>
