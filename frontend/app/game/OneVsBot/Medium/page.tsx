@@ -9,7 +9,7 @@ import Winning from '../../component/winning';
 import { User } from '../GameComponents/gameInterfaces';
 import Losing from '../../component/losing';
 
-const COM_LEVEL = 0.05;
+const COM_LEVEL = 0.07;
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
     const [playerScore, setPlayerScore] = useState<number>(0);
@@ -18,7 +18,7 @@ const page = () => {
     const [gameOver, setGameOver] = useState < boolean> (false);
     const [celebration, setCelebration] = useState <boolean> (false);
 
-    const bot: User = {username: "Easy Bot", avatar_url: "/easy.jpeg"};
+    const bot: User = {username: "Medium Bot", avatar_url: "/mediumBot.jpeg"};
     const token = getCookie("accessToken");
 
     useEffect(() => {
@@ -75,7 +75,7 @@ const page = () => {
                         <div className=' flex justify-center items-center space-x-3'>
                             <span className=' font-Bomb text-xl sm:text-3xl'>Medium Bot</span>
                             <div className="h-[40px] sm:h-[60px] w-[40px] sm:w-[60px] bg-cover bg-center overflow-hidden rounded-full mr-[10px] border-[3px] border-primary-pink-300">
-                                <img src='/meduim.jpeg' alt="" className=' w-full h-full ' />
+                                <img src='/mediumBot.jpeg' alt="" className=' w-full h-full ' />
                             </div>
                         </div>
                     </div>

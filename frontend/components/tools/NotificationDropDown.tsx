@@ -83,6 +83,15 @@ const  NotificationDropDown = () => {
       setIsClicked(true)
   }
 
+  const handleInvite = (sender:string) => {
+    socket.emit("AcceptInvite", {userid:currentUserID, receiver:sender})
+    socket.on("acceptedqueue", (data:any) => {
+      if (data.status === "accepted")
+        router.push("/game/OneVsOne/Random")
+    })
+    // console.log("username = ", sender)
+  }
+
   return (
 	<Menu as="div" className=" mt-3">
         <div>
@@ -127,11 +136,11 @@ const  NotificationDropDown = () => {
                       >
                             <div className=' space-x-4 flex justify-between'>
                               {post.type !== "Friend Request" ? (
-                                <Link href="/game">
-                                <h3 className="text-sm  leading-5">
+                                // <Link href="/game">
+                                <h3 onClick={e => handleInvite(post.sender.username)} className="text-sm cursor-pointer w-full h-full leading-5">
                                   {post?.message}
                                 </h3>
-                                </Link>
+                                // </Link>
                               ) : (
                                 <div className=' flex justify-between space-x-4 w-full'>
                                       <h3 className="text-sm  leading-5">

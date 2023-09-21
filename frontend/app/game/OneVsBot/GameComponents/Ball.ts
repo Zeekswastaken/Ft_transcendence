@@ -118,8 +118,8 @@ export default class Ball {
         
         p.top = player.pos.y;
         p.bottom = player.pos.y + player.height;
-        p.left = player.pos.x + player.gap;
-        p.right = player.pos.x + player.width - player.gap;
+        p.left = player.pos.x;
+        p.right = player.pos.x + player.gap;
         
         return (b.right >= p.left && b.bottom >= p.top && b.left <= p.right && b.top <= p.bottom );
     }

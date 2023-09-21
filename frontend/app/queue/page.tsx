@@ -85,6 +85,7 @@ const FriendQueue = () => {
   const {inviteFriendData} = useInviteFriendData()
 
   console.log("vvvvv= ", inviteFriendData)
+  const router = useRouter()
 
   useEffect(() => {
     try {
@@ -97,6 +98,12 @@ const FriendQueue = () => {
       console.error('Error decoding token:');
     }
   }, [])
+  useEffect(() => {
+    socket?.on("acceptedqueue", (data:any) => {
+      if (data.status === "accepted")
+        router.push("/game/OneVsOne/Random")
+    })
+  }, [socket])
 
 
   return (
@@ -112,8 +119,8 @@ const FriendQueue = () => {
             <h1 className=' font-Bomb text-lg sm:text-2xl md:text-4xl text-white text-center'>waiting for opponent...</h1>
             <div>
                 <div className='  w-[100px] lg:w-[200px] h-[100px] lg:h-[200px]  rounded-ful'>
-                  <img src="Spectate.png" className=' w-full h-full rounded-full' alt="" />
-                  <p className=' text-white text-lg sm:text-2xl md:text-4xl text-center py-5 font-black'>Kolibaly</p>
+                  <img src={inviteFriendData?.receiver.avatar_url} className=' w-full h-full rounded-full' alt="" />
+                  <p className=' text-white text-lg sm:text-2xl md:text-4xl text-center py-5 font-black'>{inviteFriendData?.receiver.username}</p>
                 </div>
             </div>
         </div>

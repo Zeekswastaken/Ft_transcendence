@@ -9,6 +9,9 @@ import { collision, radiansRange, mapRange, initBall } from './helper';
 import { GameService } from './game.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
 
+const WinnterScore = 7;
+const LoserScore = 0;
+
 @Injectable()
 @WebSocketGateway()
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -86,6 +89,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
         }
         this.GamesData.delete(id);
+        this.users.delete(player1.data.PlayerSocket as string);
+        this.users.delete(player2.data.PlayerSocket as string);
     }
   }
 
@@ -94,8 +99,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (await this.jwt.verify(obj.token))
     {
       const user = await this.jwt.decoded(obj.token);
-      console.log("==============> Hello From SetSocket =======> ", user.username);
-
       user.PlayerSocket = client.id;
       delete user.Socket;
       await this.userservice.update(user,user.id as number);
@@ -108,12 +111,21 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     const id = this.users.get(client.id);
     if(id !== undefined) {
       const gameData = this.GamesData.get(id);
-      if(gameData.player1.data.PlayerSocket == client.id) {
-        this.server.to(gameData.player2.data.PlayerSocket as string).emit("gameOver");
-        this.server.to(gameData.player2.data.PlayerSocket as string).emit("celebrate");
-      } else {
-        this.server.to(gameData.player1.data.PlayerSocket as string).emit("gameOver");
-        this.server.to(gameData.player1.data.PlayerSocket as string).emit("celebrate");
+      if(gameData !== undefined)
+      {
+        if(gameData.player1.data.PlayerSocket == client.id) {
+          this.server.to(gameData.player2.data.PlayerSocket as string).emit("gameOver");
+          this.server.to(gameData.player2.data.PlayerSocket as string).emit("celebrate");
+          this.gameservice.save({player1: gameData.player1.data, player2: gameData.player2.data, player1Score: LoserScore, player2Score: WinnterScore, result: gameData.player2.data.id});
+
+        } else {
+          this.server.to(gameData.player1.data.PlayerSocket as string).emit("gameOver");
+          this.server.to(gameData.player1.data.PlayerSocket as string).emit("celebrate");
+          this.gameservice.save({player1:gameData.player1.data, player2: gameData.player2.data, player1Score: WinnterScore, player2Score: LoserScore, result: gameData.player1.data.id});
+        }
+        this.GamesData.delete(id);
+        this.users.delete(gameData.player1.data.PlayerSocket as string);
+        this.users.delete(gameData.player2.data.PlayerSocket as string);
       }
     }
   }
@@ -126,14 +138,12 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async connectPlayers(obj:{p1: string, p2: string}) {
     
     if(obj.p1 !== undefined && obj.p2 !== undefined) {
-      // console.log("---------------+++++++++++++++ ", obj.p1 , obj.p2, "--------------++++++++++");
       let player1: User = await this.userservice.findByName(obj.p1);
       let player2: User = await this.userservice.findByName(obj.p2);
       while(player1.PlayerSocket == null || player2.PlayerSocket == null)
       {
         player1 = await this.userservice.findByName(obj.p1);
         player2 = await this.userservice.findByName(obj.p2);
-        // console.log("---------------+++++++++++++++ ", player1.PlayerSocket , player2.PlayerSocket, "--------------++++++++++");
       }
       
       const initGameData = { 
@@ -244,7 +254,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         "friendRequest": friendnotif,
         "gameInvite": gamenotif
       };
-      // console.log("*********** ", notif);
       this.server.to(recipient.Socket).emit("friend notif", notif);
       const message = "The gameinvite has been sent";
       this.server.to(recipient.Socket).emit('message', message);
@@ -295,6 +304,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     console.log("========================================", data.receiver)
     if (data.userid != 0) {
       const receiver = await this.userservice.findByName(data.receiver);
+      console.log("WE ARE HERE TO HAVE A FEAST===", receiver);
       const queue = await this.gameservice.addToGroupQueue(data.userid, receiver.id);
       await this.notifService.createGameNotification(data.userid, receiver.id);
       const friendnotif = await this.notifService.getFriendNotifs(receiver.id);
@@ -306,7 +316,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         console.log("QUEUE= ====== ", queue);
         this.server.to(queue.receiver.Socket).emit("friend notif", notif);
         this.server.to(client.id).emit("pendingqueue", queue);
-        console.log("NOTIFICATIONS ===== ", notif);
+        // console.log("NOTIFICATIONS ===== ", notif);
       }
     }
   
@@ -321,7 +331,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           const gamenotif = await this.notifService.getGameNotifs(receiver.id);
           const notif = {
             "friendRequest": friendnotif,
-            "gameInvite": gamenotif
+            "gameInvite": gamenotif,
           };
           this.server.to(client.id).emit("friend notif", notif);
           this.server.to(client.id).emit("acceptedqueue", queue);

@@ -4,10 +4,14 @@ import Image from "next/image";
 import ChatContent from "./chatContent";
 import { useSocketContext } from '../socket';
 import { useMyStore } from "./state";
+import { useRouter } from "next/navigation";
 
 const groupBar = ({friend}:any) => {
-    const {token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
+    const {setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
     const {socket} = useSocketContext();
+    const router = useRouter();
+    console.log(friend);
+    console.log(currUserData);
     const setMyGroupStor = (e: MouseEvent<HTMLButtonElement>) =>{
       e.preventDefault();
       setMyBoolean(true);
@@ -15,6 +19,7 @@ const groupBar = ({friend}:any) => {
       setChanelType(true);
       const channelid = friend.id;
       const userid = currUserData.id;
+      socket?.emit("getInfos",  {channelID:friend.id, userID:currUserData.id});
       socket?.emit("getGroupMessages",  {token, channelid});
     socket?.emit("isDuo",{channelid, userid} );
       setUpdateChat([]);
@@ -25,8 +30,19 @@ const groupBar = ({friend}:any) => {
       // });
       // console.log("Done");
       socket?.on("groupmessages", (data:any) => {
+        console.log(data);
         setGetChat(data);
       })
+      socket?.on("groupmessages", (data:any) => {
+        console.log(data);
+        setGetChat(data);
+      })
+      
+      socket?.emit("getChannelMembers", {channelid:friend.id})
+      socket?.on("members", (data:any) => {
+        setChatMembers(data);
+      })
+      
     }
     return (
       <button onClick={setMyGroupStor}>

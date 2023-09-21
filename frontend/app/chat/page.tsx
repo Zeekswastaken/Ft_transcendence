@@ -9,6 +9,7 @@ import { io } from 'socket.io-client';
 import { SocketProvider, useSocketContext } from '../socket';
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useMyStore } from "./state";
+import { useRouter } from 'next/navigation';
 
 
 const page = () => {
@@ -16,7 +17,17 @@ const page = () => {
   const {myBoolean, setToken, setCurrUserData} = useMyStore();
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [currentUserID, setCurrentUserID] = useState<number>(0);
-  
+  const router = useRouter()
+  const {socket} = useSocketContext();
+
+  useEffect(() => {
+    socket?.on("isjoined", (data:any) => {
+      if (data === true){
+        console.log("++++++++++++++++++++++++++++++++");
+        router.refresh();
+      }
+    })
+  }, [socket]);
   useEffect(() => {
     const token = getCookie("accessToken");
     setToken(token);
@@ -32,16 +43,16 @@ const page = () => {
       console.error('Error decoding token:');
     }
   }, [])
-  const {socket} = useSocketContext();
   const [userFriends, setUserFriends] = useState<any>([]);
   const [userGroups, setUserGroups] = useState<any>([]);
 
   useEffect(() => {
-    const token = getCookie("accessToken");
-    socket?.emit("getFriendsWithChannels", {user: currentUsername});
-    socket?.emit("getChannelsJoined", {userID: currentUserID});
-    socket?.emit("getSocketId&JoinRoom", {token: token});
-  }, [currentUserID])
+      const token = getCookie("accessToken");
+      socket?.emit("getFriendsWithChannels", {user: currentUsername});
+      socket?.emit("getChannelsJoined", {userID: currentUserID});
+      socket?.emit("getSocketId&JoinRoom", {token: token});
+  }, [currentUserID]);
+
   useEffect(() => {
     socket?.on
     socket?.on("getfriendswithchannels", (data:any) => {

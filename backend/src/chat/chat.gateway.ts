@@ -33,13 +33,15 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       // console.log(" chat.id == " + client.id)
       await this.userservice.update(user,user.id as number);
       const user2 = await this.userservice.findByName(user.username);
-      const channels = await this.ChannelService.getChannelsJoined(user2.id);
-      console.log("CHANNEL NEAR GET SOCKET BLABLA== ", channels);
-      this.users.set(client.id,await this.jwt.generateToken_2(user2) as string);
-        channels.forEach((room)=>{
-          client.join(room.id.toString());
-        })
-        return ({status:"Success"});
+      if (user2) {
+        // if (user2.id == 0)
+        const channels = await this.ChannelService.getChannelsJoined(user2.id);
+        this.users.set(client.id,await this.jwt.generateToken_2(user2) as string);
+          channels.forEach((room)=>{
+            client.join(room.id.toString());
+          })
+          return ({status:"Success"});
+      }
      }
      else
       return ({status:"Invalid Token"});
@@ -95,10 +97,11 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     if (await this.jwt.verify(payload.token))
     {
       const user = await this.jwt.decoded(payload.token);
+      console.log("USEEEEEEEEER ID", user);
       const channels = await this.ChannelService.getChannelsJoined(user.id);
-      console.log("CHANNEL NEAR GET JOINROOM== ", channels);
-
+      console.log("CHANNELS FOR REAL THIS TIME", channels);
       channels.forEach((room)=>{
+        console.log("THe roooooooooooooooooooooooooooooooooooooom is ",room);
         client.join(room.Name);
       })
       return ({status:"Success Joining"});

@@ -8,7 +8,7 @@ import { useSocketContext } from '../socket';
 import initialContent, { Content } from "./content";
 import { useMyStore } from "./state";
 import { current } from "@reduxjs/toolkit";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation";
 
 
 interface addContentProps {
@@ -17,9 +17,11 @@ interface addContentProps {
 
 const sendMessage = ({ addContent }: addContentProps) => {
 
-  const {setTempo, token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, updateChat, setNotification, setChanelType, chanelType} = useMyStore();
+  const {muted, tempo, setTempo, token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, updateChat, setNotification, setChanelType, chanelType} = useMyStore();
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
+  const router = useRouter();
+
 
   const submitSendMessage = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -33,19 +35,19 @@ const sendMessage = ({ addContent }: addContentProps) => {
 
         const receiver = userData.user.username;
         const channelid = userData.channelid;
-        socket?.emit("Duo",  {token, message:value, receiver, channelid});
+        socket?.emit("Duo",  {token, message:value, receiver, channelid});;
         const message = {text:value, Created_at:"15:15" };
         const obj = {user:currUserData, message, channelid};
-        setUpdateChat(obj);
+        setTempo([...tempo, obj]);
         socket?.emit("obj", {obj, receiver});
       }
       else{
 
         const channelid = userData.id;
-        const message = {text:value, Created_at:"15:15" };
-        const obj = {user:currUserData, message, channelid};
-        setUpdateChat(obj);
-        socket?.emit("ToRoom", {Token:token, message:value, channelid});
+          const message = {text:value, Created_at:"15:15" };
+          const obj = {user:currUserData, message, channelid};
+          setTempo([...tempo, obj]);
+          socket?.emit("ToRoom", {Token:token, message:value, channelid});
       }
       setValue("");
     }
@@ -54,32 +56,22 @@ const sendMessage = ({ addContent }: addContentProps) => {
   const handlSendMessage = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode == 13 && e.shiftKey == false) {
       e.preventDefault();
-      // console.log(chanelType);
       if (value.trim() != "") {
-        // const newContent: initialContent = {
-        //   id: Math.floor(Math.random() * 1000000),
-        //   text: value,
-        // };
-        // addContent(newContent);
         if (!chanelType){
 
-          const receiver = userData.user.username;
-          const channelid = userData.channelid;
-          socket?.emit("Duo",  {token, message:value, receiver, channelid});
-          const message = {text:value, Created_at:"15:15" };
-          const obj = {user:currUserData, message, channelid};
-          setUpdateChat(obj);
-          socket?.emit("obj", {obj, receiver});
+        const receiver = userData.user.username;
+        const channelid = userData.channelid;
+        socket?.emit("Duo",  {token, message:value, receiver, channelid});;
+        const message = {text:value, Created_at:"15:15" };
+        const obj = {user:currUserData, message, channelid};
+        setTempo([...tempo, obj]);
+        socket?.emit("obj", {obj, receiver});
         }
         else{
-          // const router = useRouter();
-          // router.reload()
-          // setUpdateChat([]);
           const channelid = userData.id;
           const message = {text:value, Created_at:"15:15" };
           const obj = {user:currUserData, message, channelid};
-          console.log(obj);
-          setUpdateChat(obj);
+          setTempo([...tempo, obj]);
           socket?.emit("ToRoom", {Token:token, message:value, channelid});
         }
         setValue("");
@@ -101,23 +93,11 @@ const sendMessage = ({ addContent }: addContentProps) => {
       setNotification(data);
     })
   },[])
-
-  return (
+  console.log(muted);
+  return ((!muted.isMuted) && (currUserData.id != muted.userID)? (
     <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
       <div className="flex justify-center absolute bottom-3 w-full h-16">
         <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">
-          {/* <button
-            type="button"
-            className="p-2 text-gray-500 rounded-lg cursor-pointer hover:bg-[#2D0130]"
-          >
-            <Image
-              src="/avatars/avatar1.png"
-              width={35}
-              height={35}
-              alt="icon"
-              className=" bottom-4 space-y-2"
-            />
-          </button> */}
           <textarea
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -129,8 +109,8 @@ const sendMessage = ({ addContent }: addContentProps) => {
           <SendButton />
         </div>
       </div>
-    </form>
-  );
+    </form>):null
+  )
 };
 
 export default sendMessage;

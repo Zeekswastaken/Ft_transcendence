@@ -12,9 +12,10 @@ const messageGroups = ({messages}:messageElements) => {
   if (!messages || !messages.user || !messages.user.id || !messages.message) {
     return null;
   }
-
+  console.log(messages.isBlocked);
   return ( 
     messages.user.id != currUserData.id ? (
+      !messages.isBlocked ? (
       <div className="p-1 m-4 flex flex-col">
         <div className="chat chat-start">
           <div className="chat-image avatar">
@@ -30,7 +31,20 @@ const messageGroups = ({messages}:messageElements) => {
             {messages.message.text}
           </div>
         </div>
+      </div>):(
+        <div className="p-1 m-4 flex flex-col">
+        <div className="chat chat-start">
+          <div className="chat-image avatar">
+            <div className="w-12 rounded-full">
+              <img src={messages.user.avatar_url} />
+            </div>
+          </div>
+          <div className=" chat-bubble bg-opacity-0 break-words text-xl text-red-500">
+            you have blocked this user
+          </div>
+        </div>
       </div>
+      )
     ) : 
     (
       <div className="chat chat-end mr-4">
