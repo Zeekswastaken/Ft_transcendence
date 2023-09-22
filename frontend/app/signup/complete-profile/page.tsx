@@ -20,13 +20,16 @@ const completProfile = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     const formData = new FormData();
     formData.append("file", avatar.current as File);
-    formData.append("birthDay", birthDay as unknown as string);
-    formData.append("gender", gender);
-    formData.append("cookie", cookie as string);
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });    // formData.append("birthDay", birthDay as unknown as string);
+    // formData.append("gender", gender);
+    // formData.append("cookie", cookie as string);
     e.preventDefault();
-    await axios.put("http://localhost:3000/auth/modify-data", formData, {headers: {
-      "Content-Type": "application/json"
+    await axios.post("http://localhost:3000/upload/image", formData, {withCredentials: true ,headers: {
+      "Content-Type": 'multipart/form-data'
     }}).then(res => {
+      console.log(res.data);
       setCookie("accessToken", res.data);
       router.push("/home");
     }).catch(err => {console.log(err)});
@@ -40,12 +43,15 @@ const completProfile = () => {
   };
 
   const [path, setPath] = useState("/profileEx.png")
+  const [avatar_url, setAvatar_url] = useState<any>()
   
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       avatar.current = e.target.files[0];
+      console.log("avatar = ", avatar.current)
       try {
         const path = URL.createObjectURL(avatar.current);
+        console.log("path = ", path)
         setPath(path);
       } catch (error) {
         console.error('Error creating URL:', error);

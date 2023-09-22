@@ -2,10 +2,10 @@ import { Body, Controller, HttpStatus, Post, Res, UploadedFile, UseInterceptors 
 import { ChannelService } from './channel.service';
 import { ExpressAdapter, FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/file-upload/multer-config';
-import { UploadController } from 'src/file-upload/upload.controller';
+// import { UploadController } from 'src/file-upload/upload.controller';
 @Controller('channel')
 export class ChannelController {
-    constructor(private readonly channelService: ChannelService, private readonly uploadController: UploadController){}
+    constructor(private readonly channelService: ChannelService){}
     @Post('createChannel')
     @UseInterceptors(FileInterceptor('avatar', multerConfig))
     async create(@Body() data :{ userid:Number, name:String, type:String, password: String}, @Res() res) {
