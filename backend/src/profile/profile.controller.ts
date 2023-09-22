@@ -21,7 +21,7 @@ export class ProfileController {
         const user = await this.profileService.findByName(username);
         if (user)
         {
-            // console.log(user.stats);
+        console.log(user.stats);
             delete user.password;
             // console.log("-------- ", user.id);
             const details = await this.friendsService.getUserFriends(user.username);

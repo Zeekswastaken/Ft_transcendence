@@ -22,6 +22,7 @@ export class UserService {
     return await bcrypt.hash(password, saltOrRounds);
 
     }
+
     async save(Body:Partial<User> ){
        return await this.userRepo.save(Body);
     }
