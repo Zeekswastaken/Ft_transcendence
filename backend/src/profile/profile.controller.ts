@@ -23,7 +23,7 @@ export class ProfileController {
         if (user)
         {
             // console.log(user.stats);
-            console.log(user.username,"His mat----------------------ches is ",await this.gameService.getGameInvites(user.id));
+            const matches = await this.gameService.getGameInvites(user.id);
             delete user.password;
             // console.log("-------- ", user.id);
             const details = await this.friendsService.getUserFriends(user.username);
@@ -36,7 +36,8 @@ export class ProfileController {
             const info = {
                 user:user, 
                 friends:details,
-                blocked:details2
+                blocked:details2,
+                matches:matches
             }
             res.send(info);
         }
