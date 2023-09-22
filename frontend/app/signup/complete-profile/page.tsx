@@ -29,13 +29,8 @@ const completProfile = () => {
     formData.append("gender", gender);
     formData.append("cookie", cookie as string);
     e.preventDefault();
-<<<<<<< HEAD
-    await axios.put("http://localhost:3000/auth/modify-data", formData, {headers: {
-      "Content-Type": "application/json"
-=======
     await axios.post("http://localhost:3000/upload/image", formData, {headers: {
       "Content-Type": 'multipart/form-data'
->>>>>>> 5b5f512d9fa754654500139d4dee5b803ec5b3c1
     }}).then(res => {
       console.log(res.data);
       setCookie("accessToken", res.data);
