@@ -10,7 +10,6 @@ type TableDataRow = {
 
 const Row = ( {opponent, score, date, result, avatar, style} : TableDataRow ) => {
 
-	console.log("Result = ", result)
 	const WinOrLost = result === "win" ? "bg-[#4ADE80]/[0.4]" : "bg-[#FF7171]/[0.4]";
 	const WinOrLost_hover = result === "win" ? "hover:bg-[#4ADE80]" : "hover:bg-[#FF7171]";
 	

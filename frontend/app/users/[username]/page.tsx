@@ -77,7 +77,7 @@ const WinRate: React.FC<Props> = ({ styles, title }) => {
 }
 
 const MatchHistory: React.FC<Props> = ({ styles, title }) => {
-  const matchHistory = useUserDataContext()?.user.stats.matches;
+  const matchHistory = useUserDataContext()?.matches;
   const userData = useUserDataContext()?.user;
   console.log ("userData = ", userData)
   console.log("matchHistory = ", matchHistory)
@@ -103,9 +103,9 @@ const MatchHistory: React.FC<Props> = ({ styles, title }) => {
               if (match.result === userData?.id){
                 result = "win"
               }else{result="lost"}
-              let opponent;let avatar; if (match.player1.id === userData?.id){
-                opponent=match.player2.username;avatar=match.player2.avatar_url
-              }else {opponent=match.player1.username;avatar=match.player1.avatar_url}
+              let opponent;let avatar; if (match.player1?.id === userData?.id){
+                opponent=match.player2?.username;avatar=match.player2?.avatar_url
+              }else {opponent=match.player1?.username;avatar=match.player1?.avatar_url}
               return <Row key={match.id} opponent={opponent} score={score} date={match.Date} result={result} avatar={avatar} style="animate-fade-up animate-delay-[400ms]" />
             } )}
 						{/* <Row opponent="Hawkins" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar1.png "style="animate-fade-up animate-delay-[200ms]" />

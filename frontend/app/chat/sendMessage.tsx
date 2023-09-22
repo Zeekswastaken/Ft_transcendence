@@ -11,11 +11,11 @@ import { current } from "@reduxjs/toolkit";
 import { useRouter } from "next/navigation";
 
 
-interface addContentProps {
-  addContent: (newContent: initialContent) => void;
-}
+// interface addContentProps {
+//   addContent: (newContent: initialContent) => void;
+// }
 
-const sendMessage = ({ addContent }: addContentProps) => {
+const sendMessage = () => {
 
   const {muted, tempo, setTempo, token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, updateChat, setNotification, setChanelType, chanelType} = useMyStore();
   const {socket} = useSocketContext();
@@ -93,10 +93,22 @@ const sendMessage = ({ addContent }: addContentProps) => {
       setNotification(data);
     })
   },[])
-  // console.log(muted);
-  // console.log(currUserData);
-  return (chanelType ?((!muted.isMuted) && (currUserData.id === muted.userID)? (
-    <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
+  return (chanelType ?(muted.isMuted ?(currUserData.id === muted.userID && userData.id === muted.channelID? (null):(
+  <form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
+    <div className="flex justify-center absolute bottom-3 w-full h-16">
+      <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">
+        <textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          type="text"
+          rows="1"
+          className=" my-1 py-4 resize-none text-white mx-4 p-2.5 w-full text-sm  bg-[#4F2150] rounded-lg focus:outline-none no-scrollbar "
+          placeholder="Type here ..."
+        ></textarea>
+        <SendButton />
+      </div>
+    </div>
+  </form>)):(<form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
       <div className="flex justify-center absolute bottom-3 w-full h-16">
         <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">
           <textarea
@@ -110,7 +122,7 @@ const sendMessage = ({ addContent }: addContentProps) => {
           <SendButton />
         </div>
       </div>
-    </form>):null
+    </form>)
   ):(<form onSubmit={submitSendMessage} onKeyDown={handlSendMessage}>
     <div className="flex justify-center absolute bottom-3 w-full h-16">
       <div className="flex items-center px-3 py-2 rounded-lg w-[90%] h-full bg-[#4F2150]">

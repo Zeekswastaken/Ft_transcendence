@@ -106,6 +106,7 @@ export class AuthService {
                 stats.losses = 0;
                 stats.matches_played = 0;
                 stats.winrate = 0;
+                stats.matches = [];
                 stats.wins = 0;
                 user.stats = stats;
                 stats.user = user;
