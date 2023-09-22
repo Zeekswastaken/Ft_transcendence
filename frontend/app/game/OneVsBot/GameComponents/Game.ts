@@ -13,45 +13,53 @@ export default function sketch(p5: P5CanvasInstance) {
     let COM_LEVEL: number;
     let handlScore: number;
     let socket: Socket;
-    let gameOver: boolean;
+    let startGame: boolean;
+    let time: number;
 
     p5.setup = () => {
-      if (p5.windowWidth > 1500) {
-        p5.createCanvas(1200, 700);
-      } else if (p5.windowWidth < 1300){
+      if (p5.windowWidth < 1500 ) {
         p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
-      }
-       else if (p5.windowWidth <= 350 ) {
-          p5.createCanvas(300, 150);
       } else {
-        p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
+        p5.createCanvas(1200, 700);
       }
       net     = new Net(p5);
       ball    = new Ball(p5);
       player = new Paddel(p5, true);
       computer = new Paddel(p5, false);
       p5.textFont('Helvetica');
-      p5.textSize(p5.width / 20);
+      p5.textSize(p5.width / 10);
       p5.textAlign(p5.CENTER, p5.CENTER);
+      startGame = false;
+      time = Date.now();
     }
     
     p5.draw = () => {
-      if(!gameOver)
+      if(startGame)
       {
-        p5.background(0);
-        net.drow(p5);
-        ball.isOut(p5, socket, player, computer);
-        player.drow(p5, 0);
-        player.updatePlayer(p5);
-        computer.drow(p5, 0);
-        computer.updateComputer(p5, ball, COM_LEVEL);
-        ball.drow(p5);
-        ball.update(p5, player, computer);
-      }
-      else {
-        p5.fill(255);
-        p5.background(0);
-        p5.text('Game Over', p5.width / 2, p5.height / 2);
+          p5.background(0);
+          net.drow(p5);
+          ball.isOut(p5, socket, player, computer);
+          player.drow(p5, 0);
+          player.updatePlayer(p5);
+          computer.drow(p5, 0);
+          computer.updateComputer(p5, ball, COM_LEVEL);
+          ball.drow(p5);
+          ball.update(p5, player, computer);
+      } else {
+          p5.background(0);
+          player.drow(p5, 0);
+          computer.drow(p5, 0);
+          p5.fill(255)
+          
+          if(Date.now() < time + 1000) {
+            p5.text("3", p5.width / 2, p5.height / 2);
+          } else if(Date.now() < time + 2000) {
+            p5.text("2", p5.width / 2, p5.height / 2);
+          } else if(Date.now() < time + 3000) {
+            p5.text("1", p5.width / 2, p5.height / 2);
+          } else {
+            startGame = true;
+          }
       }
     };
 
@@ -73,6 +81,5 @@ export default function sketch(p5: P5CanvasInstance) {
       COM_LEVEL = props.COM_LEVEL;
       handlScore = props.handlScore;
       socket = props.socket;
-      gameOver = props.gameOver;
   };
 }

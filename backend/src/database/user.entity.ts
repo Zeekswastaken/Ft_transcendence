@@ -23,6 +23,8 @@ export class User{
     @Column({default:true})
     privacy:Boolean;
     @Column({default:false})
+    ismanuel:Boolean;
+    @Column({default:false})
     ischange:Boolean;
     @Column({nullable:true})
     PlayerSocket:String;

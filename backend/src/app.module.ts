@@ -34,6 +34,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 // import { FileUploadModule } from './file-upload/file-upload.module';
 import { UploadAvatarsController } from './upload-avatars/upload-avatars.controller';
 import { UploadAvatarsModule } from './upload-avatars/upload-avatars.module';
+import { UploadAvatarsService } from './upload-avatars/upload-avatars.service';
 
 
 @Module({
@@ -52,7 +53,7 @@ import { UploadAvatarsModule } from './upload-avatars/upload-avatars.module';
     }), ChatModule,ProfileModule, GameModule, BlockedModule, NotificationsModule, UploadAvatarsModule
   ],
   controllers: [AppController, UserController, UploadAvatarsController],
-  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService, NotificationsService],
+  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService, NotificationsService,UploadAvatarsService],
 })
 export class AppModule {}
 

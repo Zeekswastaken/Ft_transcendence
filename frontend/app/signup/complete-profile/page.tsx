@@ -7,6 +7,8 @@ import axios from "axios";
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from "next/navigation";
 
+// import omar from '../../../../backend/uploads/'
+// backend return => 'uploads/avatar-1695408516407-131218539.jpeg'
 
 const completProfile = () => {
   const cookie = getCookie('accessToken');
@@ -22,12 +24,18 @@ const completProfile = () => {
     formData.append("file", avatar.current as File);
     formData.forEach((value, key) => {
       console.log(`${key}: ${value}`);
-    });    // formData.append("birthDay", birthDay as unknown as string);
-    // formData.append("gender", gender);
-    // formData.append("cookie", cookie as string);
+    });    
+    formData.append("birthDay", birthDay as unknown as string);
+    formData.append("gender", gender);
+    formData.append("cookie", cookie as string);
     e.preventDefault();
-    await axios.post("http://localhost:3000/upload/image", formData, {withCredentials: true ,headers: {
+<<<<<<< HEAD
+    await axios.put("http://localhost:3000/auth/modify-data", formData, {headers: {
+      "Content-Type": "application/json"
+=======
+    await axios.post("http://localhost:3000/upload/image", formData, {headers: {
       "Content-Type": 'multipart/form-data'
+>>>>>>> 5b5f512d9fa754654500139d4dee5b803ec5b3c1
     }}).then(res => {
       console.log(res.data);
       setCookie("accessToken", res.data);
@@ -58,6 +66,7 @@ const completProfile = () => {
       }
     }
   };
+  
   return (
     <div className=" grid place-items-center h-screen ">
       <div className=" bg-[#1B071C]/[0.8] min-w-[300px] overflow-auto h-[600px] w-[500px] mt-[140px] rounded-2xl border-[#D16ACE] border">
@@ -89,6 +98,7 @@ const completProfile = () => {
         </div>
       </form>
       </div>
+
     </div>
 )
 }
