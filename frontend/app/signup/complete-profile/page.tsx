@@ -4,20 +4,35 @@ import React, { useEffect, useState, FormEvent, useRef } from "react"
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, {  ReactDatePickerProps } from 'react-datepicker';
 import axios from "axios";
-import { getCookie, setCookie } from 'cookies-next';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { useRouter } from "next/navigation";
+import jwt,{ JwtPayload } from "jsonwebtoken";
 
 // import omar from '../../../../backend/uploads/'
 // backend return => 'uploads/avatar-1695408516407-131218539.jpeg'
 
 const completProfile = () => {
-  const cookie = getCookie('accessToken');
+  const token = getCookie('accessToken');
+  const [currentUserID, setCurrentUserID] = useState<Number>();
+
+  useEffect(() => {
+    try {
+      const user = jwt.decode(token as string) as JwtPayload
+      if (user) {
+        setCurrentUserID(user.id)
+        deleteCookie("accessToken");
+      }
+    } catch (error) {
+      console.error('Error decoding token:');
+    }
+  }, [])
   const [birthDay, setBirthDay] = useState<Date |  null>(null);
   const [gender, setGender] = useState("");
   // const [avatar_URL, setAvatar_URL] = useState<File>();
   const avatar = useRef<File | undefined>(undefined);
   const router = useRouter();
 
+  console.log("token = ", token)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     const formData = new FormData();
@@ -26,14 +41,14 @@ const completProfile = () => {
       console.log(`${key}: ${value}`);
     });    
     formData.append("birthDay", birthDay as unknown as string);
-    formData.append("gender", gender);
-    formData.append("cookie", cookie as string);
+    formData.append("gender", gender );
+    formData.append("id", currentUserID as any);
     e.preventDefault();
-    await axios.post("http://localhost:3000/upload/image", formData, {headers: {
+    await axios.put("http://localhost:3000/upload/update", formData, {headers: {
       "Content-Type": 'multipart/form-data'
     }}).then(res => {
       console.log(res.data);
-      setCookie("accessToken", res.data);
+      setCookie("accessToken", res.data.token);
       router.push("/home");
     }).catch(err => {console.log(err)});
   }

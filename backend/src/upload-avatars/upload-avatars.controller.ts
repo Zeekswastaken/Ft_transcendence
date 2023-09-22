@@ -9,6 +9,7 @@ import { extname } from 'path';
 import { UserService } from 'src/user/user.service';
 import { JWToken } from 'src/auth/jwt.service';
 import { UploadAvatarsService } from './upload-avatars.service';
+import { checkPasswordStrength } from 'src/utils/passwordChecker';
 
 @Controller('upload')
 export class UploadAvatarsController {
@@ -27,7 +28,7 @@ export class UploadAvatarsController {
         const user  = await this.userservice.findById(id);
         return {message:"SUCCESS",user};
     }
-@Post('image')
+  @Put('update')
   @UseInterceptors(FileInterceptor('file',{storage: diskStorage({
     destination: '../frontend/public/avatars/', // Specify the destination folder where files will be stored
     filename: (req, file, callback) => {
@@ -37,23 +38,60 @@ export class UploadAvatarsController {
       const newFileName = `avatar-${uniqueSuffix}${fileExtension}`;
       callback(null, newFileName);},}),}))
   
-    async uploadFile(@UploadedFile() file: Express.Multer.File,@Body() Body) {
-        const decode = await this.jwttoken.decoded(Body.cookie);
-        var user = await this.userservice.findById(decode.id);
-        user.ismanuel = true;
-        user.gender = Body.gender as String;
-        delete Body.cookie;
+    async uploadFile(@UploadedFile() file: Express.Multer.File,@Body() Body,@Res() res) {
+        console.log(Body);
+        // if(file)
+          console.log("Fileeeeeeeeeeeeeeeeeeeeee = ",Body.file);
+        // const decode = await this.jwttoken.decoded(Body.cookie);
+        var user = await this.userservice.findById(Body.id);
+        if (Body.username && Body.username != user.username)
+        {
+          let lastone = await this.userservice.findByName(Body.username);
+          if (lastone )
+          res.send({message:'exists'});
+        }
+        // user.ismanuel = true; 
+        // user.gender = Body.gender as String;
+        // delete Body.cookie;
+        // const usersec = await this.userservice.findById(id); 
+        if (user){
+            if (Body.password && checkPasswordStrength(Body.password) == 'Weak')
+                res.send({message:'weak'});
+            if (Body.password)
+                Body.password = await this.userservice.hashpassword(Body.password);
+            if ( !Body.password )
+                Body.password = user.password;
+            if(!Body.username)
+                Body.username = user.username;
+            if (!Body.avatar_url)
+                Body.avatar_url = user.avatar_url;
+            if (!Body.Bio)
+                Body.Bio = user.Bio;
+            if (Body.privacy == null)
+                Body.privacy = user.privacy;
+            
+        console.log("TWPFA == ",Body.twofactorenabled);
+        console.log("Bodyyyyyyyy",Body);
+        Body.ischange = true;
         // user.birthDay = Body.birthDay as Date;
-        user.avatar_url = '/avatars/' +file.filename as String;
-        console.log("->>>>>>>>>>>>>>>>>>>>>>>>>",file.path);
-        await this.userservice.update(user,user.id as number);
-        const after = await this.userservice.findById(Body.id);
+        if (file){
+          user.avatar_url = '/avatars/' +file.filename as String;
+          Body.avatar_url =  '/avatars/' +file.filename;
+        }
+        // console.log("->>>>>>>>>>>>>>>>>>>>>>>>>",file.path);
+        if (!file)
+          delete Body.file;
+        await this.userservice.update(Body,user.id as number);
+        const after = await this.userservice.findById(user.id);
         console.log("Body == ",Body);
-        console.log("file  ==",file);
+        // console.log("file  ==",file);
         console.log("user after == ", after);
       
         // const fs = this.uploadAvatarsService.readFile(after.avatar_url as string);
         // console.log(fs);
-        return await this.jwttoken.generateToken_2(after);
+        res.send({message:'success',token:await this.jwttoken.generateToken_2(after)});
       }
+      else
+        res.send('invalid Token');
   }
+}

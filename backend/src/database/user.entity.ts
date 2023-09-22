@@ -15,7 +15,7 @@ export class User{
     @Column({nullable:true})
     status:String;
     @Column({nullable:true})
-    birthDay: Date;
+    birthDay: String;
     @Column({default:'Oauth'})
     password:String;
     @Column({nullable:true})
