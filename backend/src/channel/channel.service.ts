@@ -499,4 +499,23 @@ console.log("==================================================");
         const members = {owner:owner, members:memberships};
         return members
     }
+
+    async switchPrivacy(channelID :Number, Type:String, Password:String)
+    {
+        const channel = await this.channelRepository.findOne({where:{id:Equal(channelID)}});
+        if (!channel)
+            throw new HttpException("Channel not found", HttpStatus.FORBIDDEN);
+        if (channel.Type == 'public' && Password)
+        {
+            channel.Type = 'protected';
+            const hashedPass = await this.hashPassword(Password);
+            channel.Password = hashedPass;
+        }
+        else
+        {
+            channel.Type = 'public'
+            channel.Password = null;
+        }
+        return await this.channelRepository.save(channel);
+    }
 }

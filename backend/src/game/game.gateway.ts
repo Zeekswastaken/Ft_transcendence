@@ -106,19 +106,19 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   handleDisconnect(client: Socket) 
-  { 
-    console.log(`Client disconnected: ${client.id}`);
+  {
     const id = this.users.get(client.id);
     if(id !== undefined) {
       const gameData = this.GamesData.get(id);
       if(gameData !== undefined)
       {
         if(gameData.player1.data.PlayerSocket == client.id) {
+          this.server.to(gameData.player2.data.PlayerSocket as string).emit("updateScoore", LoserScore, WinnterScore);
           this.server.to(gameData.player2.data.PlayerSocket as string).emit("gameOver");
           this.server.to(gameData.player2.data.PlayerSocket as string).emit("celebrate");
           this.gameservice.save({player1: gameData.player1.data, player2: gameData.player2.data, player1Score: LoserScore, player2Score: WinnterScore, result: gameData.player2.data.id});
-
         } else {
+          this.server.to(gameData.player1.data.PlayerSocket as string).emit("updateScoore", WinnterScore, LoserScore);
           this.server.to(gameData.player1.data.PlayerSocket as string).emit("gameOver");
           this.server.to(gameData.player1.data.PlayerSocket as string).emit("celebrate");
           this.gameservice.save({player1:gameData.player1.data, player2: gameData.player2.data, player1Score: WinnterScore, player2Score: LoserScore, result: gameData.player1.data.id});
@@ -129,6 +129,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
     }
   }
+
+  
+  @SubscribeMessage('Disconnect')
+  async disconnect(client: Socket) {
+    console.log("Hello World From Client Disconect ============> ");
+    this.handleDisconnect(client);
+  }
+  
 
   afterInit(server: Server) {
     console.log('WebSocket gateway initialized');
@@ -201,30 +209,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
     }
   }
-
-  // ismatching(username:string) {
-  //   for(let i = 0 ; i < this.ready.length; i++)
-  //   {
-  //     if(this.ready[i].username.toString() === username) {
-  //       return (false);
-  //     }
-  //   }
-  //   return true;
-  // }
-
-  // changeScore
-  // @SubscribeMessage('Ready')
-  // async readyToPlay(client: Socket, payload :{token:string}) {
-  //   let user = await this.jwt.decoded(payload.token);
-  //   if(this.ismatching(user.username.toString())){
-  //     this.ready.push(user);
-  //   }
-  //   if (this.ready.length > 1 ){
-  //     this.connectPlayers({p1: this.ready[0], p2: this.ready[1]});
-  //     this.ready.shift();
-  //     this.ready.shift();
-  //   }
-  // }
 
   @SubscribeMessage('oneVsBotChangeScore')
   async oneVsBot(client: Socket, obj:{player: number, bot: number}) {

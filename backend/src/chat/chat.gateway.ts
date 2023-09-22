@@ -35,13 +35,9 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       const user2 = await this.userservice.findByName(user.username);
       if (user2) {
         // if (user2.id == 0)
-          console.log("************************************User id is 0",user2)
-        console.log("====USER2 ID LELEL======= ", user2.id);
         const channels = await this.ChannelService.getChannelsJoined(user2.id);
-        console.log("====CHANELLLLLLS LELEL======= ", channels);
         this.users.set(client.id,await this.jwt.generateToken_2(user2) as string);
           channels.forEach((room)=>{
-            console.log(user.id, " --------------------------------------------------------- >>>> id joined room ",room);
             client.join(room.id.toString());
           })
           return ({status:"Success"});
@@ -73,6 +69,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       user.Socket = null;
       user.status = 'Offline';
       await this.userservice.update(user,user.id as number);
+      this.Leaveroom(client,{token:token});
       // console.log("user disconnect ==> "+JSON.stringify(user));
       // console.log(`chat.Client disconnected: ${client.id}`);
       this.users.delete(client.id)
@@ -88,9 +85,11 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     if (await this.jwt.verify(payload.Token)){
       // const recuser = await this.userservice.findByName(payload.receiver);
       const sender = await this.jwt.decoded(payload.Token)
-    const message = await this.chatservice.saveMsg({text:payload.message as string}, payload.channelid, sender);
-    console.log("PAAAAAAYLOAAAAAAD ->>>>>>>>>>>>>>>>> PAAAAAAAY YOUUUUUR BILLLLL ", {message: message, user:sender, channelid:payload.channelid})
-    this.server.to(payload.channelid.toString()).emit("MessageToRoom",{message: message, user:sender, channelid:payload.channelid});
+      const message = await this.chatservice.saveMsg({text:payload.message as string}, payload.channelid, sender);
+      console.log("PAAAAAAYLOAAAAAAD ->>>>>>>>>>>>>>>>> PAAAAAAAY YOUUUUUR BILLLLL ", {message: message, user:sender, channelid:payload.channelid})
+      client.leave(payload.channelid.toString());
+      this.server.to(payload.channelid.toString()).emit("MessageToRoom",{message: message, user:sender, channelid:payload.channelid});
+      client.join(payload.channelid.toString());
     }
     else
       return "Invalid Token";
