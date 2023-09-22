@@ -80,10 +80,10 @@ const page = () => {
                     </div>
                     <div className=' grid place-items-center items-center'>
                         <div className='border-[2px] border-gray w-fit'>
+                            
                             <ReactP5Wrapper sketch={sketch}
                                             COM_LEVEL={COM_LEVEL}
                                             socket={socket}
-                                            gameOver={gameOver}
                                             />
                         </div>
                     </div>

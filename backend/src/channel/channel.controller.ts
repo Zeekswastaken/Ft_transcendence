@@ -19,13 +19,15 @@ export class ChannelController {
           const channel = await this.channelService.createChannel(data, data.userid);
           
           // console.log("=====> ", channel);
-        if (channel)
+        if (typeof channel == 'object')
         {
           console.log("IT DID WORK")
           res.status(HttpStatus.CREATED).json(channel);
         }
-          else
-            res.status(HttpStatus.FORBIDDEN).json('Error');
+        else
+        res.send({
+          message: channel,
+       });
         } catch (error)
         {
           console.error('Error creating channel: ', error.message);
