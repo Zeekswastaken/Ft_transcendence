@@ -6,7 +6,7 @@ import { Stats } from 'src/database/stats.entity';
 import { User } from 'src/database/user.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { UserService } from 'src/user/user.service';
-import { Equal, Repository } from 'typeorm';
+import { Equal, Repository, SelectQueryBuilder, getRepository } from 'typeorm';
 
 @Injectable()
 export class GameService {
@@ -21,12 +21,16 @@ export class GameService {
         match.player2Score = Body.player2Score;
         match.result = Body.result;
         const savedMatch = await this.MatchRepo.save(match);
-        Player1.stats.matches.push(savedMatch);
         Player2.stats.matches.push(savedMatch);
-        
         let User1a, User2a, User1, User2;
-        User1a = await this.userservice.save(Player1);
+
         User2a = await this.userservice.save(Player2);
+        console.log("Before push: ", Player1.stats.matches);
+        Player1.stats.matches.push(savedMatch);
+        console.log("After push: ", Player1.stats.matches);
+        // Player1.stats.matches.push(savedMatch);
+        
+        User1a = await this.userservice.save(Player1);
         if (match.result === Body.player1.id) {
             User1 = await this.updateWinner(User1a);
             User2 = await this.updateLoser(User2a);
@@ -35,7 +39,21 @@ export class GameService {
             User2 = await this.updateWinner(User2a);
         }
     
-        console.log("USER1 AFTER GAME=======", User1.stats);
+        // console.log("USER1 AFTER GAME=======", User1.stats);
+    }
+
+    async getGameInvites(userid:any): Promise<Match[]>
+    {
+        const user = await this.userservice.findById(userid);
+        if (!user)
+            throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+            const player1Matches = await this.MatchRepo.find({ where: { player1: Equal(user.id) } });
+            const player2Matches = await this.MatchRepo.find({ where: { player2: Equal(user.id) } });
+            
+            const matches = [...player1Matches, ...player2Matches];
+            matches.sort((match1, match2) => (match2.id as number) - (match1.id as number));
+
+        return matches;
     }
 
     async updateWinner(user:User)

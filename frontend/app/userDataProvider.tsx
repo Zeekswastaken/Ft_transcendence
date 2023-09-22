@@ -24,17 +24,17 @@ export type userData = {
       wins:number
       winrate:number
       level: number
-      matches: [
-        Date:string,
-        id:number,
-        player1:Object,
-        player2:Object,
-        player1Score:number,
-        player2Score:number,
-        result:number
-      ]
     }
   }
+  matches: [
+    Date:string,
+    id:number,
+    player1:Object,
+    player2:Object,
+    player1Score:number,
+    player2Score:number,
+    result:number
+  ]
   friends: Array<{
     id:number
     username: string
@@ -72,8 +72,10 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
           setUser(undefined)
           return;
         }
-        else
+        else {
           setUser(res.data);
+          console.log("profile res = ", res.data)
+        }
       }).catch((err) => {
         console.log(err);
       })

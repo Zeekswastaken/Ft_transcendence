@@ -8,8 +8,10 @@ import { Ball, Player, GameData, BallCoordinates } from './gameInterfaces';
 import { collision, radiansRange, mapRange, initBall } from './helper';
 import { GameService } from './game.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { Match } from 'src/database/match.entity';
+import { Equal, Repository } from 'typeorm';
 
-const WinnterScore = 7;
+const WinnerScore = 7;
 const LoserScore = 0;
 
 @Injectable()
@@ -33,7 +35,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     ball.x += ball.vX * ball.speed;
     ball.y += ball.vY * ball.speed;
     var rad = radiansRange(45);
-    if(ball.y + ball.radius >= 100 || ball.y - ball.radius <= 0){
+    if(ball.y + (ball.radius / 2) >= 100 || ball.y - (ball.radius / 2) <= 0){
       if(ball.y + ball.radius >= 100) {
         ball.y = 100 - ball.radius;
       } else {
@@ -58,14 +60,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
             ball.vX = (0.75 * Math.cos(angle)) * -1; 
             ball.vY = (0.75 * Math.sin(angle)); 
         }
-        ball.speed += 0.1;
+        ball.speed += ball.deltaSpeed;
     }
   
-    if(ball.x - ball.radius < 0) {
+    if(ball.x < 0) {
       player2.score++;
       this.updateScore(player1, player2);
       initBall(ball);
-    } else  if(ball.x + ball.radius > 100){
+    } else  if(ball.x > 100){
         player1.score++;
         this.updateScore(player1, player2);
         initBall(ball);
@@ -83,10 +85,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         if(player1.score > player2.score) {
           this.server.to(player1.data.PlayerSocket as string).emit("celebrate");
           this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player1.data.id});
-
+          const user = await this.userservice.findById(player1.data.id);
+          console.log("USER AFTER FAME====> ", user);
+          const user2 = await this.userservice.findById(player2.data.id);
+          console.log("USER2 AFTER FAME====> ", user2);
         } else {
           this.server.to(player2.data.PlayerSocket as string).emit("celebrate");
-          this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
+          await this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
         }
         this.GamesData.delete(id);
         this.users.delete(player1.data.PlayerSocket as string);
@@ -105,6 +110,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
+
+
   handleDisconnect(client: Socket) 
   {
     const id = this.users.get(client.id);
@@ -113,15 +120,15 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       if(gameData !== undefined)
       {
         if(gameData.player1.data.PlayerSocket == client.id) {
-          this.server.to(gameData.player2.data.PlayerSocket as string).emit("updateScoore", LoserScore, WinnterScore);
+          this.server.to(gameData.player2.data.PlayerSocket as string).emit("updateScoore", WinnerScore, LoserScore);
           this.server.to(gameData.player2.data.PlayerSocket as string).emit("gameOver");
           this.server.to(gameData.player2.data.PlayerSocket as string).emit("celebrate");
-          this.gameservice.save({player1: gameData.player1.data, player2: gameData.player2.data, player1Score: LoserScore, player2Score: WinnterScore, result: gameData.player2.data.id});
+          this.gameservice.save({player1: gameData.player1.data, player2: gameData.player2.data, player1Score: LoserScore, player2Score: WinnerScore, result: gameData.player2.data.id});
         } else {
-          this.server.to(gameData.player1.data.PlayerSocket as string).emit("updateScoore", WinnterScore, LoserScore);
+          this.server.to(gameData.player1.data.PlayerSocket as string).emit("updateScoore", WinnerScore, LoserScore);
           this.server.to(gameData.player1.data.PlayerSocket as string).emit("gameOver");
           this.server.to(gameData.player1.data.PlayerSocket as string).emit("celebrate");
-          this.gameservice.save({player1:gameData.player1.data, player2: gameData.player2.data, player1Score: WinnterScore, player2Score: LoserScore, result: gameData.player1.data.id});
+          this.gameservice.save({player1:gameData.player1.data, player2: gameData.player2.data, player1Score: WinnerScore, player2Score: LoserScore, result: gameData.player1.data.id});
         }
         this.GamesData.delete(id);
         this.users.delete(gameData.player1.data.PlayerSocket as string);
@@ -133,7 +140,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   
   @SubscribeMessage('Disconnect')
   async disconnect(client: Socket) {
-    console.log("Hello World From Client Disconect ============> ");
     this.handleDisconnect(client);
   }
   
@@ -157,7 +163,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       const initGameData = { 
         player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
         player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
-        ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1}
+        ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1, deltaSpeed: 0.2}
       };
       const id: string = player1.username.toString() + player2.username.toString();
       this.users.set(player1.PlayerSocket as string, id);
@@ -171,25 +177,15 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('getBallAndP2Positions')
   async getBallAndP2Positions(client: Socket, obj:{id: string, user: User}) {
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
-    let ball: BallCoordinates = {
-      x: 50,
-      y: 50
-    }
     if(gameData)
     {
-      if(gameData.player1.data.username === obj.user.username)
-      {
+      if(gameData.player1.data.username === obj.user.username) {
         this.update(gameData.ball, gameData.player1, gameData.player2);
         await this.checkScore(obj.id, gameData.player1, gameData.player2);
-        ball.x = gameData.ball.x;
-        ball.y = gameData.ball.y;
-        client.emit("getBallOpponentPostion", gameData.player2.y, ball);
+        client.emit("getBallOpponentPostion", gameData.player2.y, {x: gameData.ball.x, y: gameData.ball.y});
       }
-      else
-      {
-        ball.x = 100 - gameData.ball.x;
-        ball.y = gameData.ball.y;
-        client.emit("getBallOpponentPostion", gameData.player1.y, ball);
+      else {
+        client.emit("getBallOpponentPostion", gameData.player1.y, {x: 100 - gameData.ball.x, y: gameData.ball.y});
       }
     }
   }
@@ -199,12 +195,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     const gameData: GameData | undefined = this.GamesData.get(obj.id);
     if(gameData)
     {
-      if(gameData.player1.data.username == obj.user.username)
-      {
+      if(gameData.player1.data.username == obj.user.username) {
         this.GamesData.get(obj.id).player1.y = obj.pos;
       }
-      else
-      {
+      else {
         this.GamesData.get(obj.id).player2.y = obj.pos;
       }
     }

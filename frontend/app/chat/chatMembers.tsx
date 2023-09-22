@@ -48,7 +48,7 @@ function chatMembers() {
         className="drawer-toggle bg-pink-600 right-0 "
       />
       <div className="drawer-content">
-        <label 
+        <label
           htmlFor="my-drawer-4"
           className="drawer-button absolute mx-4 my-4 right-2 bottom-full pb-2 max-sm:pb-5"
         >
@@ -119,7 +119,7 @@ function chatMembers() {
           <div className=" h-[55%] overflow-y-scroll no-scrollbar bg-[#4C2556]">
             <ul className=" flex flex-col whitespace-no-wrap p-4 max-sm:p-0">
               {mem?.map((mem, id) => (
-                <GroupList key={id} member={mem} />
+                <GroupList key={Math.random()} member={mem} />
               ))}
             </ul>
           </div>

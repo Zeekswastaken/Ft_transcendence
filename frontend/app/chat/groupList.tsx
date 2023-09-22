@@ -12,9 +12,11 @@ interface members {
 
 function groupList({ member }: members) {
 
-  const { currUserData, chatMembers, setChatMembers, userData, setMuted, muted } = useMyStore();
+  const {setAdmin, admin, setBaned, currUserData, chatMembers, setChatMembers, userData, setMuted, muted } = useMyStore();
   const { socket } = useSocketContext();
-  const [isMuted, setIsMuted] = useState(member?.isMuted || false);
+  const [isMuted, setIsMuted] = useState(member.isMuted );
+  const [isBanned, setIsBanned] = useState(member.isBanned);
+  const [isAdmin, setIsAdmin] = useState(member.Type ==="admin");
   const router = useRouter();
   function redirectToProfile() {
     router.push("/users/" + member.user.username)
@@ -27,16 +29,48 @@ function groupList({ member }: members) {
     setIsMuted(false);
     socket?.emit("unmuteUser", { channelID: userData.id, userID: member.user.id })
   }
+  function banMember() {
+    setIsBanned(true);
+    socket?.emit("banUser", { channelID: userData.id, userID: member.user.id, initiatorID: currUserData.id, amount: 0 });
+
+  }
+  function unBanMember() {
+    setIsBanned(false);
+    socket?.emit("unbanUser", { channelID: userData.id, userID: member.user.id });
+  }
+
+  function assignAdmin() {
+    setIsAdmin(true);
+    socket?.emit("assignAdmin", { channelID: userData.id, userID: member.user.id, initiatorID: currUserData.id});
+
+  }
+  function removeAdmin() {
+    setIsAdmin(false);
+    socket?.emit("removeAdmin", { channelID: userData.id, userID: member.user.id, initiatorID: currUserData.id});
+  }
   useEffect(() => {
     socket?.on("newmembership", (data: any) => {
-      member.isMuted = data.isMuted;
+      console.log(data);
       setMuted(data);
     })
-
+  }, [])
+  useEffect(() => {
+    socket?.on("newmembership1", (data: any) => {
+      console.log(data);
+      setBaned(data);
+    })
+  }, [])
+  useEffect(() => {
+    socket?.on("isadmin", (data: any) => {
+      console.log(data);
+      setAdmin(data);
+    })
   }, [])
 
-  // console.log(currUserData, chatMembers);
-  console.log(member);
+  // console.log(currUserData);
+  // console.log(member);
+  if (member.Type === "admin")
+    console.log("THIS IS ADMIN");
   // console.log(chatMembers?.members?.isMuted);
   return (
     member.user.id != currUserData.id ? (
@@ -78,7 +112,7 @@ function groupList({ member }: members) {
                 <li className=" place-content-center font-Bomb ">
                   <a>Challenge</a>
                 </li>
-                {currUserData.id === chatMembers?.owner?.Userid ? (<div>
+                {currUserData.id === chatMembers?.owner?.Userid ? (<>
 
                   {!isMuted ? (
                     <li className="place-content-center font-Bomb">
@@ -89,14 +123,47 @@ function groupList({ member }: members) {
                       <button onClick={unMuteMember}>Unmute</button>
                     </li>
                   )}
-                  <li className=" place-content-center font-Bomb">
-                    <button>Ban</button>
-                  </li>
-                  <li className=" place-content-center font-Bomb">
-                    <button>assign admin</button>
-                  </li>
-                </div>
+                  {!isBanned ? (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={banMember}>Ban</button>
+                    </li>
+                  ) : (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={unBanMember}>Unban</button>
+                    </li>
+                  )}
+                  {!isAdmin ? (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={assignAdmin}>Assign Admin</button>
+                    </li>
+                  ) : (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={removeAdmin}>Remove Admin</button>
+                    </li>
+                  )}
+                </>
                 ) : null}
+                {admin.Type === "admin" && currUserData.id === admin.Userid ? (<>
+                  {!isMuted ? (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={muteMember}>Mute</button>
+                    </li>
+                   ) : (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={unMuteMember}>Unmute</button>
+                    </li>
+                  )}
+                  {!isBanned ? (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={banMember}>Ban</button>
+                    </li>
+                  ) : (
+                    <li className="place-content-center font-Bomb">
+                      <button onClick={unBanMember}>Unban</button>
+                    </li>
+                  )}
+                  </>
+                ):null}
               </ul>
             </div>
           </div>

@@ -40,13 +40,13 @@ export default function sketch(p5: P5CanvasInstance) {
       {
         p5.background(0);
         net.drow(p5);
+        ball.isOut(p5, socket, player, computer);
         player.drow(p5, 0);
         player.updatePlayer(p5);
         computer.drow(p5, 0);
         computer.updateComputer(p5, ball, COM_LEVEL);
         ball.drow(p5);
         ball.update(p5, player, computer);
-        ball.isOut(p5, socket, player, computer);
       }
       else {
         p5.fill(255);

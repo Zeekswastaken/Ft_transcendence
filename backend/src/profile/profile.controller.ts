@@ -9,41 +9,46 @@ import { checkPasswordStrength } from 'src/utils/passwordChecker';
 import { FriendsService } from 'src/friends/friends.service';
 import { BlockedUser } from 'src/database/blockedUser.entity';
 import { BlockedService } from 'src/blocked/blocked.service';
+import { GameService } from 'src/game/game.service';
 
 @Controller('profile')
 export class ProfileController {
-    constructor (private readonly userservice:UserService,private readonly profileService:ProfileService, private readonly friendsService: FriendsService ,private readonly jwt:JWToken, private readonly blockedService: BlockedService){}
+    constructor (private readonly userservice:UserService,private readonly profileService:ProfileService, private readonly friendsService: FriendsService ,private readonly jwt:JWToken, private readonly blockedService: BlockedService, private readonly gameService:GameService){}
 
     @Get(':username')
     async display(@Param('username') username:String,@Res() res){
-        try{
-        // console.log(username);
-        const user = await this.profileService.findByName(username);
-        if (user)
-        {
-            // console.log(user.stats);
-            delete user.password;
-            // console.log("-------- ", user.id);
-            const details = await this.friendsService.getUserFriends(user.username);
-            const details2 = await this.blockedService.getblocked(user.id);
-            // console.log(details);
-            // console.log("**************************");
-            // console.log(details2);
-            console.log("user matches is == ",user.stats.matches);
-            
-            const info = {
-                user:user, 
-                friends:details,
-                blocked:details2
+        if (username) {
+            try{
+            // console.log(username);
+            const user = await this.profileService.findByName(username);
+            if (user)
+            {
+                // console.log(user.stats);
+                const matches = await this.gameService.getGameInvites(user.id);
+                delete user.password;
+                // console.log("-------- ", user.id);
+                const details = await this.friendsService.getUserFriends(user.username);
+                const details2 = await this.blockedService.getblocked(user.id);
+                // console.log(details);
+                // console.log("**************************");
+                // console.log(details2);
+                console.log("user matches is == ",user.stats.matches);
+                
+                const info = {
+                    user:user, 
+                    friends:details,
+                    blocked:details2,
+                    matches:matches
+                }
+                res.send(info);
             }
-            res.send(info);
-        }
-        else
-            res.send({message: "not-found"});
-        } catch (error)
-        {
-            console.error('Error getting the friends of the user: ',error.message);
-            throw error;
+            else
+                res.send({message: "not-found"});
+            } catch (error)
+            {
+                console.error('Error getting the friends of the user: ',error.message);
+                throw error;
+            }
         }
     }
     @Put('update/:id')

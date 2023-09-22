@@ -12,10 +12,15 @@ import { BlockedService } from 'src/blocked/blocked.service';
 import { BlockedModule } from 'src/blocked/blocked.module';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { ChannelService } from 'src/channel/channel.service';
+import { GameService } from 'src/game/game.service';
+import { GameModule } from 'src/game/game.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Match } from 'src/database/match.entity';
+import { GameInvite } from 'src/database/gameInvite.entity';
 
 @Module({
-  imports:[UserModule,AuthModule, FriendsModule, BlockedModule],
+  imports:[TypeOrmModule.forFeature([Match, GameInvite]),UserModule,AuthModule, FriendsModule, BlockedModule, GameModule],
   controllers: [ProfileController],
-  providers: [ProfileService,UserService,JWToken,JwtService, FriendsService, BlockedService, NotificationsService, ChannelService]
+  providers: [ProfileService,UserService,JWToken,JwtService, FriendsService, BlockedService, NotificationsService, ChannelService, GameService]
 })
 export class ProfileModule {}
