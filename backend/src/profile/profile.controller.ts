@@ -9,10 +9,11 @@ import { checkPasswordStrength } from 'src/utils/passwordChecker';
 import { FriendsService } from 'src/friends/friends.service';
 import { BlockedUser } from 'src/database/blockedUser.entity';
 import { BlockedService } from 'src/blocked/blocked.service';
+import { GameService } from 'src/game/game.service';
 
 @Controller('profile')
 export class ProfileController {
-    constructor (private readonly userservice:UserService,private readonly profileService:ProfileService, private readonly friendsService: FriendsService ,private readonly jwt:JWToken, private readonly blockedService: BlockedService){}
+    constructor (private readonly userservice:UserService,private readonly profileService:ProfileService, private readonly friendsService: FriendsService ,private readonly jwt:JWToken, private readonly blockedService: BlockedService, private readonly gameService:GameService){}
 
     @Get(':username')
     async display(@Param('username') username:String,@Res() res){
@@ -22,6 +23,7 @@ export class ProfileController {
         if (user)
         {
             // console.log(user.stats);
+            const matches = await this.gameService.getGameInvites(user.id);
             delete user.password;
             // console.log("-------- ", user.id);
             const details = await this.friendsService.getUserFriends(user.username);
@@ -34,7 +36,8 @@ export class ProfileController {
             const info = {
                 user:user, 
                 friends:details,
-                blocked:details2
+                blocked:details2,
+                matches:matches
             }
             res.send(info);
         }

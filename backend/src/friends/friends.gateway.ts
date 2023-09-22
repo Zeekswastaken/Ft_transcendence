@@ -7,6 +7,8 @@ import { ChannelService } from 'src/channel/channel.service';
 import { UserService } from 'src/user/user.service';
 import { exit } from 'process';
 import { User } from 'src/database/user.entity';
+import { SelectQueryBuilder } from 'typeorm';
+
 @WebSocketGateway({
   cors: {
     origin: '*',

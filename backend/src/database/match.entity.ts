@@ -7,8 +7,10 @@ export class Match {
     @PrimaryGeneratedColumn()
     id:Number;
     @ManyToOne(() => User, (user) => user.player1, { cascade: true, onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'player1id' })
     player1: User;
     @ManyToOne(() => User, (user) => user.player2, { cascade: true, onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'player2id' })
     player2: User;
     @Column()
     player1Score: number;

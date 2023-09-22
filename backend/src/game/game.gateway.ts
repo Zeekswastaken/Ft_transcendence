@@ -8,6 +8,8 @@ import { Ball, Player, GameData, BallCoordinates } from './gameInterfaces';
 import { collision, radiansRange, mapRange, initBall } from './helper';
 import { GameService } from './game.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { Match } from 'src/database/match.entity';
+import { Equal, Repository } from 'typeorm';
 
 const WinnterScore = 7;
 const LoserScore = 0;
@@ -83,10 +85,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         if(player1.score > player2.score) {
           this.server.to(player1.data.PlayerSocket as string).emit("celebrate");
           this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player1.data.id});
-
+          const user = await this.userservice.findById(player1.data.id);
+          console.log("USER AFTER FAME====> ", user);
+          const user2 = await this.userservice.findById(player2.data.id);
+          console.log("USER2 AFTER FAME====> ", user2);
         } else {
           this.server.to(player2.data.PlayerSocket as string).emit("celebrate");
-          this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
+          await this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
         }
         this.GamesData.delete(id);
         this.users.delete(player1.data.PlayerSocket as string);
@@ -104,6 +109,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       await this.userservice.update(user,user.id as number);
     }
   }
+
+
 
   handleDisconnect(client: Socket) 
   {
