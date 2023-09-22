@@ -9,7 +9,6 @@ import { BallCoordinates, User } from "../GameComponents/gameInterfaces";
 import { useRouter } from 'next/navigation';
 import Losing from '../../component/losing';
 import Winning from '../../component/winning';
-import { clippingParents } from '@popperjs/core';
 
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
@@ -60,13 +59,12 @@ const page = () => {
         socket?.on('disconnect', () => {
         });
         return () => {
-            console.log("===> client id = ", socket?.id);
             socket?.emit("Disconnect");
         }
     }, [socket]);
 
     useEffect(() => { 
-        const newsocket = io('http://localhost:3000');
+        const newsocket = io('http://10.14.3.7:3000');
         setSocket(newsocket);
         newsocket.emit("setSocket", {token: token});
         return () => {
@@ -108,7 +106,6 @@ const page = () => {
                                         user={user}
                                         opponentPos={opponentPos}
                                         ballCoordinates={ballCoordinates}
-                                        gameOver={gameOver}
                                         />
                     </div>
                 </div>

@@ -30,7 +30,6 @@ export interface GameProps {
     COM_LEVEL: number;
     handlScore: any;
     socket: Socket;
-    gameOver: boolean;
 }
 
 export interface net {

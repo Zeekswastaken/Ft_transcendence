@@ -9,7 +9,7 @@ import Winning from '../../component/winning';
 import { User } from '../GameComponents/gameInterfaces';
 import Losing from '../../component/losing';
 
-const COM_LEVEL = 0.1;
+const COM_LEVEL = 0.15;
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
     const [playerScore, setPlayerScore] = useState<number>(0);
@@ -47,7 +47,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
+        const newSocket = io('http://10.14.3.7:3000');
         setSocket(newSocket);
         return () => {
             socket?.disconnect();
@@ -84,7 +84,6 @@ const page = () => {
                             <ReactP5Wrapper sketch={sketch}
                                             COM_LEVEL={COM_LEVEL}
                                             socket={socket}
-                                            gameOver={gameOver}
                                             />
                         </div>
                     </div>

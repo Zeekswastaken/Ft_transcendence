@@ -46,7 +46,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
+        const newSocket = io('http://10.14.3.7:3000');
         setSocket(newSocket);
         return () => {
             socket?.disconnect();
@@ -80,10 +80,10 @@ const page = () => {
                     </div>
                     <div className=' grid place-items-center items-center'>
                         <div className='border-[2px] border-gray w-fit'>
+                            
                             <ReactP5Wrapper sketch={sketch}
                                             COM_LEVEL={COM_LEVEL}
                                             socket={socket}
-                                            gameOver={gameOver}
                                             />
                         </div>
                     </div>

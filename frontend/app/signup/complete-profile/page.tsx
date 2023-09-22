@@ -24,7 +24,7 @@ const completProfile = () => {
     formData.append("gender", gender);
     formData.append("cookie", cookie as string);
     e.preventDefault();
-    await axios.put("http://localhost:3000/auth/modify-data", formData, {headers: {
+    await axios.put("http://10.14.3.7:3000/auth/modify-data", formData, {headers: {
       "Content-Type": "application/json"
     }}).then(res => {
       setCookie("accessToken", res.data);

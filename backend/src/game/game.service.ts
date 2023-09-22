@@ -6,7 +6,7 @@ import { Stats } from 'src/database/stats.entity';
 import { User } from 'src/database/user.entity';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { UserService } from 'src/user/user.service';
-import { Equal, Repository, SelectQueryBuilder, getRepository } from 'typeorm';
+import { Equal, Repository, SelectQueryBuilder, Not } from 'typeorm';
 
 @Injectable()
 export class GameService {
@@ -99,6 +99,9 @@ export class GameService {
       }
       else
       {
+        const check = await this.GameinviteRepo.findOne({where:{sender: Equal(userid),receiver: null, type: 'random'}});
+        if (check)
+            return ;
         entrance++;
         queue.receiver = user;
         entrance--;
@@ -169,6 +172,9 @@ export class GameService {
 
     async findQueue(userid:Number)
     {
-        return await this.GameinviteRepo.findOne({where: {sender: Equal(userid)}});
+      const user = await this.userservice.findById(userid);
+        const queue =  await this.GameinviteRepo.findOne({where: {sender: Equal(userid)}});
+        console.log("QUEUUUUE IN HEEEERE --- ", queue);
+        return queue;
     }
 }
