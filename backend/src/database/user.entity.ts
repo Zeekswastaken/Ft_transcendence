@@ -65,5 +65,7 @@ export class User{
     qr_code_url: string;
     @OneToMany(() => Notification, notification => notification.recipient)
     receivednotifications: Notification[];
+    @Column({nullable: true})
+    blacklist: Number[];
     user: Promise<String>;
 }

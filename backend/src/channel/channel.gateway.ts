@@ -26,7 +26,6 @@ export class ChannelGateway {
     try {
       console.log("MY PINEAPPLE IS RED DEDEDEDEDEDEDEDEDe");
     const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
-    console.log("--------**********------> ", await this.channelService.getChannelsJoined(data.userID));
     this.server.to(client.id).emit("isjoined", bool);
     this.server.to(data.channelID.toString()).emit("members", await this.channelService.getChannelMembers(data.channelID));
     }catch (error) {

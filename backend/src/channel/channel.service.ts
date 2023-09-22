@@ -161,7 +161,7 @@ export class ChannelService {
        return await this.channelMembershipRepository.save(updatedmembership);
     }
 
-    async joinChannel(channelID: Number, userID: Number, Pass: String): Promise<boolean>
+    async joinChannel(channelID: Number, userID: Number, Pass: String): Promise<boolean | string>
     {
         // console.log("-88888-------> ", userID);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelID)}});
@@ -169,6 +169,9 @@ export class ChannelService {
         if (!channel || !user)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
         // console.log("--------> ", user.id);
+        const foundChannel = user.blacklist.find(channelID => channelID === channel.id)
+        if (foundChannel)
+            return false; 
         const membership = await this.channelMembershipRepository.findOne({ where: {
             user: {id: Equal(user.id)}
             , channel:{id:Equal(channel.id)}}}
@@ -229,6 +232,11 @@ export class ChannelService {
             adminmem.Type = "owner";
             await this.channelMembershipRepository.save(adminmem);
             }
+        }
+        if (membership.isBanned == true || membership.isMuted == true)
+        {
+            user.blacklist.push(membership.Channelid);
+            await this.userRepository.save(user);
         }
         await this.channelMembershipRepository.delete(membership.id.valueOf());
         return true
