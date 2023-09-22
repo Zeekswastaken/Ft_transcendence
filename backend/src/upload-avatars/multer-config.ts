@@ -5,7 +5,7 @@ import { extname } from 'path';
 
 export const multerConfig = {
   storage: diskStorage({
-    destination: './uploads', // Specify the destination folder where files will be stored
+    destination: '../frontend/public/avatars/', // Specify the destination folder where files will be stored
     filename: (req, file, callback) => {
       console.log("dir : ",__dirname)
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
