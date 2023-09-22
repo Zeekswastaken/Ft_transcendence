@@ -17,6 +17,7 @@ export interface Ball {
     vX: number;
     vY: number;
     direction: number;
+    deltaSpeed: number;
 }
 
 export interface BallCoordinates {

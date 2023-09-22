@@ -26,7 +26,7 @@ const Losing = (props: Result) => {
                         <span className=''>{props.bootScore}</span>
                     </div>
                     <div className=' flex justify-center items-center space-x-3'>
-                        <span className=' font-Bomb text-xl sm:text-3xl'>Easy Bot</span>
+                        <span className=' font-Bomb text-xl sm:text-3xl'>{props.bot.username}</span>
                         <div className="w-[100px] lg:w-[200px] h-[100px] lg:h-[200px] rounded-full">
                             <img src={props?.bot.avatar_url} alt="" className='  w-full h-full rounded-full' />
                         </div>
