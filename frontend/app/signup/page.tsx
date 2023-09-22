@@ -17,7 +17,7 @@ const signup = () => {
   const [userNotFound, setUserNotFound] = useState('');
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await axios.post("http://10.14.3.7:3000/auth/signup", {
+    await axios.post("http://localhost:3000/auth/signup", {
         username,
         password,
         repassword
@@ -46,8 +46,8 @@ const signup = () => {
       }).catch(err => {console.log(err)})
   }
   
-  const link_42 = "http://10.14.3.7:3000/auth/42";
-  const link_google = "http://10.14.3.7:3000/auth/google"
+  const link_42 = "http://localhost:3000/auth/42";
+  const link_google = "http://localhost:3000/auth/google"
   
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

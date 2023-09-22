@@ -30,7 +30,7 @@ const completProfile = () => {
     formData.append("cookie", cookie as string);
     e.preventDefault();
 <<<<<<< HEAD
-    await axios.put("http://10.14.3.7:3000/auth/modify-data", formData, {headers: {
+    await axios.put("http://localhost:3000/auth/modify-data", formData, {headers: {
       "Content-Type": "application/json"
 =======
     await axios.post("http://localhost:3000/upload/image", formData, {headers: {

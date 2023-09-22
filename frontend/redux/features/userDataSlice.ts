@@ -27,7 +27,7 @@
 // export const fetchUserData = (): AppThunk => async (dispatch) => {
 //   const User = useParams().username;
 //   try {
-//     const response = await axios.get(`http://10.14.3.7:3000/profile/${User}`); // Adjust the endpoint
+//     const response = await axios.get(`http://localhost:3000/profile/${User}`); // Adjust the endpoint
 //     dispatch(setUser(response.data));
 //   } catch (error) {
 //     // Handle error if needed

@@ -24,7 +24,7 @@ export function SocketProvider({ children }: SocketProviderProps) {
   useEffect(() => {
     // Only create a new socket if it hasn't been created yet
     if (!socket) {
-      const newSocket = io("http://10.14.3.7:3000", {
+      const newSocket = io("http://localhost:3000", {
         transports: ["websocket"],
         autoConnect: false,
       });

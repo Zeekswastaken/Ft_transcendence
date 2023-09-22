@@ -14,7 +14,7 @@ export default  function Home() {
   // const [isUserValid, setIsUserValid] = useState<boolean>(false);
   const router = useRouter();
 
-   axios.post("http://10.14.3.7:3000", {
+   axios.post("http://localhost:3000", {
     token: token
   }).then(res => {
     if (res.data.status === "unauthorized")

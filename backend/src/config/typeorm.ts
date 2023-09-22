@@ -14,7 +14,7 @@ import { ChannelMembership } from "../database/channelMembership.entity";
 
 const config = {
     type: 'postgres',
-    host: '10.14.3.7', // Use the service name defined in your Docker Compose file
+    host: 'localhost', // Use the service name defined in your Docker Compose file
     port: 5432,
     username: 'admin',
     password: 'pass',

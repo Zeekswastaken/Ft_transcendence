@@ -63,7 +63,7 @@ const MatchHistory = () => {
 	console.log("User = ", User)
 	useEffect(() => {
 		if (User) {
-			axios.get(`http://10.14.3.7:3000/profile/${User}`).then((res) =>{
+			axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
 				if(res.data.message === "not-found"){
 				  setUser(undefined)
 				  return;
