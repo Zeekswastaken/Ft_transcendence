@@ -320,7 +320,7 @@ export class ChannelService {
             normalmembership.isBanned = true;
         //REMIND YOUSSEF TO GIVE YOU THE AMOUNT IN MINUTES
         normalmembership.banEndDate = new Date();
-        normalmembership.banEndDate.setMinutes(normalmembership.muteEndDate.getMinutes() + amount);
+        normalmembership.banEndDate.setMinutes(normalmembership.banEndDate.getMinutes() + amount);
         return this.channelMembershipRepository.save(normalmembership);
     }
 
@@ -378,7 +378,7 @@ console.log("==================================================");
         const stats = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelID), Userid: Equal(userID)}});
         if (!stats)
             throw new HttpException("Membership not found", HttpStatus.FORBIDDEN);
-        return ({Type:stats.Type, isMuted:stats.isMuted, isBanned:stats.isBanned, userID:stats.Userid});
+        return ({Type:stats.Type, isMuted:stats.isMuted, isBanned:stats.isBanned, userID:stats.Userid, channelID:channelID});
     }
 
 

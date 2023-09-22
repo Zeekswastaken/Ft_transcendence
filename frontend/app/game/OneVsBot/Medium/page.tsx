@@ -9,7 +9,7 @@ import Winning from '../../component/winning';
 import { User } from '../GameComponents/gameInterfaces';
 import Losing from '../../component/losing';
 
-const COM_LEVEL = 0.07;
+const COM_LEVEL = 0.1;
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
     const [playerScore, setPlayerScore] = useState<number>(0);

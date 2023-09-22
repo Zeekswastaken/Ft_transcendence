@@ -5,9 +5,10 @@ import ChatContent from "./chatContent";
 import { useSocketContext } from '../socket';
 import { useMyStore } from "./state";
 import { useRouter } from "next/navigation";
+import chatMembers from "./chatMembers";
 
 const groupBar = ({friend}:any) => {
-    const {setMuted,setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
+    const {setBaned, setMuted,setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
     const {socket} = useSocketContext();
     const router = useRouter();
     const setMyGroupStor = (e: MouseEvent<HTMLButtonElement>) =>{
@@ -19,7 +20,7 @@ const groupBar = ({friend}:any) => {
       const userid = currUserData.id;
       socket?.emit("getInfos",  {channelID:friend.id, userID:currUserData.id});
       socket?.emit("getGroupMessages",  {token, channelid});
-    socket?.emit("isDuo",{channelid, userid} );
+      socket?.emit("isDuo",{channelid, userid} );
       setUpdateChat([]);
       setTempo([]);
       // socket?.on("isduo", (data:any)=>{
@@ -30,6 +31,7 @@ const groupBar = ({friend}:any) => {
       socket?.on("state", (data:any) => {
         console.log(data);
         setMuted(data);
+        setBaned(data);
       });
 
       socket?.on("groupmessages", (data:any) => {
@@ -39,6 +41,7 @@ const groupBar = ({friend}:any) => {
       
       socket?.emit("getChannelMembers", {channelid:friend.id})
       socket?.on("members", (data:any) => {
+        console.log(data);
         setChatMembers(data);
       })
       

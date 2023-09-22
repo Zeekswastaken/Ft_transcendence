@@ -13,6 +13,8 @@ export  interface MyStore {
     notification:any;
     chatMembers:any[];
     muted:any;
+    baned:any;
+    admin:any;
     setMyBoolean: (value: Boolean) => void;
     setCurrUserData: (data: any) => void;
     setUserData: (data: any) => void;
@@ -25,6 +27,8 @@ export  interface MyStore {
     setNotification: (value: any) => void;
     setChatMembers: (value: any) => void;
     setMuted: (value: any) => void;
+    setBaned: (value: any) => void;
+    setAdmin: (value: any) => void;
   }
   
   export const useMyStore = create<MyStore>((set) => ({
@@ -40,6 +44,8 @@ export  interface MyStore {
     notification:[],
     chatMembers:[],
     muted:[],
+    baned:[],
+    admin:[],
     setMyBoolean: (value: Boolean) => set({ myBoolean: value }),
     setCurrUserData: (data: any) => set({ currUserData: data }),
     setUserData: (data: any) => set({ userData: data }),
@@ -52,4 +58,6 @@ export  interface MyStore {
     setNotification: (value: any) => set({ notification: value }),
     setChatMembers: (data) => set({ chatMembers: data }),
     setMuted: (value: any) => set({ muted: value }),
+    setBaned: (value: any) => set({ baned: value }),
+    setAdmin: (value: any) => set({ admin: value }),
   }));

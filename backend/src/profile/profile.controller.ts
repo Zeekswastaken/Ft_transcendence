@@ -17,36 +17,38 @@ export class ProfileController {
 
     @Get(':username')
     async display(@Param('username') username:String,@Res() res){
-        try{
-        // console.log(username);
-        const user = await this.profileService.findByName(username);
-        if (user)
-        {
-            // console.log(user.stats);
-            const matches = await this.gameService.getGameInvites(user.id);
-            delete user.password;
-            // console.log("-------- ", user.id);
-            const details = await this.friendsService.getUserFriends(user.username);
-            const details2 = await this.blockedService.getblocked(user.id);
-            // console.log(details);
-            // console.log("**************************");
-            // console.log(details2);
-            console.log("user matches is == ",user.stats.matches);
-            
-            const info = {
-                user:user, 
-                friends:details,
-                blocked:details2,
-                matches:matches
+        if (username) {
+            try{
+            // console.log(username);
+            const user = await this.profileService.findByName(username);
+            if (user)
+            {
+                // console.log(user.stats);
+                const matches = await this.gameService.getGameInvites(user.id);
+                delete user.password;
+                // console.log("-------- ", user.id);
+                const details = await this.friendsService.getUserFriends(user.username);
+                const details2 = await this.blockedService.getblocked(user.id);
+                // console.log(details);
+                // console.log("**************************");
+                // console.log(details2);
+                console.log("user matches is == ",user.stats.matches);
+                
+                const info = {
+                    user:user, 
+                    friends:details,
+                    blocked:details2,
+                    matches:matches
+                }
+                res.send(info);
             }
-            res.send(info);
-        }
-        else
-            res.send({message: "not-found"});
-        } catch (error)
-        {
-            console.error('Error getting the friends of the user: ',error.message);
-            throw error;
+            else
+                res.send({message: "not-found"});
+            } catch (error)
+            {
+                console.error('Error getting the friends of the user: ',error.message);
+                throw error;
+            }
         }
     }
     @Put('update/:id')

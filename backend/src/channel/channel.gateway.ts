@@ -51,7 +51,7 @@ export class ChannelGateway {
   }
   
   @SubscribeMessage('assignAdmin')
-  async assignAd(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
+  async assignAd(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
   {
     try {
     //   const channelID = data.channelID; 
@@ -61,23 +61,25 @@ export class ChannelGateway {
     // const userid = 2;
     // const channelid = 4;
     // const initiatorid = 1;
-    return await this.channelService.assignAdmin(data.channelID, data.userID, data.initiatorID);
-    }catch (error) {
+    const membership = await this.channelService.assignAdmin(data.channelID, data.userID, data.initiatorID);
+    client.to(data.channelID.toString()).emit("isadmin", membership);
+  }catch (error) {
       console.error('Error joining channel: ', error.message);
       throw error;
     }
   }
 
   @SubscribeMessage('removeAdmin')
-  async removeAd(@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
+  async removeAd(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
   {
     try {
       console.log("--------> ", data.channelID);
       console.log("--------> ", data.userID);
-    const userid = 2;
-    const channelid = 4;
-    const initiatorid = 1;
-    return await this.channelService.removeAdmin(channelid, userid, initiatorid);
+    // const userid = 2;
+    // const channelid = 4;
+    // const initiatorid = 1;
+    const membership =  await this.channelService.removeAdmin(data.channelID, data.userID, data.initiatorID);
+    client.to(data.channelID.toString()).emit("isadmin", membership);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
       throw error;
@@ -88,6 +90,7 @@ export class ChannelGateway {
   async mute(@ConnectedSocket() client: Socket, @MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
   {
     try{
+      console.log("CLIENT TAT EMITS ===== ", client.id, "***************", data.userID, "*****CHACNNEL******", data.channelID);
       const channelID = data.channelID; 
       const userID = data.userID;
       const initiatorID = data.initiatorID;
@@ -100,7 +103,7 @@ export class ChannelGateway {
       // console.log("CHECKING IN LE MUTE", members, "CHAKAKAKKAKA", data.channelID);
       // const user = await this.userService.findById(data.userID);
       // console.log("USER SOCJKETRTTT=======" , user.Socket);
-      client.to(channelID.toString()).emit("newmembership", {isMuted:bool, userID:userID});
+      client.to(channelID.toString()).emit("newmembership", {isMuted:bool, userID:userID, channelID:channelID});
     }
   catch (error) {
     console.error('Error muting user: ', error.message);
@@ -119,7 +122,7 @@ export class ChannelGateway {
       if (check)
         bool = false;
       // const members = await this.channelService.getChannelMembers(data.channelID);
-      client.to(channelID.toString()).emit("newmembership", {isMuted:bool, userID:userID});
+      client.to(channelID.toString()).emit("newmembership", {isMuted:bool, userID:userID, channelID:channelID});
     }
   catch (error) {
     console.error('Error unmuting user: ', error.message);
@@ -131,6 +134,7 @@ export class ChannelGateway {
   async ban(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
   {
     try{
+      console.log("CLIENT TAT EMITS ===== ", client.id, "***************", data.userID, "*****CHACNNEL******", data.channelID);
       const channelID = data.channelID; 
       const userID = data.userID;
       const initiatorID = data.initiatorID;
@@ -140,7 +144,8 @@ export class ChannelGateway {
       if (check)
         bool = true;
       // const members = await this.channelService.getChannelMembers(data.channelID);
-      client.to(data.channelID.toString()).emit("newmembership3", {isBanned:bool, userID:userID});
+      console.log("BANINO ======",{isBanned:bool, userID:userID});
+      client.to(channelID.toString()).emit("newmembership1", {isBanned:bool, userID:userID, channelID:channelID});
     }
   catch (error) {
     console.error('Error banning user: ', error.message);
@@ -159,7 +164,7 @@ export class ChannelGateway {
       if (check)
         bool = false;
       // const members = await this.channelService.getChannelMembers(data.channelID);
-      client.to(data.channelID.toString()).emit("newmembership4", {isBanned:bool, userID:userID});
+      client.to(data.channelID.toString()).emit("newmembership1", {isBanned:bool, userID:userID, channelID:channelID});
     }
   catch (error) {
     console.error('Error unbanning user: ', error.message);

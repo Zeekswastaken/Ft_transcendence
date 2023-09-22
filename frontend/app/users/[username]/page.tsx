@@ -77,7 +77,7 @@ const WinRate: React.FC<Props> = ({ styles, title }) => {
 }
 
 const MatchHistory: React.FC<Props> = ({ styles, title }) => {
-  const matchHistory = useUserDataContext()?.user.stats.matches;
+  const matchHistory = useUserDataContext()?.matches;
   const userData = useUserDataContext()?.user;
   console.log ("userData = ", userData)
   console.log("matchHistory = ", matchHistory)
