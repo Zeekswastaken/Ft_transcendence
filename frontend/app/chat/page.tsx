@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation';
 
 const page = () => {
   
-  const {myBoolean, setToken, setCurrUserData} = useMyStore();
+  const {myBoolean, setToken, setCurrUserData, setMyBoolean} = useMyStore();
   const [currentUsername, setCurrentUsername] = useState<string>("");
   const [currentUserID, setCurrentUserID] = useState<number>(0);
   const router = useRouter()
@@ -29,6 +29,7 @@ const page = () => {
     })
   }, [socket]);
   useEffect(() => {
+    setMyBoolean(false);
     const token = getCookie("accessToken");
     setToken(token);
     try {

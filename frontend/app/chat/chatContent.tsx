@@ -12,12 +12,8 @@ import { useSocketContext } from '../socket';
 
 
 function chatContent() {
-  const [content, setContent] = useState<content[]>(initialContent);
-  const addContent = (newContent: initialContent) => {
-    setContent([...content, newContent]);
-  };
-  const {myBoolean, userData, chanelType, setChatMembers} = useMyStore();
-  const {socket} = useSocketContext();
+  const { myBoolean, userData, chanelType, setChatMembers, baned, currUserData } = useMyStore();
+  const { socket } = useSocketContext();
   // useEffect(() =>{
 
   //   if(chanelType){
@@ -27,17 +23,26 @@ function chatContent() {
   //     })
   //   }
   // }, [])
-  return (
-    <div className={` relative w-[1200px] max-xl:w-[900px] h-[90%]  m-4 bg-primary-purple-100 bg-opacity-80 shadow-md  rounded-2xl ${myBoolean ? "max-md:w-full" : "max-md:hidden"}`}>
-      {" "}
-      {/* chat*/}
-      <DiscutionHeader />
-      {chanelType ? <ChatMembers />
-        :<ChatProfile />}
-      <ChatBox/>
-      <SendMessage addContent={addContent} />
+
+  return <div className={` relative w-[1200px] max-xl:w-[900px] h-[90%]  m-4 bg-primary-purple-100 bg-opacity-80 shadow-md  rounded-2xl ${myBoolean ? "max-md:w-full" : "max-md:hidden"}`}>
+    <DiscutionHeader />
+  {chanelType ?(baned.isBanned ?(currUserData.id === baned.userID && userData.id === baned.channelID? (null):(
+    <>
+    {chanelType ? <ChatMembers /> : <ChatProfile />}
+    <ChatBox />
+    <SendMessage />
+    </>
+    )):(<>
+      {chanelType ? <ChatMembers /> : <ChatProfile />}
+      <ChatBox />
+      <SendMessage />
+      </>)
+    ):(<>
+      {chanelType ? <ChatMembers /> : <ChatProfile />}
+      <ChatBox />
+      <SendMessage />
+      </>)}
     </div>
-  );
 }
 
 export default chatContent;

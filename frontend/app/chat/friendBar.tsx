@@ -22,10 +22,13 @@ const friendBar = ({friend}:any) => {
     socket?.emit("isDuo",{channelid, userid} );
     setUpdateChat([]);
     setTempo([]);
+    setGetChat([])
     if (notification.id == friend.channelid){
       setNotification([]);
     }
+    console.log("lol", {token, channelid});
     socket?.on("messages", (data:any) => {
+      console.log(data);
       setGetChat(data);
     })
   }
