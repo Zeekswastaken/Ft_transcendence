@@ -11,6 +11,8 @@ services:
     #   - ./.env
     ports:
       - 3001:3001
+    depends_on:
+      - backend
   backend:
     container_name: backend
     build: ./backend/

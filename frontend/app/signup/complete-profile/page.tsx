@@ -7,6 +7,8 @@ import axios from "axios";
 import { getCookie, setCookie } from 'cookies-next';
 import { useRouter } from "next/navigation";
 
+// import omar from '../../../../backend/uploads/'
+// backend return => 'uploads/avatar-1695408516407-131218539.jpeg'
 
 const completProfile = () => {
   const cookie = getCookie('accessToken');
@@ -20,13 +22,22 @@ const completProfile = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     const formData = new FormData();
     formData.append("file", avatar.current as File);
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });    
     formData.append("birthDay", birthDay as unknown as string);
     formData.append("gender", gender);
     formData.append("cookie", cookie as string);
     e.preventDefault();
+<<<<<<< HEAD
     await axios.put("http://10.14.3.7:3000/auth/modify-data", formData, {headers: {
       "Content-Type": "application/json"
+=======
+    await axios.post("http://localhost:3000/upload/image", formData, {headers: {
+      "Content-Type": 'multipart/form-data'
+>>>>>>> 5b5f512d9fa754654500139d4dee5b803ec5b3c1
     }}).then(res => {
+      console.log(res.data);
       setCookie("accessToken", res.data);
       router.push("/home");
     }).catch(err => {console.log(err)});
@@ -40,18 +51,22 @@ const completProfile = () => {
   };
 
   const [path, setPath] = useState("/profileEx.png")
+  const [avatar_url, setAvatar_url] = useState<any>()
   
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       avatar.current = e.target.files[0];
+      console.log("avatar = ", avatar.current)
       try {
         const path = URL.createObjectURL(avatar.current);
+        console.log("path = ", path)
         setPath(path);
       } catch (error) {
         console.error('Error creating URL:', error);
       }
     }
   };
+  
   return (
     <div className=" grid place-items-center h-screen ">
       <div className=" bg-[#1B071C]/[0.8] min-w-[300px] overflow-auto h-[600px] w-[500px] mt-[140px] rounded-2xl border-[#D16ACE] border">
@@ -83,6 +98,7 @@ const completProfile = () => {
         </div>
       </form>
       </div>
+
     </div>
 )
 }

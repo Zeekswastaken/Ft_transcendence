@@ -10,18 +10,18 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { Stats } from 'src/database/stats.entity';
 import { ChannelController } from './channel.controller';
-import { UploadController } from '../file-upload/upload.controller';
-import { FileUploadModule } from '../file-upload/file-upload.module';
+// import { UploadController } from '../file-upload/upload.controller';
+// import { FileUploadModule } from '../file-upload/file-upload.module';
 
 
 @Module({
   imports: [TypeOrmModule.forFeature([Channel, ChannelMembership, User, Stats]),JwtModule.register({
     secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
     signOptions: { expiresIn: '1h' }, 
-  }), FileUploadModule],
+  }), ],
   exports: [TypeOrmModule],
-  controllers: [ChannelController, UploadController],
-  providers: [ChannelGateway, ChannelService,UploadController, UserService],
+  controllers: [ChannelController, ],
+  providers: [ChannelGateway, ChannelService, UserService],
 })
 
 export class ChannelModule {}
