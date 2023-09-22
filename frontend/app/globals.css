@@ -81,11 +81,11 @@
 }
 
 .card_handle_hover {
-	@apply absolute  group-hover:bg-[#7f4b97]/[0.7] bg-[#7f4b97]/[0.6] rounded-[30px] group-hover:rounded-[30px] group-hover:pb-12 inset-0 flex translate-y-[80%] flex-col items-center justify-center px-9 text-center transition-all duration-500 group-hover:translate-y-20;
+	@apply absolute  group-hover:bg-[#7f4b97]/[0.7] bg-[#7f4b97]/[0.6] rounded-[30px] group-hover:rounded-[30px] group-hover:pb-12 inset-0 flex translate-y-[80%] flex-col items-center justify-center px-5 sm:px-9 text-center transition-all duration-500 group-hover:translate-y-20;
 }
 
 .card_text_h {
-	@apply text-3xl font-Bomb group-hover:pb-0 pb-[150px] transition-all duration-500 text-white;
+	@apply text-2xl sm:text-3xl font-Bomb group-hover:pb-0 pb-[120px] sm:pb-[150px] transition-all duration-500 text-white;
 }
 
 .card_text_p {

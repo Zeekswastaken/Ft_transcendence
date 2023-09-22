@@ -21,7 +21,7 @@ const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
 	const onOrOffColor = status === "Online" ? "text-[#22C55E]" : "text-[#FF4747]";
 	return (
 		<Link href={`/users/${name}`}>
-		<ul className={` ${styles} hover:bg-primary-pink-200/[0.6] transition-all duration-500 hover:rounded-3xl hover:drop-shadow-2xl pt-4 lg:pt-6  divide-y divide-gray-200 dark:divide-gray-700 tracking-widest text-[24px] text-white font-Heading`}>
+		<ul className={` ${styles} hover:bg-primary-pink-200/[0.6] transition-all duration-500 hover:rounded-3xl hover:drop-shadow-2xl pt-4 lg:pt-6  divide-y divide-gray-200 dark:divide-gray-700 tracking-wider text-[24px] text-white font-bold`}>
 			<li className="pb-3 sm:pb-4 mx-10 ">
 				<div className="flex items-center space-x-6">
 					{/* <div className="flex"> */}
@@ -30,7 +30,7 @@ const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
 					<div className=" flex-1 min-w-0">
 						<p className="  duration-300 cursor-pointer truncat ">{name}</p>
 					</div>
-					<div className= {`inline-flex items-center tracking-wider text-lg ${onOrOffColor}`}>
+					<div className= {`inline-flex items-center font-Heading tracking-wider text-lg ${onOrOffColor}`}>
 						{status}
 					</div>
 				</div>
@@ -44,6 +44,8 @@ const MatchHistory = () => {
 
 	const [User, setUser] = useState<any>()
 	const [userFriends, setUserFriends] = useState<Array<any>>()
+	const [matchHistory, setMatchHistory] = useState<Array<any>>();
+	const [userData, setUserData] = useState();
 	
 	const token = getCookie("accessToken");
 	useEffect(() => {
@@ -58,20 +60,26 @@ const MatchHistory = () => {
 			}
 		}
 	},[])
-
+	console.log("User = ", User)
 	useEffect(() => {
-		axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
-			if(res.data.message === "not-found"){
-			  setUser(undefined)
-			  return;
-			}
-			else{
-				setUserFriends(res.data.friends);
-			}
-		  }).catch((err) => {
-			console.log(err);
-		  })
+		if (User) {
+			axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
+				if(res.data.message === "not-found"){
+				  setUser(undefined)
+				  return;
+				}
+				else{
+					setUserFriends(res.data.friends);
+					setMatchHistory(res.data.matches);
+					setUserData(res.data.user)
+					console.log("res = ", res.data)
+				}
+			  }).catch((err) => {
+				console.log(err);
+			  })
+		}
 	  }, [User])
+	// const userData = useUserDataContext()?.user;
 	return (
 		
 		<div className=" min-w-[350px]  my-16 mx-2 sm:mx-20 grid grid-cols-1 lg:grid-cols-2 lg:max-w-[1400px] ">
@@ -85,11 +93,23 @@ const MatchHistory = () => {
 						</tr>
 					</thead>
 					<tbody className=" font-bold text-xl  ">
-						<Row opponent="Hawkins" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar1.png "style="animate-fade-up animate-delay-[0ms]" />
+					{matchHistory?.map((match:any) => {
+					console.log("result = ", match.result, " id = ", userData?.id)
+					let score = match.player1Score + "-" + match.player2Score
+					let result;
+					if (match.result === userData?.id){
+						result = "win"
+					}else{result="lost"}
+					let opponent;let avatar; if (match.player1?.id === userData?.id){
+						opponent=match.player2?.username;avatar=match.player2?.avatar_url
+					}else {opponent=match.player1?.username;avatar=match.player1?.avatar_url}
+					return <Row key={match.id} opponent={opponent} score={score} date={match.Date} result={result} avatar={avatar} style="animate-fade-up animate-delay-[400ms]" />
+					} )}
+						{/* <Row opponent="Hawkins" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar1.png "style="animate-fade-up animate-delay-[0ms]" />
 						<Row opponent="Gloria" score="5-2" date="May 30, 2023" result="win" avatar="/avatars/avatar2.png "style="animate-fade-up animate-delay-[200ms]" />
 						<Row opponent="Colleen" score="6-3" date="May 30, 2023" result="win" avatar="/avatars/avatar3.png "style="animate-fade-up animate-delay-[400ms]" />
 						<Row opponent="Karim" score="2-5" date="May 30, 2023" result="lost" avatar="/avatars/avatar4.png "style="animate-fade-up animate-delay-[600ms]" />
-						<Row opponent="Samir" score="6-3" date="May 30, 2023" result="win" avatar="/avatars/avatar5.png "style="animate-fade-up animate-delay-[800ms]" />
+						<Row opponent="Samir" score="6-3" date="May 30, 2023" result="win" avatar="/avatars/avatar5.png "style="animate-fade-up animate-delay-[800ms]" /> */}
 					</tbody>
 				</table>
 			</div>
