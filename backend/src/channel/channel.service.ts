@@ -169,9 +169,15 @@ export class ChannelService {
         if (!channel || !user)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
         // console.log("--------> ", user.id);
-        const foundChannel = user.blacklist.find(channelID => channelID === channel.id)
+        if (user.blacklist)
+        {
+        const foundChannel = user.blacklist.find(channelID => channelID === channel.id as number)
         if (foundChannel)
+        {
+            console.log("TIOUCHEEEEEEEE PISSYCATTTTT");
             return false; 
+        }
+        }
         const membership = await this.channelMembershipRepository.findOne({ where: {
             user: {id: Equal(user.id)}
             , channel:{id:Equal(channel.id)}}}
@@ -235,7 +241,7 @@ export class ChannelService {
         }
         if (membership.isBanned == true || membership.isMuted == true)
         {
-            user.blacklist.push(membership.Channelid);
+            user.blacklist.push(membership.Channelid as number);
             await this.userRepository.save(user);
         }
         await this.channelMembershipRepository.delete(membership.id.valueOf());
