@@ -45,6 +45,7 @@ const MatchHistory = () => {
 	const [User, setUser] = useState<any>()
 	const [userFriends, setUserFriends] = useState<Array<any>>()
 	const [matchHistory, setMatchHistory] = useState<Array<any>>();
+	const [userData, setUserData] = useState();
 	
 	const token = getCookie("accessToken");
 	useEffect(() => {
@@ -70,6 +71,7 @@ const MatchHistory = () => {
 				else{
 					setUserFriends(res.data.friends);
 					setMatchHistory(res.data.matches);
+					setUserData(res.data.user)
 					console.log("res = ", res.data)
 				}
 			  }).catch((err) => {
@@ -77,7 +79,7 @@ const MatchHistory = () => {
 			  })
 		}
 	  }, [User])
-	const userData = useUserDataContext()?.user;
+	// const userData = useUserDataContext()?.user;
 	return (
 		
 		<div className=" min-w-[350px]  my-16 mx-2 sm:mx-20 grid grid-cols-1 lg:grid-cols-2 lg:max-w-[1400px] ">

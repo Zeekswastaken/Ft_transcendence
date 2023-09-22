@@ -200,7 +200,7 @@ const Spectate:React.FC<Props> = ( {title} ) => {
             </svg>
           </div>
         <div className={` flex justify-between w-full px-16 py-5 rounded-2xl items-center text-4xl `}>
-          <div className=' flex items-center text-gray-200 justify-between my-10 space-x-6'>
+          {/* <div className=' flex items-center text-gray-200 justify-between my-10 space-x-6'>
             <div>
               <p className=' font-Bomb  text-2xl'>{slides[curr].player1}</p>
               <Link href={`/users/${slides[curr].player1}`}>
@@ -214,7 +214,7 @@ const Spectate:React.FC<Props> = ( {title} ) => {
               <button className={` rounded-xl ${player2Avatar} bg-cover bg-center min-w-[120px] h-[120px] hover:shadow hover:shadow-green-400 duration-300`} />
              </Link>
             </div>
-          </div>
+          </div> */}
         </div>
           <div onClick={next} className=' text-white text-4xl font-Bomb'>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-[50px] h-[50px]">
@@ -222,7 +222,7 @@ const Spectate:React.FC<Props> = ( {title} ) => {
             </svg>
           </div>
       </div>
-      <Link href="/game" className=" bg-primary-pink-300/[0.7] hover:bg-primary-pink-300 p-2 rounded-xl text-3xl text-white font-Bomb">
+      <Link href="https://www.youtube.com/watch?v=Kw1DLZsNMzo&ab_channel=ttrio2016" className=" bg-primary-pink-300/[0.7] hover:bg-primary-pink-300 p-2 rounded-xl text-3xl text-white font-Bomb">
         Watch Now
       </Link>
     </div>
