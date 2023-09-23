@@ -11,7 +11,7 @@ import 'alpinejs';
 
 
 function chatMembers() {
-  const {setMyBoolean, myBoolean, userData, chatMembers, currUserData } = useMyStore();
+  const {setMyBoolean, myBoolean, userData, chatMembers, currUserData, setUserGroups} = useMyStore();
   // const {socket} = useSocketContext();
   // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -53,7 +53,7 @@ function chatMembers() {
       console.log(data);
       if (data.isleft)
         setMyBoolean(false);
-      setUserFriends(data);
+      setUserGroups(data);
     })
   }
 

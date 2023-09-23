@@ -162,8 +162,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
       
       const initGameData = { 
-        player1: {isLeft: true,  isReady: false, data: player1, y: 50, score: 0,}, 
-        player2: {isLeft: false, isReady: false,  data: player2, y: 50, score: 0}, 
+        player1: {isLeft: true,  isReady: false, data: player1, y: 50 - 25 / 2, score: 0,}, 
+        player2: {isLeft: false, isReady: false,  data: player2, y: 50 - 25 / 2, score: 0}, 
         ball: {x: 50, y: 50, radius: 3, speed: 1, vX: 0.5, vY: 0.5, direction: 1, deltaSpeed: 0.2}
       };
       const id: string = player1.username.toString() + player2.username.toString();
@@ -186,6 +186,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         client.emit("getBallOpponentPostion", gameData.player2.y, {x: gameData.ball.x, y: gameData.ball.y});
       }
       else {
+        console.log("===============================> ",gameData.player1.data.username,  gameData.player1.y);
         client.emit("getBallOpponentPostion", gameData.player1.y, {x: 100 - gameData.ball.x, y: gameData.ball.y});
       }
     }

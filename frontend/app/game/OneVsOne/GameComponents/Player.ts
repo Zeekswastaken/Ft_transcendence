@@ -40,17 +40,15 @@ export default class Paddel implements Player{
         if(this.isLeft) {
             this.pos.x = this.gap;
         }
-        else
-        {
-            this.pos.x = p5.width - this.gap;
+        else {
+            this.pos.x = p5.width - this.width - this.gap;
         }
     }
 
     drow (p5: P5CanvasInstance, pos: number) {
         p5.fill(this.color);
-        if(this.isLeft)
-        {
-            p5.rect(this.pos.x, this.pos.y, this.width, this.height, this.width);
+        if(this.isLeft) {
+            p5.rect(this.pos.x, pos, this.width, this.height, this.width);
         }
         else {
             p5.rect(this.pos.x, pos, this.width, this.height, this.width);
@@ -61,6 +59,7 @@ export default class Paddel implements Player{
     {
         if(this.isLeft){
             if(p5.mouseY <  (p5.height - this.height / 2) && p5.mouseY > 0 - this.height / 2){
+                console.log("Mouse = ", p5.mouseY);
                 this.pos.y = p5.mouseY;
                 return (this.pos.y);
             }
