@@ -31,7 +31,7 @@ export class UserService {
     }
     async update(Body:Partial<User>,id:number){
        // console.log("\n\n\n\n\body after == "+ Body);
-       console.log("id = " + id);
+    //    console.log("id = " + id);
             await this.userRepo.update(id,Body);
     }
     async findByName(username:any): Promise<User | null>

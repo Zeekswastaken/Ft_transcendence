@@ -63,6 +63,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   async handleDisconnect(client: Socket) {
     // const token = client.handshake.query.token;
     //const user = await this.userservice.findBySocket(client.id as string);
+    // console.log("client DisConnect========== > ",client.id)
     const token = this.users.get(client.id);
     if (token){
       const user = await this.jwt.decoded(token);
@@ -86,7 +87,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       // const recuser = await this.userservice.findByName(payload.receiver);
       const sender = await this.jwt.decoded(payload.Token)
       const message = await this.chatservice.saveMsg({text:payload.message as string}, payload.channelid, sender);
-      console.log("PAAAAAAYLOAAAAAAD ->>>>>>>>>>>>>>>>> PAAAAAAAY YOUUUUUR BILLLLL ", {message: message, user:sender, channelid:payload.channelid})
+      // console.log("PAAAAAAYLOAAAAAAD ->>>>>>>>>>>>>>>>> PAAAAAAAY YOUUUUUR BILLLLL ", {message: message, user:sender, channelid:payload.channelid})
       client.leave(payload.channelid.toString());
       this.server.to(payload.channelid.toString()).emit("MessageToRoom",{message: message, user:sender, channelid:payload.channelid});
       client.join(payload.channelid.toString());
@@ -99,11 +100,11 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   async joinroom(client: Socket, payload: { token: string }) {
     if (await this.jwt.verify(payload.token)) {
       const user = await this.jwt.decoded(payload.token);
-      console.log("USER ID:", user.id);
+      // console.log("USER ID:", user.id);
   
       // Retrieve the list of channels the user has already joined
       const channels = await this.ChannelService.getChannelsJoined(user.id);
-      console.log("CHANNELS FOR REAL THIS TIME:", channels);
+      // console.log("CHANNELS FOR REAL THIS TIME:", channels);
   
       // Keep track of the rooms the client has already joined
       const roomsJoined = new Set<string>();
@@ -113,7 +114,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
   
         // Check if the client has already joined this room
         if (!roomsJoined.has(roomName)) {
-          console.log("The room is:", roomName);
+          // console.log("The room is:", roomName);
           client.join(roomName);
   
           // Add the room to the set of rooms the client has joined
@@ -183,7 +184,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
           ...message,
           isBlocked: isBlockedResults[index],
         }));
-        console.log("GET MESSAGES WITH BLOCK=======", messagesWithBlocked);
+        // console.log("GET MESSAGES WITH BLOCK=======", messagesWithBlocked);
           this.server.to(client.id).emit("groupmessages", messagesWithBlocked);
         }
       }
@@ -206,7 +207,7 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     {
       const recuser = await this.userservice.findByName(payload.receiver);
       client.to(recuser.Socket).emit("OBJ",payload.obj as any);
-      console.log("-------> PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP = ", recuser);
+      // console.log("-------> PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP = ", recuser);
     }
     
 }

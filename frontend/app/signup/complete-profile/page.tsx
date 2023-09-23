@@ -87,7 +87,9 @@ const completProfile = () => {
           </div> 
             <div className="  flex place-content-center mt-4">
               <label htmlFor="uploadImage" className="cursor-pointer flex relative place-content-center">
-                <img src={path} alt="profile" width={130} height={130} className=" rounded-full"/>
+                <div className=" h-[130px] w-[130px] rounded-full">
+                  <img src={path} alt="profile" className=" w-full h-full rounded-full"/>
+                </div> 
                 <img className=" absolute mt-[58px]" src="/camera.svg" alt="icon" width={25} height={20} />
               </label>
               <input onChange={handleImageChange} className="hidden" id="uploadImage" accept="image/*" type="file" name="avatar" /> 

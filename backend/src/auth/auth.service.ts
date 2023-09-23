@@ -23,6 +23,7 @@ export class AuthService {
         const user = await this.userservice.findById(userid);
         user.twofactorsecret = otplib.authenticator.generateSecret();
         user.twofactorenabled = true;
+        // console.log("AUTHHHHHHH = > ", user);
         await this.userservice.save(user);
         return (user);
     }
@@ -30,7 +31,7 @@ export class AuthService {
     async generateQrCodeUri(userid: Number): Promise<string> {
         // console.log("******************************************", userid);
         let user = await this.userservice.findById(userid);
-         console.log("=USER IN QR CODE----> ", user);
+        //  console.log("=USER IN QR CODE----> ", user);
         user = await this.generateSecret(user.id); // Await the secret generation
         // console.log("SECRET ==== ", user.twofactorsecret);
         const otpauthURL = otplib.authenticator.keyuri(

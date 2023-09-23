@@ -24,7 +24,7 @@ export class UploadAvatarsController {
       // const user = await this.userservice.findById(id);
       // const avatar = "./backend/uploads/" + ob
         // await this.SettingService.updatePhoto(file, req.user);
-        console.log(req.files);
+        // console.log(req.files);
         const user  = await this.userservice.findById(id);
         return {message:"SUCCESS",user};
     }
@@ -32,16 +32,16 @@ export class UploadAvatarsController {
   @UseInterceptors(FileInterceptor('file',{storage: diskStorage({
     destination: '../frontend/public/avatars/', // Specify the destination folder where files will be stored
     filename: (req, file, callback) => {
-      console.log("dir : ",__dirname)
+      // console.log("dir : ",__dirname)
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileExtension = extname(file.originalname);
       const newFileName = `avatar-${uniqueSuffix}${fileExtension}`;
       callback(null, newFileName);},}),}))
   
     async uploadFile(@UploadedFile() file: Express.Multer.File,@Body() Body,@Res() res) {
-        console.log(Body);
+        console.log("Boduuuuuuuuuuuu =     >>>>   ",Body);
         // if(file)
-          console.log("Fileeeeeeeeeeeeeeeeeeeeee = ",Body.file);
+          // console.log("Fileeeeeeeeeeeeeeeeeeeeee = ",Body.file);
         // const decode = await this.jwttoken.decoded(Body.cookie);
         var user = await this.userservice.findById(Body.id);
         if (Body.username && Body.username != user.username)
@@ -56,7 +56,7 @@ export class UploadAvatarsController {
         // const usersec = await this.userservice.findById(id); 
         if (user){
             if (Body.password && checkPasswordStrength(Body.password) == 'Weak')
-                res.send({message:'weak'});
+                res.send({message:'weak'})
             if (Body.password)
                 Body.password = await this.userservice.hashpassword(Body.password);
             if ( !Body.password )
@@ -70,8 +70,8 @@ export class UploadAvatarsController {
             if (Body.privacy == null)
                 Body.privacy = user.privacy;
             
-        console.log("TWPFA == ",Body.twofactorenabled);
-        console.log("Bodyyyyyyyy",Body);
+        // console.log("TWPFA == ",Body.twofactorenabled);
+        // console.log("Bodyyyyyyyy",Body);
         Body.ischange = true;
         // user.birthDay = Body.birthDay as Date;
         if (file){
@@ -83,9 +83,9 @@ export class UploadAvatarsController {
           delete Body.file;
         await this.userservice.update(Body,user.id as number);
         const after = await this.userservice.findById(user.id);
-        console.log("Body == ",Body);
+        // console.log("Body == ",Body);
         // console.log("file  ==",file);
-        console.log("user after == ", after);
+        // console.log("user after == ", after);
       
         // const fs = this.uploadAvatarsService.readFile(after.avatar_url as string);
         // console.log(fs);

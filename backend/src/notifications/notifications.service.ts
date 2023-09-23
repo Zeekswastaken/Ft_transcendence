@@ -56,14 +56,14 @@ export class NotificationsService {
         recipient.receivednotifications.push(notifs);
         await this.userRepository.save(recipient);
         await this.notificationsRepository.save(notifs);
-        console.log("LEMME SMASH====== ", notifs.sender);
-        console.log("RECIPIENT ======== ", recipient.receivednotifications[0].recipient);
+        // console.log("LEMME SMASH====== ", notifs.sender);
+        // console.log("RECIPIENT ======== ", recipient.receivednotifications[0].recipient);
         return (notifs);
     }
 
     async getFriendNotifs(userID:Number): Promise<Notification[]>
     {
-      console.log("-------------->", userID);
+      // console.log("-------------->", userID);
        const user = await this.userRepository.findOne({where:{id:Equal(userID)}, relations: ['receivednotifications','receivednotifications.sender', 'receivednotifications.recipient']});
        if (!user)
         throw new HttpException("User not found",HttpStatus.FORBIDDEN);
@@ -101,9 +101,10 @@ async deleteNotif(recipient: User, sender: User, Type: string) {
       ]
     });
 
+
   if (!notif)
   {
-    console.log("Dunno");
+    // console.log("Dunno");
     return ;
   }
   // console.log("ZEZEZEEZEZEZEEZEZEE");
@@ -111,6 +112,21 @@ async deleteNotif(recipient: User, sender: User, Type: string) {
   await this.notificationsRepository.remove(notif);
 
   // console.log("LELELLELELELELELE");
+}
+
+async setRead(userid:Number, state:boolean){
+  const user = await this.userRepository.findOne({where:{id:Equal(userid)}});
+  if (!user)
+    throw new HttpException("User not found", HttpStatus.FORBIDDEN);
+  const notifications = await this.notificationsRepository.find({where:{sender:Equal(userid)}});
+  if (notifications.length)
+  {
+    const updatedNotifications = notifications.map(notification => {
+      notification.isRead = state;
+      return notification;
+  });
+    await this.notificationsRepository.save(updatedNotifications);
+  }
 }
 
 }

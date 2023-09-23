@@ -39,6 +39,39 @@ export const useGameSocketStore = create<Store>((set) => ({
 //     }
 //   }, [])
 
+<<<<<<< HEAD
+  const router = useRouter()
+  useEffect(() => {
+    if (socket) {
+      socket.emit('AddtoQueue', {userid: currentUserId})
+      socket.on('queue', (data: any) => {
+        if (data.receiver) {
+          router.push('/game/OneVsOne/Random');
+        }
+        setQueue(data)
+      })
+    }
+    
+  }, [socket, currentUserId])
+  return (
+    <div className=" flex place-content-center items-center w-full pt-0 lg:pt-[200px] h-screen max-w-[1300px] min-w-[350px] ">
+    <div className=" flex pb-10 items-center place-content-center w-full mx-1 h-[480px]  xl:h-[700px] glass rounded-xl ">
+        <div className=' grid grid-cols-3 mx-10 items-center place-items-center gap-5'>
+            <div>
+                <div className=' w-[100px] lg:w-[200px] h-[100px] lg:h-[200px] rounded-full'>
+                    <img src={currentUser?.avatar_url} className='w-full h-full rounded-full' alt="" />
+                    <p className=' text-white text-lg sm:text-2xl md:text-4xl text-center py-5 font-black'>{currentUser?.username}</p>
+                </div>
+            </div>
+            <h1 className=' font-Bomb text-lg sm:text-2xl md:text-4xl text-white text-center'>waiting for opponent...</h1>
+            <div>
+                <div className='  w-[100px] lg:w-[200px] h-[100px] lg:h-[200px]  rounded-ful'>
+                  <img src="Spectate.png" className=' w-full h-full rounded-full' alt="" />
+                  <p className=' text-white text-lg sm:text-2xl md:text-4xl text-center py-5 font-black'>opponent</p>
+                </div>
+            </div>
+        </div>
+=======
 //   const router = useRouter()
 //   useEffect(() => {
 //     console.log("===============>>>>>>><<<<<<<++++++++++++++++")
@@ -74,6 +107,7 @@ export const useGameSocketStore = create<Store>((set) => ({
 //                 </div>
 //             </div>
 //         </div>
+>>>>>>> f77df9db58a64da61f70f50817f582190bc1f380
 
 //     </div>
 //   </div>

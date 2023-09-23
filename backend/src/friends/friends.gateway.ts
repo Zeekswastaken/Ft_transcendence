@@ -60,7 +60,7 @@ export class FriendsGateway {
       const friendnotif = await this.notifService.getFriendNotifs(data.userID);
       // console.log("************** lelelelelelel ", friendnotif);
       const gamenotif = await this.notifService.getGameNotifs(data.userID);
-      console.log("game : ",gamenotif);
+      // console.log("game : ",gamenotif);
       const notif = {
         "friendRequest": friendnotif,
         "gameInvite": gamenotif
@@ -77,12 +77,12 @@ export class FriendsGateway {
         // } else {
         //   console.log('****************Event emission failed');
         // }});
-        console.log("99999999999999999999 ", friendnotif);
+        // console.log("99999999999999999999 ", friendnotif);
         this.server.to(client.id).emit('friend notif', notif);
       // console.log(request)
     } catch (error)
     {
-      console.error('Error sending the friend request: ',error.message);
+      // console.error('Error sending the friend request: ',error.message);
       client.emit('error', error.message);
       throw error;
     }
@@ -157,7 +157,7 @@ export class FriendsGateway {
       // console.log("-------> user ", data.userID); 
       // console.log("-------> recipient ", data.recipientID);
       // console.log("HERE I AM");
-      console.log("-------> HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEH ", data.userID);
+      // console.log("-------> HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEH ", data.userID);
       await this.friendsService.removeFriendship(data.userID, data.recipientID);
       const message = "Unfriended successfully";
       const refusing = await this.userService.findById(data.recipientID);
@@ -235,16 +235,16 @@ export class FriendsGateway {
   }
   @SubscribeMessage('GetOnlineFriends')
   async GetOnlineFriends(client:Socket,obj:{id:number}){
-    console.log(obj.id);
+    // console.log(obj.id);
     const user = await this.userService.findById(obj.id);
-    console.log("USERNAME HERE ======== ", user.username);
+    // console.log("USERNAME HERE ======== ", user.username);
     const friends = await this.friendsService.getUserFriends(user.username);
    friends.forEach((one)=>{console.log(one.username);})
     var OnlineFriends = friends.filter((friend)=>{
         if (friend.status == 'Online')
           return friend;
     });
-    console.log("ONLINE FRIENDS===========> ", friends);
+    // console.log("ONLINE FRIENDS===========> ", friends);
     // OnlineFriends.forEach((one)=>{
     //   console.log(one.username); 
     // })
@@ -258,10 +258,22 @@ export class FriendsGateway {
       // console.log("getfriends: ", friends);
       // exit(1);
 
-      console.log("ALL CHANNELS ==== ", friends);
+      // console.log("ALL CHANNELS ==== ", friends);
       // const user = await this.userService.findByName(data.user);
       // console.log("*-*-*-*-*-*-*-*-*-*-* ", friends);
       this.server.to(client.id).emit('getfriendswithchannels' ,friends);
+    }catch (error)
+    {
+      console.error('Error getting the friends of the user: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
+  }
+
+  @SubscribeMessage('setIsRead')
+  async setRead(@MessageBody() data: { userid: Number, state:boolean}, @ConnectedSocket() client: Socket) {
+    try{
+      await this.notifService.setRead(data.userid, data.state);
     }catch (error)
     {
       console.error('Error getting the friends of the user: ',error.message);
