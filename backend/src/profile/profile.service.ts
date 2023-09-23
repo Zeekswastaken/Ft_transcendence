@@ -11,7 +11,7 @@ export class ProfileService {
     {
             // console.log(await  this.userRepo.findOne({where :{ username: username}}));
             const user =  await this.userRepo.findOne({where :{ username: username},relations:['stats', 'stats.matches','stats.matches.player1', 'stats.matches.player2']});
-            console.log("ZIS IS ZA USER ====== ", user.stats.matches);
+            // console.log("ZIS IS ZA USER ====== ", user.stats.matches);
             return user;
     }
     async findById(id:any): Promise<User>

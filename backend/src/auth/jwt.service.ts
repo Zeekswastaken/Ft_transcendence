@@ -25,7 +25,7 @@ export class JWToken{
           if (token)
           {
             const decoded = await this.jwtService.verifyAsync(token, {secret:this.secret_key.toString()});
-            console.log('Decoded:', decoded);
+            // console.log('Decoded:', decoded);
             // if (decoded.exp > currentTime) {
             //   console.log('EHO EHO');
             //   return true; // Token is valid and has not expired

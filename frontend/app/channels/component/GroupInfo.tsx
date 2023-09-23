@@ -85,7 +85,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
             setLoading(true);
             setIsclicked(!isclicked);
             socket.on("isjoined", (data:any) => {
-                console.log("data = ", data)
                 if (data) {
                     socket.emit("JoinRoom", {token: token});
                     setErrorMessage("")

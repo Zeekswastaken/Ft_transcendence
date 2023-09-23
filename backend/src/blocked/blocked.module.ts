@@ -9,13 +9,18 @@ import { JwtModule } from '@nestjs/jwt';
 import { BlockedUser } from 'src/database/blockedUser.entity';
 import { UserService } from 'src/user/user.service';
 import { Stats } from 'src/database/stats.entity';
+import { FriendsService } from 'src/friends/friends.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { Notification } from 'src/database/notifications.entity';
+import { ChannelService } from 'src/channel/channel.service';
+import { ChannelMembership } from 'src/database/channelMembership.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserFriends, BlockedUser, Channel, Stats]),JwtModule.register({
+  imports: [TypeOrmModule.forFeature([User, UserFriends, BlockedUser, Channel, Stats, Notification, ChannelMembership]),JwtModule.register({
     secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
     signOptions: { expiresIn: '1h' }, 
   })],
-  providers: [BlockedGateway, BlockedService,UserService],
+  providers: [BlockedGateway, BlockedService,UserService, NotificationsService, FriendsService, ChannelService],
   exports: [TypeOrmModule]
 })
 export class BlockedModule {}

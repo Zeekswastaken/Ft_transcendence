@@ -20,7 +20,7 @@ export class AuthController {
 
     @Put('modify-data')
     async modyfiy(@Body() Body,@Res() res){
-        console.log("Body*******************************\n",Body);
+        // console.log("Body*******************************\n",Body);
         const decode = await this.jwtservice.decoded(Body.cookie);
         delete Body.cookie;
         delete Body.avatar_url;
@@ -174,13 +174,13 @@ export class twoFactAuth_Controller{
       const isValid = await this.authservice.verifyToken(body.QRCode, body.currentUserID);
       if (isValid.isValid)
       {
-        console.log("----------------------<", isValid.user);
+        // console.log("----------------------<", isValid.user);
         const cookie_token = await this.authservice.generateToken_2(isValid.user);
             const user2 = await this.jwtservice.decoded(cookie_token);
             // console.log("***************************************************>\n",user2);
             res.send({message:'success',token:cookie_token,user:user2,isValid:isValid.isValid});
       }
-      console.log("isvalid ", isValid)
+    //   console.log("isvalid ", isValid)
       return { isValid };
     }
 
@@ -266,12 +266,12 @@ export class fortytwo_Controller{
     }
     @Put('complete')
     async completeProfile(@Body() Body, @Res() res){;
-        console.log(Body);
+        // console.log(Body);
         delete Body.cookie;
         delete Body.avatar_url;
         if (await this.usersrvice.findByName(Body.username) != null)
         {
-            console.log("Hello from here")
+            // console.log("Hello from here")
             res.send("invalid")
             return;
         }

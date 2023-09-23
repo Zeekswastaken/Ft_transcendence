@@ -27,9 +27,9 @@ export class ChannelService {
     }
     async createChannel(data: any, owner: Number) : Promise<Channel| string>
     {
-        console.log('--------> ', data.name);
-        console.log('--------> ', data.type);
-        console.log('--------> ', data.password);
+        // console.log('--------> ', data.name);
+        // console.log('--------> ', data.type);
+        // console.log('--------> ', data.password);
         // const filename = 'testest.png';
         // const image = new Image();
         const channel = new Channel();
@@ -68,7 +68,7 @@ export class ChannelService {
         // console.log("------->", savedChannel)
         channel.memberships.push(membership)
         await this.channelMembershipRepository.save(membership);
-        console.log("CHANNELS IN CREATE ======> ", await this.channelRepository.find());
+        // console.log("CHANNELS IN CREATE ======> ", await this.channelRepository.find());
         return savedChannel;
     }
 
@@ -183,7 +183,7 @@ export class ChannelService {
 
     async joinChannel(channelID: Number, userID: Number, Pass: String): Promise<boolean | string>
     {
-         console.log("-88888-------> ", userID, "==========> ", channelID);
+        //  console.log("-88888-------> ", userID, "==========> ", channelID);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
         if (!channel || !user)
@@ -194,7 +194,7 @@ export class ChannelService {
         const foundChannel = user.blacklist.find(channelID => channelID === channel.id as number)
         if (foundChannel)
         {
-            console.log("TIOUCHEEEEEEEE PISSYCATTTTT");
+            // console.log("TIOUCHEEEEEEEE PISSYCATTTTT");
             return false; 
         }
         }
@@ -206,10 +206,10 @@ export class ChannelService {
             throw new HttpException("The User is already in the chat", HttpStatus.FORBIDDEN);
         if (channel.Type == "protected")
         {
-            console.log("TYPE IS PROTECTED==============> ", Pass);
+            // console.log("TYPE IS PROTECTED==============> ", Pass);
             if (!(await this.checkPassword(channelID, Pass)))
             {
-                console.log("HEEEERRU");
+                // console.log("HEEEERRU");
                 return false;
             }
         }
@@ -270,17 +270,17 @@ export class ChannelService {
 
     async muteUser(channelID: Number, userID: Number,initiatorID: Number ,amount: number): Promise<ChannelMembership>
     {
-        console.log("CHECKING IN MUUUUURE ======", userID, "]]]]]]]]]]]]]]]]]]]]]]]]]]",initiatorID );
+        // console.log("CHECKING IN MUUUUURE ======", userID, "]]]]]]]]]]]]]]]]]]]]]]]]]]",initiatorID );
         const channel = await this.channelRepository.findOne({where: {id: Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
         const userinit = await this.userRepository.findOne({where: {id: Equal(initiatorID)}});
         if (!channel || !user || !userinit)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
-        console.log("----------->INITIATOR ===== ", initiatorID);
+        // console.log("----------->INITIATOR ===== ", initiatorID);
         const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member', Channelid:Equal(channelID)}});
         if (user2)
         {
-            console.log("===============>USER IN MUTE", user2);
+            // console.log("===============>USER IN MUTE", user2);
             throw new HttpException("This User doesn't have the rights to perform this action", HttpStatus.FORBIDDEN);
         }
             const membership = await this.channelMembershipRepository.findOne({
@@ -377,18 +377,18 @@ export class ChannelService {
 
     async getAllChannels(userid: Number): Promise<{ channel: Channel; joined: boolean }[]>
     {
-        console.log("HEERERERERERERE");
+        // console.log("HEERERERERERERE");
         const user = await this.userRepository.findOne({where:{id:Equal(userid)}});
         if (!user)
             throw new HttpException("User not found", HttpStatus.FORBIDDEN);
-console.log("==================================================");
+// console.log("==================================================");
         const channels = await this.channelRepository.find({
             where: {
                 Type: Not(In(["private","Duo"])) 
             },relations:['memberships']
         });
-        console.log("=========================================");
-        console.log("====CHANNELS=====> ", channels);
+        // console.log("=========================================");
+        // console.log("====CHANNELS=====> ", channels);
         const channelsWithStatus = channels.map((channel) => ({
             channel,
             joined: (channel.memberships || []).some(
@@ -424,7 +424,7 @@ console.log("==================================================");
           const channel = await this.channelRepository.findOne({where: { id: Equal(channelID)}});
       
           if (!channel) {
-            console.log("HEEEEEEEERUUUUU2222222");
+            // console.log("HEEEEEEEERUUUUU2222222");
             return false; // Channel with the specified ID not found
           }
       
@@ -464,23 +464,23 @@ console.log("==================================================");
         return await bcrypt.hash(password, saltOrRounds);
     }
 
-     async validateInvitationLink(invitationLink: string): Promise<boolean> {
+     async validateInvitationLink(invitationLink: string): Promise<{isvalid:boolean, channelid:Number}> {
         const splitLink = invitationLink.split('-');
         //Check if link structure is valid
         if (splitLink.length !== 3)
-            return false;
+            return {isvalid:false, channelid: null};
         const [channelID, timestamp, randomData] = splitLink;
         const time = Date.now();
         const linkTime = +timestamp;
-        const Threshold = 90 * 60 * 1000;
+        const Threshold = 60 * 60 * 1000;
         //Check if the timestamp is expired/not valid
         if (isNaN(linkTime) || time - linkTime > Threshold)
-            return false;
+            return {isvalid:false, channelid: null};
         //Check if the channel Id is actually in the database or not
             const checkChannel = await this.channelRepository.findOne({where:{ id: Equal(+channelID)}});
         if (!checkChannel)
-            return false;
-        return true;
+            return {isvalid:false, channelid: null};
+        return {isvalid:true, channelid: +channelID};
     }
 
     async generateInvitationLink(channelID: number, userid:Number): Promise<string> {

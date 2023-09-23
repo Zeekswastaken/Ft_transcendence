@@ -4,6 +4,7 @@ import { getCookie } from "cookies-next"
 import jwt,{ JwtPayload } from "jsonwebtoken"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { useSocketContext } from "../socket"
 
 type Props = {
   name:string,
@@ -77,17 +78,28 @@ const page = () => {
 
   const token = getCookie("accessToken");
   const [currentUsername ,setCurrentUsername] = useState("");
+  const [currentUserid, setCurrentUserid] = useState("");
+  const {socket} = useSocketContext();
   useEffect(() => {
     try {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
         setCurrentUsername(user.username)
+        setCurrentUserid(user.id)
       }
     } catch (error) {
       console.error('Error decoding token:');
     }
   }, [])
-  
+  useEffect(() => {
+    console.log("currentUserid = ", currentUserid)
+    if (currentUserid !== undefined) {
+      socket?.emit("getLeaderboard", {userID: currentUserid})
+      socket?.on("leaderboard", (data:any) => {
+        console.log("leaderBoard = ", data);
+      })
+    }
+  },[currentUserid])
 
   return (
     <div className=" flex place-content-center items-center w-full h-screen max-w-[1300px] min-w-[350px] ">

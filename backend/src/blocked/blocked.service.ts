@@ -49,7 +49,7 @@ export class BlockedService {
   }
 
   async unblock(userid: Number, recipientid: Number) {
-    console.log(userid, " ========= ", recipientid);
+    // console.log(userid, " ========= ", recipientid);
     const user = await this.userRepository.findOne({where:{id:Equal(userid)}, relations: ['blockedUsers', 'blockingUsers']});
     const blocked = await this.userRepository.findOne({where:{id:Equal(recipientid)}, relations: ['blockedUsers', 'blockingUsers']});
     if (!user || !blocked)
@@ -81,6 +81,8 @@ export class BlockedService {
 
   async isBlocked(userid: Number, recipientid: Number): Promise<boolean>
   {
+    if (userid === recipientid)
+      return false
     const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
       relations: ['blockedUsers', 'blockingUsers'],
@@ -99,6 +101,8 @@ export class BlockedService {
 
   async isBlocking(userid: Number, recipientid: Number): Promise<boolean>
   {
+    if (userid === recipientid)
+      return false
     const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
       relations: ['blockingUsers', 'blockedUsers'],
