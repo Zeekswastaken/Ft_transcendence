@@ -61,7 +61,7 @@ export class ChannelGateway {
       // console.log("--------> ", data.userID);
       const isleft = await this.channelService.LeaveChannel(data.channelID, data.userID)
       this.server.to(data.channelID.toString()).emit('afterleave', await this.channelService.getChannelMembers(data.channelID));
-      client.to(client.id).emit('isleft', {isleft:isleft, channels:await this.channelService.getChannelsJoined(data.userID)});
+      this.server.to(client.id).emit('isleft', {isleft:isleft, channels:await this.channelService.getChannelsJoined(data.userID)});
     }catch (error){
       console.error('Error joining channel: ', error.message);
       throw error;
@@ -245,14 +245,40 @@ export class ChannelGateway {
     }
   }
   @SubscribeMessage('switchPrivacy')
-  async switchPrivacy(@ConnectedSocket() client: Socket, @MessageBody() data:{channelid: Number, Type: String, Password:String})
+  async switchPrivacy(@ConnectedSocket() client: Socket, @MessageBody() data:{channelid: Number, Password:String})
   {
     try{
-        const channel = await this.channelService.switchPrivacy(data.channelid, data.Type, data.Password);
+        const channel = await this.channelService.switchPrivacy(data.channelid, data.Password);
         if (typeof channel == 'object')
           this.server.to(data.channelid.toString()).emit("privacy",channel.Type);
         else
         this.server.to(data.channelid.toString()).emit("privacy",channel);         
+        }
+    catch(error)
+    {
+      console.error('Error getting all the channels by the user: ', error.message);
+      throw error;  
+    }
+  }
+    @SubscribeMessage('generateLink')
+  async generateLink(@ConnectedSocket() client: Socket, @MessageBody() data:{channelid: Number, userid:Number})
+  {
+    try{
+        const channel = await this.channelService.generateInvitationLink(data.channelid as number, data.userid);
+          this.server.to(client.id).emit("Link",channel);      
+        }
+    catch(error)
+    {
+      console.error('Error getting all the channels by the user: ', error.message);
+      throw error;  
+    }
+  }
+  @SubscribeMessage('validateLink')
+  async validateLink(@ConnectedSocket() client: Socket, @MessageBody() data:{invite:string})
+  {
+    try{
+        const validate = await this.channelService.validateInvitationLink(data.invite);
+          this.server.to(client.id).emit("validateLink",validate);      
         }
     catch(error)
     {

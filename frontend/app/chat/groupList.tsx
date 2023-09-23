@@ -81,7 +81,7 @@ function groupList({ member }: members) {
             alt="pic"
             className="absolute w-[50px] mx-4 max-sm:mx-1 left-0 bottom-1"
           />
-          <div className=" chat_text_username absolute bottom-4 left-20">
+          <div className=" chat_text_username absolute bottom-4 left-6 max-sm:left-20">
             <p className=" font-Heading text-2xl max-sm:text-lg sm:w-36 truncate">{member.user.username}</p>
           </div>
 

@@ -269,4 +269,16 @@ export class FriendsGateway {
       throw error;
     }
   }
+
+  @SubscribeMessage('setIsRead')
+  async setRead(@MessageBody() data: { userid: Number, state:boolean}, @ConnectedSocket() client: Socket) {
+    try{
+      await this.notifService.setRead(data.userid, data.state);
+    }catch (error)
+    {
+      console.error('Error getting the friends of the user: ',error.message);
+      client.emit('error', error.message);
+      throw error;
+    }
+  }
 }

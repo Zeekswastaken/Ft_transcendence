@@ -6,9 +6,10 @@ import { useSocketContext } from '../socket';
 import { useMyStore } from "./state";
 import { useRouter } from "next/navigation";
 import chatMembers from "./chatMembers";
+import { userData } from "@/redux/features/userDataSlice";
 
 const groupBar = ({friend}:any) => {
-    const {setBaned, setMuted,setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
+    const {userData,setBaned, setMuted,setChatMembers, token,setMyBoolean , setUserData, setChanelType, setGetChat, setUpdateChat, setTempo, currUserData} = useMyStore();
     const {socket} = useSocketContext();
     const router = useRouter();
     const setMyGroupStor = (e: MouseEvent<HTMLButtonElement>) =>{
@@ -46,6 +47,7 @@ const groupBar = ({friend}:any) => {
       })
       
     }
+    console.log(userData);
     return (
       <button onClick={setMyGroupStor}>
         <div className="relative h-[80px] flex-shrink-0 rounded-xl rounded-br-0 bg-[#2D0130] hover:bg-primary-purple-100 ">

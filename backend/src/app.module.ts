@@ -52,7 +52,7 @@ import { UploadAvatarsService } from './upload-avatars/upload-avatars.service';
       signOptions: { expiresIn: '24h' },
     }), ChatModule,ProfileModule, GameModule, BlockedModule, NotificationsModule, UploadAvatarsModule
   ],
-  controllers: [AppController, UserController, UploadAvatarsController],
+  controllers: [AppController, UserController, UploadAvatarsController ],
   providers: [AppService,TokenGuard,JWToken,UserService,ChannelService, NotificationsService,UploadAvatarsService],
 })
 export class AppModule {}

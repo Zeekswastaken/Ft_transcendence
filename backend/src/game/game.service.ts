@@ -62,6 +62,7 @@ export class GameService {
         user.stats.matches_played++;
         user.stats.level += 0.25;
         user.stats.winrate = (user.stats.wins/user.stats.matches_played)*100;
+        user.stats.score += 50;
         await this.statsRepo.save(user.stats);
         console.log("LETS SEEE ======= ", user.stats.matches);
         return await this.userservice.save(user);
@@ -71,6 +72,8 @@ export class GameService {
     {
         user.stats.losses++;
         user.stats.matches_played++;
+        if (user.stats.score > 0)
+          user.stats.score -= 25;
         user.stats.winrate = (user.stats.wins/user.stats.matches_played)*100;
         await this.statsRepo.save(user.stats);
         return (await this.userservice.save(user));
@@ -165,16 +168,31 @@ export class GameService {
 
     async DeleteQueue(queueid:Number)
     {
-        const queue = await this.GameinviteRepo.findOne({where:{id:Equal(queueid)}});
+        const queue = await this.GameinviteRepo.findOne({where:{id:Equal(queueid)}, relations:['sender', 'receiver']});
         if (queue)
-          this.GameinviteRepo.delete(queue.id as number);
-    }
+        {
+          if (queue.type === 'invite')
+            await this.notifService.deleteNotif(queue.sender, queue.receiver, 'Game invite')
+          await this.GameinviteRepo.delete(queue.id as number);
+        }
+        }
 
     async findQueue(userid:Number)
     {
-      const user = await this.userservice.findById(userid);
         const queue =  await this.GameinviteRepo.findOne({where: {sender: Equal(userid)}});
         console.log("QUEUUUUE IN HEEEERE --- ", queue);
         return queue;
+    }
+
+    async getUsersForLeaderboard(userid:Number) : Promise<{Topten:User[] , UserPos:User}>
+    {
+      const user = await this.userservice.findById(userid);
+      const users = await this.userservice.findAll();
+      if (!users || user)
+          throw new HttpException("Users not found", HttpStatus.NOT_FOUND);
+      users.sort((a,b) => b.stats.score - a.stats.score);
+      const topTenUsers = users.slice(0, 10);
+      
+      return {Topten:topTenUsers, UserPos:user};
     }
 }
