@@ -47,8 +47,8 @@ export class GameService {
         const user = await this.userservice.findById(userid);
         if (!user)
             throw new HttpException("User not found", HttpStatus.FORBIDDEN);
-            const player1Matches = await this.MatchRepo.find({ where: { player1: Equal(user.id) } });
-            const player2Matches = await this.MatchRepo.find({ where: { player2: Equal(user.id) } });
+            const player1Matches = await this.MatchRepo.find({ where: { player1: Equal(user.id) }, relations:['player1', 'player2'] });
+            const player2Matches = await this.MatchRepo.find({ where: { player2: Equal(user.id) }, relations:['player1', 'player2'] });
             
             const matches = [...player1Matches, ...player2Matches];
             matches.sort((match1, match2) => (match2.id as number) - (match1.id as number));

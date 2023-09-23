@@ -50,6 +50,7 @@ const RandomQueue = () => {
         setQueue(data)
       })
     }
+    
   }, [socket, currentUserId])
   return (
     <div className=" flex place-content-center items-center w-full pt-0 lg:pt-[200px] h-screen max-w-[1300px] min-w-[350px] ">
