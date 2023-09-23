@@ -18,7 +18,7 @@ export class ChannelController {
         const newFileName = `avatar-${uniqueSuffix}${fileExtension}`;
         callback(null, newFileName);},}),}))
     
-    async create(@UploadedFile() file: Express.Multer.File,@Body() data :{ userid:Number, name:String, type:String, password: String}, @Res() res) {
+    async create(@UploadedFile() file: Express.Multer.File,@Body() data, @Res() res) {
         try{ 
           // console.log("it kinda worked");
           // const token = client.handshake.query.token;
