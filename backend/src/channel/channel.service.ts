@@ -464,23 +464,23 @@ export class ChannelService {
         return await bcrypt.hash(password, saltOrRounds);
     }
 
-     async validateInvitationLink(invitationLink: string): Promise<boolean> {
+     async validateInvitationLink(invitationLink: string): Promise<{isvalid:boolean, channelid:Number}> {
         const splitLink = invitationLink.split('-');
         //Check if link structure is valid
         if (splitLink.length !== 3)
-            return false;
+            return {isvalid:false, channelid: null};
         const [channelID, timestamp, randomData] = splitLink;
         const time = Date.now();
         const linkTime = +timestamp;
-        const Threshold = 90 * 60 * 1000;
+        const Threshold = 60 * 60 * 1000;
         //Check if the timestamp is expired/not valid
         if (isNaN(linkTime) || time - linkTime > Threshold)
-            return false;
+            return {isvalid:false, channelid: null};
         //Check if the channel Id is actually in the database or not
             const checkChannel = await this.channelRepository.findOne({where:{ id: Equal(+channelID)}});
         if (!checkChannel)
-            return false;
-        return true;
+            return {isvalid:false, channelid: null};
+        return {isvalid:true, channelid: +channelID};
     }
 
     async generateInvitationLink(channelID: number, userid:Number): Promise<string> {

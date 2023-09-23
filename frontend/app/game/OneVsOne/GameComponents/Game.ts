@@ -40,6 +40,7 @@ export default function sketch(p5: P5CanvasInstance) {
       p5.textAlign(p5.CENTER, p5.CENTER);
       startGame = false;
       time = Date.now();
+      opponentPos = player2.pos.y;
     }
     
     p5.draw = () => {
