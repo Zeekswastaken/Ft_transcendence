@@ -61,7 +61,7 @@ export class ChannelGateway {
       // console.log("--------> ", data.userID);
       const isleft = await this.channelService.LeaveChannel(data.channelID, data.userID)
       this.server.to(data.channelID.toString()).emit('afterleave', await this.channelService.getChannelMembers(data.channelID));
-      client.to(client.id).emit('isleft', {isleft:isleft, channels:await this.channelService.getChannelsJoined(data.userID)});
+      this.server.to(client.id).emit('isleft', {isleft:isleft, channels:await this.channelService.getChannelsJoined(data.userID)});
     }catch (error){
       console.error('Error joining channel: ', error.message);
       throw error;

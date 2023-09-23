@@ -11,7 +11,7 @@ import 'alpinejs';
 
 
 function chatMembers() {
-  const { setMyBoolean, myBoolean, userData, chatMembers, currUserData } = useMyStore();
+  const {setMyBoolean, myBoolean, userData, chatMembers, currUserData } = useMyStore();
   // const {socket} = useSocketContext();
   // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -49,8 +49,12 @@ function chatMembers() {
 
   function leaveGroup() {
     socket.emit("LeaveChannel", { channelID: userData.id, userID: currUserData.id })
-    // router.push("/BIBICHAAAAAAAAAAAAAAAAAAAAAAAA");
-    // router.push("/chat");
+    socket?.on("isleft", (data:any) =>{
+      console.log(data);
+      if (data.isleft)
+        setMyBoolean(false);
+      setUserFriends(data);
+    })
   }
 
   const openModal = () => {
@@ -88,6 +92,14 @@ function chatMembers() {
         setType(type);
       })
       document.getElementById('my_modal_1').close();
+  }
+  const [privateLink, setPrivateLink] = useState<string>("");
+  function getLink() {
+    document.getElementById('my_modal').showModal();
+    socket?.emit("generateLink", {channelid:userData.id, userid:currUserData.id});
+    socket?.on("Link", (link:string)=>{
+      setPrivateLink(link);
+    })
   }
 
 
@@ -200,7 +212,7 @@ function chatMembers() {
                         }
                         {type === "private" ? (
                           <li className=" place-content-center font-Bomb">
-                            <button onClick={() => document.getElementById('my_modal').showModal()}>
+                            <button onClick={getLink}>
                               Group link
                             </button>
                           </li>) : (null)
@@ -232,7 +244,7 @@ function chatMembers() {
                             <input
                               id="copy-input"
                               type=""
-                              value="link to group dfkjdfkd;lfkd;flk;ldfk"
+                              value={privateLink}
                               placeholder="Enter text to copy"
                               className="bg-purple-700 border-none p-2 rounded-md w-[150px] flex justify-center items-center"
                               disabled

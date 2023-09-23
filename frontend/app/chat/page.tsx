@@ -59,6 +59,7 @@ const page = () => {
       setUserFriends(data);
     })
     socket?.on("getchannelsjoined", (data:any) => {
+      console.log(data);
       setUserGroups(data);
     })
   },[currentUsername])
