@@ -132,7 +132,6 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
         
     }
     const handleLeaveChannel = (e: MouseEvent<HTMLButtonElement>) => {
-        
         // setLoading(false);
             if (currentUserID !== undefined)
                 socket.emit("LeaveChannel", {channelID: Id, userID: currentUserID})

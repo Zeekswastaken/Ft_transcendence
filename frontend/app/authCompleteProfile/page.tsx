@@ -30,6 +30,7 @@ const completProfile = () => {
   }, [])
   const [invalidUsername, setInvalidUsername] = useState(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const ischange = true
     const formData = new FormData();
 
@@ -38,24 +39,27 @@ const completProfile = () => {
     formData.append("gender", gender );
     formData.append("id", currentUserID as any);
     formData.append("ischange", ischange as any)
-
-    if (username === "") {
-      alert("Please enter username");
-      return;
+    const usernameRegex = /^[A-Za-z0-9_-]+$/;
+    const isValidUsername = usernameRegex.test(username);
+    if (!isValidUsername || username.length > 10 || username.length === 0) {
+      console.log("Invalid username");
+      // setUserNotFound("Invalid Username, please try again!");
+      setInvalidUsername(true)
     }
-    e.preventDefault();
-    await axios.put("http://localhost:3000/upload/update", formData, {headers: {
-      "Content-Type": "multipart/form-data"
-    }}).then(res => {
-      deleteCookie("accessToken")
-      if (res.data == "invalid") {
-        setInvalidUsername(true)
-        return
-      }
-      setInvalidUsername(false)
-      setCookie("accessToken", res.data.token);
-      router.push("/home");
-    }).catch(err => {console.log(err)});
+    else {
+      await axios.put("http://localhost:3000/upload/update", formData, {headers: {
+        "Content-Type": "multipart/form-data"
+      }}).then(res => {
+        deleteCookie("accessToken")
+        if (res.data == "invalid") {
+          setInvalidUsername(true)
+          return
+        }
+        setInvalidUsername(false)
+        setCookie("accessToken", res.data.token);
+        router.push("/home");
+      }).catch(err => {console.log(err)});
+    }
   }
 
   const handleDateChange: ReactDatePickerProps['onChange'] = (date) => {

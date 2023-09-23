@@ -201,7 +201,7 @@ useEffect(() => {
       statusStyle = "bg-blue-400"
   }
 
-  const avatar = userData?.avatar_url.replace("../frontend/public/", "/");
+  const avatar = userData?.avatar_url
   return (
     <>
     {Data ? (

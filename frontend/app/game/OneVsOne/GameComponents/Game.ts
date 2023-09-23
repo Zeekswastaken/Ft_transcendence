@@ -40,6 +40,7 @@ export default function sketch(p5: P5CanvasInstance) {
       p5.textAlign(p5.CENTER, p5.CENTER);
       startGame = false;
       time = Date.now();
+      opponentPos = player2.pos.y;
     }
     
     p5.draw = () => {
@@ -57,8 +58,8 @@ export default function sketch(p5: P5CanvasInstance) {
         pos = next;
       } else {
         p5.background(0);
-        player1.drow(p5, 0);
-        player2.drow(p5, 0);
+        player1.drow(p5, player1.pos.y);
+        player2.drow(p5, player2.pos.y);
         p5.fill(255)
         
         if(Date.now() < time + 1000) {

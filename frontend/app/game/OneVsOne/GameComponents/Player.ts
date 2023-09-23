@@ -16,7 +16,7 @@ export default class Paddel implements Player{
         this.height = p5.height / 4;
         this.gap = this.width / 2;
         this.score = 0;
-        this.pos = p5. createVector(0, (p5.height / 2) - (this.height / 2));
+        this.pos = p5.createVector(0, (p5.height / 2) - (this.height / 2));
         
         if(this.isLeft) {
             this.color = "#A0009D";
@@ -42,7 +42,7 @@ export default class Paddel implements Player{
         }
         else
         {
-            this.pos.x = p5.width - this.width - this.gap;
+            this.pos.x = p5.width - this.gap;
         }
     }
 
@@ -53,11 +53,7 @@ export default class Paddel implements Player{
             p5.rect(this.pos.x, this.pos.y, this.width, this.height, this.width);
         }
         else {
-            if(pos != undefined){
-                p5.rect(this.pos.x, pos, this.width, this.height, this.width);
-            } else {
-                p5.rect(this.pos.x, this.pos.y, this.width, this.height, this.width);
-            }
+            p5.rect(this.pos.x, pos, this.width, this.height, this.width);
         }
     }
 
