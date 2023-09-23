@@ -45,7 +45,7 @@ const completProfile = () => {
     }
     e.preventDefault();
     await axios.put("http://localhost:3000/upload/update", formData, {headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "multipart/form-data"
     }}).then(res => {
       deleteCookie("accessToken")
       if (res.data == "invalid") {
