@@ -25,7 +25,7 @@ export class ChannelService {
         // console.log('ChannelMembershipRepository:', channelMembershipRepository);
         // console.log('UserRepository:', userRepository);
     }
-    async createChannel(data: any, owner: Number) : Promise<Channel| string>
+    async createChannel(data: any, owner: Number,file: Express.Multer.File) : Promise<Channel| string>
     {
         console.log('--------> ', data.name);
         console.log('--------> ', data.type);
@@ -39,6 +39,8 @@ export class ChannelService {
             throw new HttpException("Channel name or Type not specified", HttpStatus.FORBIDDEN);
         channel.Name = data.name;
         channel.Type = data.type;
+        if (file)
+            channel.avatar = '/avatars/' +file.filename as String;
         // channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
         // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
