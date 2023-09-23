@@ -43,6 +43,7 @@ const completProfile = () => {
       alert("Please enter username");
       return;
     }
+    formData.append("username",username);
     e.preventDefault();
     await axios.put("http://localhost:3000/upload/update", formData, {headers: {
       "Content-Type": "multipart/form-data"

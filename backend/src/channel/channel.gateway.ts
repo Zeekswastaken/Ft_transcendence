@@ -24,7 +24,7 @@ export class ChannelGateway {
   @SubscribeMessage('JoinChannel')
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
     try {
-      console.log("MY PINEAPPLE IS RED DEDEDEDEDEDEDEDEDe =====> ", data.channelID, "===============", data.userID, "**************", data.Pass);
+      // console.log("MY PINEAPPLE IS RED DEDEDEDEDEDEDEDEDe =====> ", data.channelID, "===============", data.userID, "**************", data.Pass);
     const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
     this.server.to(client.id).emit("isjoined", bool);
     this.server.to(data.channelID.toString()).emit("members", await this.channelService.getChannelMembers(data.channelID));
@@ -84,8 +84,8 @@ export class ChannelGateway {
   async removeAd(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
   {
     try {
-      console.log("--------> ", data.channelID);
-      console.log("--------> ", data.userID);
+      // console.log("--------> ", data.channelID);
+      // console.log("--------> ", data.userID);
     // const userid = 2;
     // const channelid = 4;
     // const initiatorid = 1;
@@ -101,7 +101,7 @@ export class ChannelGateway {
   async mute(@ConnectedSocket() client: Socket, @MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
   {
     try{
-      console.log("CLIENT TAT EMITS ===== ", client.id, "***************", data.userID, "*****CHACNNEL******", data.channelID);
+      // console.log("CLIENT TAT EMITS ===== ", client.id, "***************", data.userID, "*****CHACNNEL******", data.channelID);
       const channelID = data.channelID; 
       const userID = data.userID;
       const initiatorID = data.initiatorID;
@@ -145,7 +145,7 @@ export class ChannelGateway {
   async ban(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number, amount: number})
   {
     try{
-      console.log("CLIENT TAT EMITS ===== ", client.id, "***************", data.userID, "*****CHACNNEL******", data.channelID);
+      // console.log("CLIENT TAT EMITS ===== ", client.id, "***************", data.userID, "*****CHACNNEL******", data.channelID);
       const channelID = data.channelID; 
       const userID = data.userID;
       const initiatorID = data.initiatorID;
@@ -155,7 +155,7 @@ export class ChannelGateway {
       if (check)
         bool = true;
       // const members = await this.channelService.getChannelMembers(data.channelID);
-      console.log("BANINO ======",{isBanned:bool, userID:userID});
+      // console.log("BANINO ======",{isBanned:bool, userID:userID});
       client.to(channelID.toString()).emit("newmembership1", {isBanned:bool, userID:userID, channelID:channelID});
     }
   catch (error) {
@@ -186,11 +186,11 @@ export class ChannelGateway {
   async getting(@ConnectedSocket() client: Socket,@MessageBody() data: { userID: Number})
   {
     try{
-      console.log("HEROEOEOEOENCN", data.userID);
+      // console.log("HEROEOEOEOENCN", data.userID);
       const channels =  await this.channelService.getChannelsJoined(data.userID)
-      console.log("HEROEOEOEOENCNdddddd");
+      // console.log("HEROEOEOEOENCNdddddd");
       // const user = await this.userService.findById(data.userID);
-      console.log(data.userID , " CHANNLES JOINED ====== ", channels);
+      // console.log(data.userID , " CHANNLES JOINED ====== ", channels);
 
       this.server.to(client.id).emit('getchannelsjoined', channels);
     }
@@ -207,7 +207,7 @@ export class ChannelGateway {
       // data.userid = 2;
         const channels = await this.channelService.getAllChannels(data.userid);
         // console.log("=-=-=-=-=-=-=channels", channels);
-        console.log("CHANNELS JOINED =======> ", channels);
+        // console.log("CHANNELS JOINED =======> ", channels);
         this.server.to(client.id).emit("channels", channels);
     }
   catch (error) {
@@ -233,9 +233,9 @@ export class ChannelGateway {
   async getInfos(@ConnectedSocket() client: Socket,@MessageBody() data: {channelID: Number, userID: Number})
   {
     try{
-      console.log("POOPOPOPOPOPOPOPOPOPOPOPOPP",data)
+      // console.log("POOPOPOPOPOPOPOPOPOPOPOPOPP",data)
       const state = await this.channelService.getInfos(data.channelID, data.userID);
-      console.log("STATIISISISISURERER==== ",state);
+      // console.log("STATIISISISISURERER==== ",state);
       this.server.to(client.id).emit("state", state);
     }
     catch(error)
