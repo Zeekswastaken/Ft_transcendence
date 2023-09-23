@@ -13,6 +13,7 @@ export default class Ball {
     vY: number;
     direction: number;
     color: string;
+    deltaSpeed: number;
 
     constructor (p5: P5CanvasInstance)
     {
@@ -24,6 +25,7 @@ export default class Ball {
         this.vY = 5;
         this.direction = 1;
         this.color = "#FFFFFF";
+        this.deltaSpeed = 0.2;
     }
 
     resize = (p5: P5CanvasInstance) => {
@@ -43,12 +45,12 @@ export default class Ball {
             if(this.y + this.radius / 2 >= p5.height) {
                 this.y = p5.height - this.radius / 2;
             } else {
-                this.y = this.radius;
+                this.y = this.radius / 2;
             }
             this.vY = -this.vY;
         }
         let selectPlayer = this.x < p5.width / 2 ? player : computer;
-        if(this.collision(selectPlayer))
+        if(this.collision(p5, selectPlayer))
         {
             if(selectPlayer == player)
             {
@@ -64,18 +66,18 @@ export default class Ball {
                 this.vX = (10 * Math.cos(angle)) * -1; 
                 this.vY = (10 * Math.sin(angle)); 
             }
-            this.speed += 0.2 ;
+            this.speed += this.deltaSpeed;
         }
     }
 
     isOut(p5: P5CanvasInstance, socket: Socket, player: Paddel, computer: Paddel)
     {
         
-        if(this.x - this.radius < 0) {
+        if(this.x  < 0) {
             computer.score++;
             socket.emit("oneVsBotChangeScore", {player: player.score, bot: computer.score});
             this.reset(p5);
-        } else  if(this.x + this.radius > p5.width){
+        } else  if(this.x > p5.width){
             player.score++;
             socket.emit("oneVsBotChangeScore", {player: player.score, bot: computer.score});
             this.reset(p5);
@@ -93,9 +95,10 @@ export default class Ball {
             this.vX = -this.vX;
         }
         this.vY = -5;
+        this.deltaSpeed += 0.01;
     }
 
-    collision(player: Paddel)
+    collision(p5: P5CanvasInstance, player: Paddel)
     {
         let b: BallBoundary = {
             top: 0,
@@ -111,15 +114,15 @@ export default class Ball {
             right: 0,
         };
 
-        b.top = this.y - this.radius;
-        b.bottom = this.y + this.radius;
-        b.left = this.x - this.radius;
-        b.right = this.x + this.radius;
+        b.top = this.y - (this.radius / 2);
+        b.bottom = this.y + (this.radius / 2);
+        b.left = this.x - (this.radius / 2);
+        b.right = this.x + (this.radius / 2) ;
         
         p.top = player.pos.y;
         p.bottom = player.pos.y + player.height;
         p.left = player.pos.x;
-        p.right = player.pos.x + player.gap;
+        p.right = player.pos.x + player.width;
         
         return (b.right >= p.left && b.bottom >= p.top && b.left <= p.right && b.top <= p.bottom );
     }

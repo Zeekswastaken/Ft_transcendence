@@ -31,7 +31,10 @@ import typeorm from './config/typeorm';
 import { BlockedModule } from './blocked/blocked.module';
 import { NotificationsService } from './notifications/notifications.service';
 import { NotificationsModule } from './notifications/notifications.module';
-import { FileUploadModule } from './file-upload/file-upload.module';
+// import { FileUploadModule } from './file-upload/file-upload.module';
+import { UploadAvatarsController } from './upload-avatars/upload-avatars.controller';
+import { UploadAvatarsModule } from './upload-avatars/upload-avatars.module';
+import { UploadAvatarsService } from './upload-avatars/upload-avatars.service';
 
 
 @Module({
@@ -47,10 +50,10 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     UserModule, AuthModule,ChannelModule,JwtModule.register({
       secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
       signOptions: { expiresIn: '24h' },
-    }), ChatModule,ProfileModule, GameModule, BlockedModule, NotificationsModule,FileUploadModule
+    }), ChatModule,ProfileModule, GameModule, BlockedModule, NotificationsModule, UploadAvatarsModule
   ],
-  controllers: [AppController, UserController],
-  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService, NotificationsService],
+  controllers: [AppController, UserController, UploadAvatarsController],
+  providers: [AppService,TokenGuard,JWToken,UserService,ChannelService, NotificationsService,UploadAvatarsService],
 })
 export class AppModule {}
 

@@ -9,7 +9,7 @@ import Winning from '../../component/winning';
 import { User } from '../GameComponents/gameInterfaces';
 import Losing from '../../component/losing';
 
-const COM_LEVEL = 0.1;
+const COM_LEVEL = 0.2;
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
     const [playerScore, setPlayerScore] = useState<number>(0);
@@ -80,10 +80,10 @@ const page = () => {
                     </div>
                     <div className=' grid place-items-center items-center'>
                         <div className='border-[2px] border-gray w-fit'>
+                            
                             <ReactP5Wrapper sketch={sketch}
                                             COM_LEVEL={COM_LEVEL}
                                             socket={socket}
-                                            gameOver={gameOver}
                                             />
                         </div>
                     </div>

@@ -2,10 +2,10 @@ import { Body, Controller, HttpStatus, Post, Res, UploadedFile, UseInterceptors 
 import { ChannelService } from './channel.service';
 import { ExpressAdapter, FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/file-upload/multer-config';
-import { UploadController } from 'src/file-upload/upload.controller';
+// import { UploadController } from 'src/file-upload/upload.controller';
 @Controller('channel')
 export class ChannelController {
-    constructor(private readonly channelService: ChannelService, private readonly uploadController: UploadController){}
+    constructor(private readonly channelService: ChannelService){}
     @Post('createChannel')
     @UseInterceptors(FileInterceptor('avatar', multerConfig))
     async create(@Body() data :{ userid:Number, name:String, type:String, password: String}, @Res() res) {
@@ -19,13 +19,15 @@ export class ChannelController {
           const channel = await this.channelService.createChannel(data, data.userid);
           
           // console.log("=====> ", channel);
-        if (channel)
+        if (typeof channel == 'object')
         {
           console.log("IT DID WORK")
           res.status(HttpStatus.CREATED).json(channel);
         }
-          else
-            res.status(HttpStatus.FORBIDDEN).json('Error');
+        else
+        res.send({
+          message: channel,
+       });
         } catch (error)
         {
           console.error('Error creating channel: ', error.message);

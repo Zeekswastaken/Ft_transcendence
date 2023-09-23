@@ -59,4 +59,5 @@ export const initBall = (ball: Ball) => {
       ball.vX = 0.5;
       ball.vY = 0.5;
     }
+    ball.deltaSpeed += 0.03;
 }

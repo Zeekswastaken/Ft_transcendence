@@ -26,9 +26,24 @@ export class ChannelGateway {
     try {
       console.log("MY PINEAPPLE IS RED DEDEDEDEDEDEDEDEDe");
     const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
-    console.log("--------**********------> ", await this.channelService.getChannelsJoined(data.userID));
     this.server.to(client.id).emit("isjoined", bool);
     this.server.to(data.channelID.toString()).emit("members", await this.channelService.getChannelMembers(data.channelID));
+    }catch (error) {
+      console.error('Error joining channel: ', error.message);
+      this.server.to(client.id).emit("isjoined", false);
+      throw error;
+    }
+  }
+
+  @SubscribeMessage('changePass')
+  async changePass(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket)
+  {
+    try{
+    const bool = await this.channelService.changePass(data.channelID, data.userID, data.Pass);
+    if (bool)
+      client.to(data.channelID.toString()).emit("isPass", true);
+    else
+      client.to(data.channelID.toString()).emit("isPass", false);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
       this.server.to(client.id).emit("isjoined", false);
@@ -44,7 +59,9 @@ export class ChannelGateway {
       const userID = data.userID;
       // console.log("--------> ", data.channelID);
       // console.log("--------> ", data.userID);
-      client.to(client.id).emit('isleft', await this.channelService.LeaveChannel(data.channelID, data.userID));
+      const isleft = await this.channelService.LeaveChannel(data.channelID, data.userID)
+      this.server.to(data.channelID.toString()).emit('afterleave', await this.channelService.getChannelMembers(data.channelID));
+      client.to(client.id).emit('isleft', {isleft:isleft, channels:await this.channelService.getChannelsJoined(data.userID)});
     }catch (error){
       console.error('Error joining channel: ', error.message);
       throw error;
@@ -55,13 +72,6 @@ export class ChannelGateway {
   async assignAd(@ConnectedSocket() client: Socket,@MessageBody() data: { channelID: Number, userID: Number, initiatorID: Number})
   {
     try {
-    //   const channelID = data.channelID; 
-    //   const userID = data.userID;
-    //   // console.log("--------> ", data.channelID);
-    //   // console.log("--------> ", data.userID);
-    // const userid = 2;
-    // const channelid = 4;
-    // const initiatorid = 1;
     const membership = await this.channelService.assignAdmin(data.channelID, data.userID, data.initiatorID);
     client.to(data.channelID.toString()).emit("isadmin", membership);
   }catch (error) {
@@ -239,8 +249,11 @@ export class ChannelGateway {
   {
     try{
         const channel = await this.channelService.switchPrivacy(data.channelid, data.Type, data.Password);
-        this.server.to(data.channelid.toString()).emit("privacy",channel.Type);
-      }
+        if (typeof channel == 'object')
+          this.server.to(data.channelid.toString()).emit("privacy",channel.Type);
+        else
+        this.server.to(data.channelid.toString()).emit("privacy",channel);         
+        }
     catch(error)
     {
       console.error('Error getting all the channels by the user: ', error.message);

@@ -63,8 +63,8 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
     
   const handleRandomlyOpponent= (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    setButtonType("random");
-    router.push("/queue");
+    // setButtonType("random");
+    router.push("/queue/randomqueue");
   }
   const handleFriendOpponent = (e: React.MouseEvent<HTMLElement>) => {
     setButtonType("friend");
@@ -81,7 +81,7 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
     socket.on("pendingqueue", (data:any) => {
       console.log(data);
       setInviteFriendData(data);
-      router.push("/queue")
+      router.push("/queue/friendqueue")
     })
   }
   // console.log("username = ", username)

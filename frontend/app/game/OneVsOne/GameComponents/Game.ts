@@ -17,22 +17,19 @@ export default function sketch(p5: P5CanvasInstance) {
     let opponentPos: number;
     let gameId: string;
     let pos: number;
-    let gameOver: boolean;
+    let startGame: boolean;
+    let time: number;
     let ballCoordinates: BallCoordinates = {
       x: 50,
       y: 50
     };
   
     p5.setup = () => {
-      if (p5.windowWidth > 1500) {
+     if(p5.windowWidth < 1500 ) {
+        console.log("hello From 1500");
+        p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
+      } else {
         p5.createCanvas(1200, 700);
-      } else if (p5.windowWidth <= 1200){
-        p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
-      }else if(p5.windowWidth <= 350 ) {
-          p5.createCanvas(300, 150);
-      }
-      else {
-        p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
       }
       net     = new Net(p5);
       ball    = new Ball(p5);
@@ -41,27 +38,38 @@ export default function sketch(p5: P5CanvasInstance) {
       p5.textFont('Helvetica');
       p5.textSize(p5.width / 20);
       p5.textAlign(p5.CENTER, p5.CENTER);
+      startGame = false;
+      time = Date.now();
     }
     
     p5.draw = () => {
-    if(!gameOver)
-    {
-      socket?.emit("getBallAndP2Positions", {id: gameId, user: user});
-      p5.background(0);
-      net.drow(p5);
-      ball.drow(p5, ballCoordinates.x, ballCoordinates.y);
-      player1.drow(p5, 0);
-      player2.drow(p5, opponentPos);
-      let next = player1.update(p5);
-      if(next != undefined && next != pos){
-        socket?.emit("setPositon", {id: gameId, user: user, pos: (next * 100 / p5.height)});
-      }
-      pos = next;
-    }
-    else {
-      p5.fill(255);
-      p5.background(0);
-      p5.text('Game Over', p5.width / 2, p5.height / 2);
+      if(startGame) {
+        socket?.emit("getBallAndP2Positions", {id: gameId, user: user});
+        p5.background(0);
+        net.drow(p5);
+        ball.drow(p5, ballCoordinates.x, ballCoordinates.y);
+        player1.drow(p5, 0);
+        player2.drow(p5, opponentPos);
+        let next = player1.update(p5);
+        if(next != undefined && next != pos){
+          socket?.emit("setPositon", {id: gameId, user: user, pos: (next * 100 / p5.height)});
+        }
+        pos = next;
+      } else {
+        p5.background(0);
+        player1.drow(p5, 0);
+        player2.drow(p5, 0);
+        p5.fill(255)
+        
+        if(Date.now() < time + 1000) {
+          p5.text("3", p5.width / 2, p5.height / 2);
+        } else if(Date.now() < time + 2000) {
+          p5.text("2", p5.width / 2, p5.height / 2);
+        } else if(Date.now() < time + 3000) {
+          p5.text("1", p5.width / 2, p5.height / 2);
+        } else {
+          startGame = true;
+        }
     }
     };
 
@@ -83,7 +91,6 @@ export default function sketch(p5: P5CanvasInstance) {
         socket = props.socket;
         user = props.user;
         gameId = props.gameId;
-        gameOver = props.gameOver;
         if(props.opponentPos){
           opponentPos = (props.opponentPos * p5.height / 100);
         }
