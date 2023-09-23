@@ -537,7 +537,7 @@ console.log("==================================================");
         return members
     }
 
-    async switchPrivacy(channelID :Number, Type:String, Password:String) : Promise<Channel | string>
+    async switchPrivacy(channelID :Number, Password:String) : Promise<Channel | string>
     {
         const channel = await this.channelRepository.findOne({where:{id:Equal(channelID)}});
         if (!channel)
