@@ -81,6 +81,8 @@ export class BlockedService {
 
   async isBlocked(userid: Number, recipientid: Number): Promise<boolean>
   {
+    if (userid === recipientid)
+      return false
     const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
       relations: ['blockedUsers', 'blockingUsers'],
@@ -99,6 +101,8 @@ export class BlockedService {
 
   async isBlocking(userid: Number, recipientid: Number): Promise<boolean>
   {
+    if (userid === recipientid)
+      return false
     const user = await this.userRepository.findOne({
       where: { id: Equal(userid) },
       relations: ['blockingUsers', 'blockedUsers'],

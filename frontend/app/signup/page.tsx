@@ -17,33 +17,41 @@ const signup = () => {
   const [userNotFound, setUserNotFound] = useState('');
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await axios.post("http://localhost:3000/auth/signup", {
-        username,
-        password,
-        repassword
-      })
-      .then((res) => {
-        if (res.data.message === "empty" || res.data.message === "exists") {
-          setUserNotFound("Invalid Username, please try again!");
-          setPassNotMatch("");
-          setPasswordError("");
-          return ;
-        }
-        else if (res.data.message === "weak") {
-          setPasswordError("Your Password not Strong enough, Please try again.");
-          setUserNotFound("");
-          setPassNotMatch("");
-          return ;
-        }
-        else if (res.data.message === 'notMatch') {
-          setPassNotMatch("Passwords do not match.");
-          setPasswordError("");
-          setUserNotFound("");
-          return;
-        }
-        setCookie("accessToken", res.data);
-        router.push("/signup/complete-profile")
-      }).catch(err => {console.log(err)})
+    const usernameRegex = /^[A-Za-z0-9_-]+$/;
+    const isValidUsername = usernameRegex.test(username);
+    if (!isValidUsername || username.length > 10) {
+      console.log("Invalid username");
+      setUserNotFound("Invalid Username, please try again!");
+    }
+    else {
+      await axios.post("http://localhost:3000/auth/signup", {
+          username,
+          password,
+          repassword
+        })
+        .then((res) => {
+          if (res.data.message === "empty" || res.data.message === "exists") {
+            setUserNotFound("Invalid Username, please try again!");
+            setPassNotMatch("");
+            setPasswordError("");
+            return ;
+          }
+          else if (res.data.message === "weak") {
+            setPasswordError("Your Password not Strong enough, Please try again.");
+            setUserNotFound("");
+            setPassNotMatch("");
+            return ;
+          }
+          else if (res.data.message === 'notMatch') {
+            setPassNotMatch("Passwords do not match.");
+            setPasswordError("");
+            setUserNotFound("");
+            return;
+          }
+          setCookie("accessToken", res.data);
+          router.push("/signup/complete-profile")
+        }).catch(err => {console.log(err)})
+    }
   }
   
   const link_42 = "http://localhost:3000/auth/42";

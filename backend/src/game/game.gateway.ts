@@ -334,6 +334,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('getLeaderboard')
     async getlead(@ConnectedSocket() client: Socket, @MessageBody() data: {userID:Number})
     {
+      console.log ("userId = ", data.userID)
       try{
         const users = await this.gameservice.getUsersForLeaderboard(data.userID);
         this.server.to(client.id).emit("leaderboard", users);

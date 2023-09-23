@@ -192,7 +192,8 @@ export class GameService {
     {
       const user = await this.userservice.findById(userid);
       const users = await this.userservice.findAll();
-      if (!users || user)
+      // console.log("CURRENT USERS ======== ",user, "OTHER USERRS ======= ", users);
+      if (!users || !user)
           throw new HttpException("Users not found", HttpStatus.NOT_FOUND);
       users.sort((a,b) => b.stats.score - a.stats.score);
       const topTenUsers = users.slice(0, 10);

@@ -54,28 +54,18 @@ const CreatGroup = () =>
     const {group, setGroup} = useGroupStore()
     const handleSubmit = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
-        // const formData = new FormData();
-        // console.log("file = ", avatar.current)
-        // console.log("name = ", channelName);
-        // console.log("id = ", currentUserID)
-        // console.log("type = ", privacy)
-        // console.log("password = ", password)
-        // formData.append('file', avatar.current as any)
-        // // formData.append('avatar', avatar.current as any); // Assuming 'avatar' is the field name expected by FileInterceptor
-        // formData.append('userid', currentUserID as any);
-        // formData.append('name', channelName);
-        // formData.append('type', privacy);
-        // formData.append('password', password);
+        const formData = new FormData();
+        // formData.append('avatar', avatar.current as any); // Assuming 'avatar' is the field name expected by FileInterceptor
+        formData.append('file', avatar.current as any)
+        formData.append('userid', currentUserID as any);
+        formData.append('name', channelName);
+        formData.append('type', privacy);
+        formData.append('password', password);
         
         // formData.forEach((value, key) => {
         //     console.log(`${key}: ${value}`);
         // });
-        axios.post("http://localhost:3000/channel/createChannel", {
-            userid: currentUserID,
-            name: channelName,
-            type: privacy,
-            password: password
-        })
+        axios.post("http://localhost:3000/channel/createChannel", formData)
         .then(res => {
             if (res.status == HttpStatusCode.Created)
             setGroup(!group)
@@ -88,7 +78,7 @@ const CreatGroup = () =>
     
     return (
         <div className='rounded-xl bg-[#670647]/[0.4] items-center place-content-center mt-20 px-5 sm:px-[3rem] py-[3rem] mb-[100px]'>
-            <form encType="multipart/form-data" >
+            <form  encType="multipart/form-data">
                 <div className=' grid grid-cols-1 lg:grid-cols-2 gap-5'>
                     <div className=' cursor-not-allowed w-full h-[90px] bg-[#2E0231B2] rounded-xl flex items-center px-5 drop-shadow-lg'>
                         <div className=' w-[70px] h-[70px] rounded-full border-[5px] border-primary-pink-200 '>
@@ -123,7 +113,6 @@ const CreatGroup = () =>
                         className={` placeholder:font-Heading font-bold w-full h-[90px] bg-[#2E0231E5] rounded-xl drop-shadow-[2px_3px_0_rgba(0,0,0,0.15)] outline-none focus:outline focus:outline-primary-pink-300 px-3 text-gray-300` + (privacy !== "protected" ? ' cursor-not-allowed' : '')}
                         />
                 </div>
-
             </form>
             <div className='flex space-x-3'>
                 <button onClick={handleCancel} className=' mt-10 px-4 text-white font-Bomb pt-1 rounded-lg duration-300 hover:text-primary-pink-300 '>Cancel</button>

@@ -15,7 +15,7 @@ export class ChannelController {
         console.log("dir : ",__dirname)
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
         const fileExtension = extname(file.originalname);
-        const newFileName = `avatar-${uniqueSuffix}${fileExtension}`;
+        const newFileName = `channelavatar-${uniqueSuffix}${fileExtension}`;
         callback(null, newFileName);},}),}))
     
     async create(@UploadedFile() file: Express.Multer.File,@Body() data, @Res() res) {

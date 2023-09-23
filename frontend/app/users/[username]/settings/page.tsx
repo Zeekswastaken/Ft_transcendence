@@ -23,6 +23,7 @@ const Settings = () => {
   const router = useRouter();
   const token = getCookie("accessToken");
   const [invalidUsername, setInvalidUsername] = useState("");
+  const [invalidBio, setInvalidBio] = useState("")
   const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
@@ -47,46 +48,61 @@ const Settings = () => {
   const handleApply = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     // useEffect(() => {
-      let pr:boolean | null
-      if (privacy === "Private")
-        pr = false
-      else if (privacy === "Public")
-        pr = true
-      else
-        pr = null
-
-      const formData = new FormData();
-      formData.append("id", user?.id);
-      formData.append("privacy", pr as any);
-      formData.append("password", password );
-      formData.append("Bio", bio as string);
-      formData.append("twofactorenabled", isEnable as any);
-      formData.append("username", username);
-      formData.append("file", avatar.current as File);
-      await axios.put(`http://localhost:3000/upload/update`, formData).then(res => {
-        if (res.data.message === "error") {
-          return ;
-        }
-        else if (res.data.message === "weak"){
-          setPasswordError("Your Password not Strong enough, Please try again.");
-          setInvalidUsername("");
-          return;
-        }
-        else if (res.data.message === "exists") {
-          setInvalidUsername("Invalid Username, please try again!");
-          setPasswordError("");
-          return
-        }
-        else if (res.data.message === "success") {
-          setCookie("accessToken", res.data.token);
-          
-          if (username) {
-            router.push(`/users/${username}`);
+      const usernameRegex = /^[A-Za-z0-9_-]+$/;
+      const isValidUsername = usernameRegex.test(username);
+      if (bio.length > 100) {
+        setInvalidBio("Invalid Bio")
+      }
+      else if (username && (!isValidUsername || username.length > 10)) {
+        console.log("Invalid username");
+        setInvalidUsername("Invalid Username, please try again!");
+        // setUserNotFound("Invalid Username, please try again!");
+      }
+      else {
+        let pr:boolean | null
+        if (privacy === "Private")
+          pr = false
+        else if (privacy === "Public")
+          pr = true
+        else
+          pr = null
+  
+        const formData = new FormData();
+        formData.append("id", user?.id);
+        formData.append("privacy", pr as any);
+        formData.append("password", password );
+        formData.append("Bio", bio as string);
+        formData.append("twofactorenabled", isEnable as any);
+        formData.append("username", username);
+        formData.append("file", avatar.current as File);
+        await axios.put(`http://localhost:3000/upload/update`, formData).then(res => {
+          if (res.data.message === "error") {
+            return ;
           }
-          else
-            router.push(`/users/${user?.username}`)
-        }
-    }).catch(res => {console.log(res)});
+          else if (res.data.message === "weak"){
+            setPasswordError("Your Password not Strong enough, Please try again.");
+            setInvalidUsername("");
+            return;
+          }
+          else if (res.data.message === "exists") {
+            setInvalidUsername("Invalid Username, please try again!");
+            setPasswordError("");
+            return
+          }
+          else if (res.data.message === "success") {
+            setCookie("accessToken", res.data.token);
+            
+            if (username) {
+              router.push(`/users/${username}`);
+            }
+            else
+            {
+              console.log("here")
+              router.push(`/users/${user?.username}`)
+            }
+          }
+      }).catch(res => {console.log(res)});
+      }
   }
   const [canSee, setCanSee] = useState<boolean>(false)
   const [inputType, setInputType] = useState("password");
@@ -142,16 +158,18 @@ const Settings = () => {
               
               <div className=" 2xl:pt-16 pt-5 px-10 w-full">
                 <div className=" animate-fade-left animate-delay-100 flex place-content-center mt-0">
-                  <div className=" w-[130px] h-[130px] rounded-full">
+                  {/* <div className=" w-[130px] h-[130px] rounded-full"> */}
                     <label
                       htmlFor="uploadImage"
                       className="cursor-pointer flex relative place-content-center"
                     >
-                      <img
-                        src={path}
-                        alt="profile"
-                        className=" w-full h-full rounded-full"
-                      />
+                      <div className=" h-[130px] w-[130px] rounded-full">
+                        <img
+                          src={path}
+                          alt="profile"
+                          className=" w-full h-full rounded-full"
+                        />
+                      </div>
                       <img
                         className=" absolute mt-[58px]"
                         src="/camera.svg"
@@ -160,7 +178,7 @@ const Settings = () => {
                         height={20}
                       />
                     </label>
-                  </div>
+                  {/* </div> */}
                   <input
                     onChange={handleImageChange}
                     className="hidden"
@@ -186,6 +204,7 @@ const Settings = () => {
                       className="shadow-sm no-scrollbar border-transparent focus:ring-0 focus:border-transparent font-bold resize-none text-[#D4D4D4] block w-full sm:text-sm bg-[#562257] rounded-md"
                       defaultValue={""}
                     />
+                    {invalidBio && <p className="text-red-500 text-xs pt-1 text-left">{invalidBio}</p>}
                   </div>
                 </div>
               </div>
