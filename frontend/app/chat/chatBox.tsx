@@ -117,7 +117,7 @@ function chatBox()
       if (currUserData.id !== data.user.id) {
         socket?.emit("isBlocked", { userID: currUserData.id, recipientID: data.user.id });
         socket?.on("isblocked", (bool: boolean) => {
-          setUpdateChat({ message: data.message, user: data.user, channelid: data.channelid, isBnl });
+          setUpdateChat({ message: data.message, user: data.user, channelid: data.channelid, isBlocked:bool });
         });
       }
     };

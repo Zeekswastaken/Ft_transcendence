@@ -23,13 +23,17 @@ export class GameService {
         const savedMatch = await this.MatchRepo.save(match);
         Player2.stats.matches.push(savedMatch);
         let User1a, User2a, User1, User2;
-
+        // Player2.status = 'online';
+        // delete Player2.status;
+        console.log('Player2 == ',Player2);
         User2a = await this.userservice.save(Player2);
-        console.log("Before push: ", Player1.stats.matches);
+        // console.log("Before push: ", Player1.stats.matches);
         Player1.stats.matches.push(savedMatch);
-        console.log("After push: ", Player1.stats.matches);
-        // Player1.stats.matches.push(savedMatch);
-        
+        // console.log("After push: ", Player1.stats.matches);
+        // Player1.stats.matches.push( savedMatch);
+        // Player1.status = 'online';
+        // delete Player1.status;
+        console.log('Player1 == ',Player1);
         User1a = await this.userservice.save(Player1);
         if (match.result === Body.player1.id) {
             User1 = await this.updateWinner(User1a);
@@ -47,8 +51,8 @@ export class GameService {
         const user = await this.userservice.findById(userid);
         if (!user)
             throw new HttpException("User not found", HttpStatus.FORBIDDEN);
-            const player1Matches = await this.MatchRepo.find({ where: { player1: Equal(user.id) } });
-            const player2Matches = await this.MatchRepo.find({ where: { player2: Equal(user.id) } });
+            const player1Matches = await this.MatchRepo.find({ where: { player1: Equal(user.id) }, relations:['player1', 'player2'] });
+            const player2Matches = await this.MatchRepo.find({ where: { player2: Equal(user.id) }, relations:['player1', 'player2'] });
             
             const matches = [...player1Matches, ...player2Matches];
             matches.sort((match1, match2) => (match2.id as number) - (match1.id as number));
@@ -64,7 +68,7 @@ export class GameService {
         user.stats.winrate = (user.stats.wins/user.stats.matches_played)*100;
         user.stats.score += 50;
         await this.statsRepo.save(user.stats);
-        console.log("LETS SEEE ======= ", user.stats.matches);
+        // console.log("LETS SEEE ======= ", user.stats.matches);
         return await this.userservice.save(user);
     }
 
@@ -86,7 +90,7 @@ export class GameService {
       if (!User)
         throw new HttpException("User not found", HttpStatus.FORBIDDEN);
       User.PlayerSocket = null;
-      console.log("**********************************************************************************,",User.Socket,"**********************************************************");
+      // console.log("**********************************************************************************,",User.Socket,"**********************************************************");
       delete User.Socket;
       const user = await this.userservice.save(User); 
       const queue = await this.GameinviteRepo.findOne({where:{receiver: null, type: 'random'}});
@@ -119,7 +123,7 @@ export class GameService {
       if (!User || !receiver)
         throw new HttpException("User not found", HttpStatus.FORBIDDEN);
       User.PlayerSocket = null;
-      console.log("**********************************************************************************,",User.Socket,"**********************************************************");
+      // console.log("**********************************************************************************,",User.Socket,"**********************************************************");
       delete User.Socket;
       const user = await this.userservice.save(User); 
       const queue = await this.GameinviteRepo.findOne({where:[{sender:Equal(userid), receiver: Equal(receiverid), type: 'invite'},{sender:Equal(receiverid), receiver: Equal(userid), type: 'invite'}]});
@@ -180,7 +184,7 @@ export class GameService {
     async findQueue(userid:Number)
     {
         const queue =  await this.GameinviteRepo.findOne({where: {sender: Equal(userid)}});
-        console.log("QUEUUUUE IN HEEEERE --- ", queue);
+        // console.log("QUEUUUUE IN HEEEERE --- ", queue);
         return queue;
     }
 

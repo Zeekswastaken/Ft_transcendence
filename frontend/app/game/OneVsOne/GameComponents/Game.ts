@@ -26,7 +26,6 @@ export default function sketch(p5: P5CanvasInstance) {
   
     p5.setup = () => {
      if(p5.windowWidth < 1500 ) {
-        console.log("hello From 1500");
         p5.createCanvas(p5.windowWidth - (p5.windowWidth / 6), p5.windowWidth / 1.99);
       } else {
         p5.createCanvas(1200, 700);
@@ -35,6 +34,7 @@ export default function sketch(p5: P5CanvasInstance) {
       ball    = new Ball(p5);
       player1 = new Paddel(p5, true);
       player2 = new Paddel(p5, false);
+      pos;
       p5.textFont('Helvetica');
       p5.textSize(p5.width / 20);
       p5.textAlign(p5.CENTER, p5.CENTER);
@@ -48,17 +48,17 @@ export default function sketch(p5: P5CanvasInstance) {
         p5.background(0);
         net.drow(p5);
         ball.drow(p5, ballCoordinates.x, ballCoordinates.y);
-        player1.drow(p5, 0);
+        player1.drow(p5, player1.pos.y);
         player2.drow(p5, opponentPos);
         let next = player1.update(p5);
-        if(next != undefined && next != pos){
+        if(next != undefined && next != pos) {
           socket?.emit("setPositon", {id: gameId, user: user, pos: (next * 100 / p5.height)});
         }
         pos = next;
       } else {
         p5.background(0);
-        player1.drow(p5, 0);
-        player2.drow(p5, 0);
+        player1.drow(p5, player1.pos.y);
+        player2.drow(p5, player2.pos.y);
         p5.fill(255)
         
         if(Date.now() < time + 1000) {
@@ -91,7 +91,7 @@ export default function sketch(p5: P5CanvasInstance) {
         socket = props.socket;
         user = props.user;
         gameId = props.gameId;
-        if(props.opponentPos){
+        if(props.opponentPos != undefined){
           opponentPos = (props.opponentPos * p5.height / 100);
         }
         if(props.ballCoordinates) {

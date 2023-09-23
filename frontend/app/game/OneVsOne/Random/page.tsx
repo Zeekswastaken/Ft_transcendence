@@ -9,6 +9,7 @@ import { BallCoordinates, User } from "../GameComponents/gameInterfaces";
 import { useRouter } from 'next/navigation';
 import Losing from '../../component/losing';
 import Winning from '../../component/winning';
+import GameOponent from '../../component/choseGame';
 
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
@@ -75,7 +76,7 @@ const page = () => {
     }, []);
 
     return (
-        gameOver ? celebrate ? <Winning user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username!, avatar_url: opponent?.avatar_url!}} playerScore={p1Score} bootScore={p2Score}></Winning>
+        opponent ? gameOver ? celebrate ? <Winning user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username!, avatar_url: opponent?.avatar_url!}} playerScore={p1Score} bootScore={p2Score}></Winning>
                  :             <Losing user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username!, avatar_url:opponent?.avatar_url!}} playerScore={p1Score} bootScore={p2Score}></Losing>
         :<div className=' text-3xl text-white pt-[150px]  max-w-[1400px]  rounded-[20px]   w-full h-screen '>
             <div className=' glass mx-3 w-auto rounded-[20px] grid place-content-center border-[2px] border-[#FF1382] p-3 min-w-[350px]' >
@@ -100,17 +101,17 @@ const page = () => {
                 </div>
                 <div className=' grid place-items-center items-center'>
                     <div className='border-[2px] border-gray w-fit'>
-                        <ReactP5Wrapper sketch={sketch} 
-                                        socket={socket} 
-                                        gameId={gameId}
-                                        user={user}
-                                        opponentPos={opponentPos}
-                                        ballCoordinates={ballCoordinates}
-                                        />
+                            <ReactP5Wrapper sketch={sketch} 
+                                            socket={socket} 
+                                            gameId={gameId}
+                                            user={user}
+                                            opponentPos={opponentPos}
+                                            ballCoordinates={ballCoordinates}
+                                            />
                     </div>
                 </div>
             </div>
-        </div>
+        </div> : <GameOponent />
     );
 }
 export default page;
