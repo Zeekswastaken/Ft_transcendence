@@ -1,7 +1,7 @@
 "use client"
 import axios from "axios";
 import { getCookie, setCookie } from "cookies-next";
-import React, { FormEvent, MouseEvent, MouseEventHandler, use, useEffect, useState } from "react";
+import React, { FormEvent, MouseEvent, MouseEventHandler, use, useEffect, useRef, useState } from "react";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/app/userDataProvider";
@@ -54,13 +54,16 @@ const Settings = () => {
         pr = true
       else
         pr = null
-      await axios.put(`http://localhost:3000/profile/update/${user?.id}`, {
-        privacy: pr,
-        username: username,
-        password: password,
-        Bio: bio,
-        twofactorenabled: isEnable
-      }).then(res => {
+
+      const formData = new FormData();
+      formData.append("id", user?.id);
+      formData.append("privacy", pr as any);
+      formData.append("password", password );
+      formData.append("Bio", bio as string);
+      formData.append("twofactorenabled", isEnable as any);
+      formData.append("username", username);
+      formData.append("file", avatar.current as File);
+      await axios.put(`http://localhost:3000/upload/update`, formData).then(res => {
         if (res.data.message === "error") {
           return ;
         }
@@ -105,6 +108,23 @@ const Settings = () => {
   const handle2fa = () => {
     setIsEnable(!isEnable)
   }
+  const avatar = useRef<File | undefined>(undefined);
+  const [path, setPath] = useState("/profileEx.png")
+
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      avatar.current = e.target.files[0];
+      console.log("avatar = ", avatar.current)
+      try {
+        const path = URL.createObjectURL(avatar.current);
+        console.log("path = ", path)
+        setPath(path);
+      } catch (error) {
+        console.error('Error creating URL:', error);
+      }
+    }
+  };
 
   return (
     <div className=" border-2 mt-10 border-primary-pink-300 rounded-[20px]">
@@ -116,28 +136,33 @@ const Settings = () => {
                 Account Settings
               </h1>
             </div>
+              <form encType="multipart/form-data" className=" w-full h-full">
             <div className="bg-[#2F0331] w-full grid grid-cols-1  2xl:grid-cols-3 mt-3 rounded-2xl opacity-90 border border-primary-pink-300">
+
+              
               <div className=" 2xl:pt-16 pt-5 px-10 w-full">
                 <div className=" animate-fade-left animate-delay-100 flex place-content-center mt-0">
-                  <label
-                    htmlFor="uploadImage"
-                    className="cursor-pointer flex relative place-content-center"
-                  >
-                    <img
-                      src="/profileEx.png"
-                      alt="profile"
-                      width={130}
-                      height={130}
-                    />
-                    <img
-                      className=" absolute mt-[58px]"
-                      src="/camera.svg"
-                      alt="icon"
-                      width={25}
-                      height={20}
-                    />
-                  </label>
+                  <div className=" w-[130px] h-[130px] rounded-full">
+                    <label
+                      htmlFor="uploadImage"
+                      className="cursor-pointer flex relative place-content-center"
+                    >
+                      <img
+                        src={path}
+                        alt="profile"
+                        className=" w-full h-full rounded-full"
+                      />
+                      <img
+                        className=" absolute mt-[58px]"
+                        src="/camera.svg"
+                        alt="icon"
+                        width={25}
+                        height={20}
+                      />
+                    </label>
+                  </div>
                   <input
+                    onChange={handleImageChange}
                     className="hidden"
                     id="uploadImage"
                     accept="image/*"
@@ -236,14 +261,8 @@ const Settings = () => {
                     <button onClick={handleApply} className=" py-1 px-2 text-white font-Heading text-xl tracking-wide duration-300">Apply</button>
                   </div>
               </div>
-                {/* <div className=" place-content-center items-center flex">
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input onClick={handle2fa} type="checkbox" value="" className="sr-only peer" checked={user?.twofactorenabled || isEnable}/>
-                    <div className="w-14 h-7 bg-gray-200  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-green-400"></div>
-                    <span className="ml-3 text-base text-white font-Bomb pt-1 dark:text-gray-300">Enable 2FA</span>
-                  </label>
-                </div> */}
               </div>
+              </form>
           </div>
         </div>
       </div>

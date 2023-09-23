@@ -15,13 +15,15 @@ export class User{
     @Column({nullable:true})
     status:String;
     @Column({nullable:true})
-    birthDay: Date;
+    birthDay: String;
     @Column({default:'Oauth'})
     password:String;
     @Column({nullable:true})
     gender: String;
     @Column({default:true})
     privacy:Boolean;
+    @Column({default:false})
+    ismanuel:Boolean;
     @Column({default:false})
     ischange:Boolean;
     @Column({nullable:true})
@@ -65,5 +67,7 @@ export class User{
     qr_code_url: string;
     @OneToMany(() => Notification, notification => notification.recipient)
     receivednotifications: Notification[];
+    @Column('integer', { array: true, nullable:true, default:[]})
+blacklist: number[];
     user: Promise<String>;
 }

@@ -200,6 +200,8 @@ useEffect(() => {
     else
       statusStyle = "bg-blue-400"
   }
+
+  const avatar = userData?.avatar_url.replace("../frontend/public/", "/");
   return (
     <>
     {Data ? (
@@ -226,9 +228,9 @@ useEffect(() => {
                     <div className=" 2xl:mb-0 mt-[50px] grid place-content-center ">
                       <div className=" relative w-[150px] h-[150px] flex place-content-center border-4 border-primary-pink-300 rounded-full ">
                         <img
-                          src={userData?.avatar_url}
+                          src={avatar}
                           alt="avatar"
-                          className=" whandleAddFriend-full h-full rounded-full"
+                          className=" w-full h-full rounded-full"
                         />
                         <div className={` mt-[120px] absolute place-content-center items-center w-[70px] h-[30px] ${statusStyle} flex  pt-1 rounded-[26px]`}>
                           <p className=" text-white/[0.9] tracking-wide font-Bomb ">{Status}</p>

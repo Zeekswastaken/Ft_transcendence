@@ -96,21 +96,38 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     //DO THE SAME AS THE DUO ONE
   }
   @SubscribeMessage('JoinRoom')
-  async joinroom(client:Socket,payload : {token:String}){
-    if (await this.jwt.verify(payload.token))
-    {
+  async joinroom(client: Socket, payload: { token: string }) {
+    if (await this.jwt.verify(payload.token)) {
       const user = await this.jwt.decoded(payload.token);
-      console.log("USEEEEEEEEER ID", user);
+      console.log("USER ID:", user.id);
+  
+      // Retrieve the list of channels the user has already joined
       const channels = await this.ChannelService.getChannelsJoined(user.id);
-      console.log("CHANNELS FOR REAL THIS TIME", channels);
-      channels.forEach((room)=>{
-        console.log("THe roooooooooooooooooooooooooooooooooooooom is ",room);
-        client.join(room.Name);
-      })
-      return ({status:"Success Joining"});
+      console.log("CHANNELS FOR REAL THIS TIME:", channels);
+  
+      // Keep track of the rooms the client has already joined
+      const roomsJoined = new Set<string>();
+  
+      channels.forEach((room) => {
+        const roomName = room.Name;
+  
+        // Check if the client has already joined this room
+        if (!roomsJoined.has(roomName)) {
+          console.log("The room is:", roomName);
+          client.join(roomName);
+  
+          // Add the room to the set of rooms the client has joined
+          roomsJoined.add(roomName);
+        } else {
+          console.log("Client has already joined room:", roomName);
+        }
+      });
+  
+      return { status: "Success Joining" };
     }
-    return ({status:"Invalid Token"});
+    return { status: "Invalid Token" };
   }
+  
 
   @SubscribeMessage('LeaveRoom')
   async Leaveroom(client:Socket,payload : {token:String}){
@@ -191,4 +208,5 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       client.to(recuser.Socket).emit("OBJ",payload.obj as any);
       console.log("-------> PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP = ", recuser);
     }
+    
 }

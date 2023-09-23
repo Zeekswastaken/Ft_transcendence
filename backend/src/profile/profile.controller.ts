@@ -72,7 +72,7 @@ export class ProfileController {
                 if (usersec){
                     if (Body.password && checkPasswordStrength(Body.password) == 'Weak')
                     {
-                        res.send({message:'weak'});
+                        res.send({message:'weak'})
                    // return;
                     }
                     if (Body.password)
@@ -88,8 +88,7 @@ export class ProfileController {
                     if (Body.privacy == null)
                         Body.privacy = usersec.privacy;
                     console.log("TWPFA == ",Body.twofactorenabled);
-                    // if (Body.twofactorenabled != usersec.twofactorenabled)
-                    //     Body.twofactorenabled = usersec.twofactorenabled;
+
                     await this.userservice.update(Body,id);
                     const user = await this.userservice.findById(id); 
                     // console.log(user.stats);

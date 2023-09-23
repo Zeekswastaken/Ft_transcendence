@@ -265,11 +265,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('RemoveQueue')
   async remove(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
   {
-    console.log("========================================");
+    console.log("========================================*****************************", data.userid);
       const queue = await this.gameservice.findQueue(data.userid);
       if (queue)
+      {
+        console.log("QUEUE ACTUALLY FUND */*/*/*/*/*/*/**/");
         await this.gameservice.DeleteQueue(queue.id);
-      this.server.to(client.id).emit("queued", "queuedeleted");
+      }
+        this.server.to(client.id).emit("queued", "queuedeleted");
 
       const message = "The gameinvite has been sent";
       // this.server.to(recipient.Socket).emit('message', message);
@@ -296,11 +299,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         this.server.to(client.id).emit("pendingqueue", queue);
         // console.log("NOTIFICATIONS ===== ", notif);
       }
-    }
+  }
   
     @SubscribeMessage('AcceptInvite')
     async accept(@MessageBody() data: {userid:Number, receiver:string}, @ConnectedSocket() client: Socket)
     {
+      try
+      {
       console.log("========================================", data.receiver)
       if (data.userid != 0) {
         const receiver = await this.userservice.findByName(data.receiver);
@@ -317,5 +322,23 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           await this.connectPlayers({p1: queue.sender.username as string, p2: queue.receiver.username as string})
           await this.gameservice.DeleteQueue(queue.id);
         }
+      }    catch(error)
+      {
+        console.error('Error accepting invite: ', error.message);
+        throw error;  
       }
+    }
+
+    @SubscribeMessage('getLeaderboard')
+    async getlead(@ConnectedSocket() client: Socket, @MessageBody() data: {userID:Number})
+    {
+      try{
+        const users = await this.gameservice.getUsersForLeaderboard(data.userID);
+        this.server.to(client.id).emit("leaderboard", users);
+      }    catch(error)
+      {
+        console.error('Error getting all the users for the leaderboard: ', error.message);
+        throw error;  
+      }
+    }
 }

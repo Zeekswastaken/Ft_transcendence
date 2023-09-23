@@ -20,7 +20,7 @@ export default class Ball {
         this.radius = p5.width / 30;
         this.x = p5.width / 2;
         this.y = p5.height / 2;
-        this.speed = 2;
+        this.speed = 1;
         this.vX = 5;
         this.vY = 5;
         this.direction = 1;
@@ -88,14 +88,14 @@ export default class Ball {
     {
         this.x = p5.width / 2;
         this.y = p5.height / 2;
-        this.speed = 2;
+        this.speed = 1;
         this.vX = 5;
         this.direction++;
         if(!(this.direction % 2)) {
             this.vX = -this.vX;
         }
         this.vY = -5;
-        this.deltaSpeed += 0.1;
+        this.deltaSpeed += 0.01;
     }
 
     collision(p5: P5CanvasInstance, player: Paddel)
