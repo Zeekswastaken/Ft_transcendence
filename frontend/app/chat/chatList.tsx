@@ -15,7 +15,7 @@ function chatList({userFriends, userGroups}:any)
 {
   const {setMyBoolean , myBoolean} = useMyStore();
   return (
-    <div className={` w-[500px] h-[90%]  max-w-md px-2  p-1 m-4 glass ${myBoolean ? "max-md:hidden" : "max-md:w-full"}`}>
+    <div className={` w-[500px] h-[90%]  max-w-md px-2  p-1 m-4 glass ${myBoolean ? "max-lg:hidden" : "max-lg:w-full"}`}>
       <Tab.Group>
         <Tab.List className="flex space-x-1 rounded-xl bg-primary-purple-400 p-1">
             <Tab

@@ -12,7 +12,10 @@ const messageGroups = ({messages}:messageElements) => {
   if (!messages || !messages.user || !messages.user.id || !messages.message) {
     return null;
   }
-  console.log(messages.isBlocked);
+  if (messages.isBlocked)
+    console.log("he is blocked{}{}{}{}{")
+  console.log(messages);
+  console.log(currUserData);
   return ( 
     messages.user.id != currUserData.id ? (
       !messages.isBlocked ? (
