@@ -20,14 +20,14 @@ const page = () => {
   const router = useRouter()
   const {socket} = useSocketContext();
 
-  useEffect(() => {
-    socket?.on("isjoined", (data:any) => {
-      if (data === true){
-        console.log("++++++++++++++++++++++++++++++++");
-        router.refresh();
-      }
-    })
-  }, [socket]);
+  // useEffect(() => {
+  //   socket?.on("isjoined", (data:any) => {
+  //     if (data === true){
+  //       console.log("++++++++++++++++++++++++++++++++");
+  //       router.refresh();
+  //     }
+  //   })
+  // }, [socket]);
   useEffect(() => {
     setMyBoolean(false);
     const token = getCookie("accessToken");
@@ -55,11 +55,11 @@ const page = () => {
   }, [currentUserID]);
 
   useEffect(() => {
-    socket?.on
     socket?.on("getfriendswithchannels", (data:any) => {
       setUserFriends(data);
     })
     socket?.on("getchannelsjoined", (data:any) => {
+      console.log(data);
       setUserGroups(data);
     })
   },[currentUsername])

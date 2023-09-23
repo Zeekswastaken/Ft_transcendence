@@ -18,6 +18,8 @@ export class BlockedService {
     async create(userID: Number, blockedID: Number) {
       // console.log("USERID ______ ", userID);
       // console.log("blockedID ______ ", blockedID);
+      if (userID == blockedID)
+        throw new HttpException("User is trying to block himself", HttpStatus.FORBIDDEN);
       const user = await this.userRepository.findOne({ where: { id: Equal(userID) }, relations: ['blockedUsers', 'blockingUsers'] });
       const bluuck = await this.userRepository.findOne({ where: { id: Equal(blockedID) }, relations: ['blockedUsers', 'blockingUsers'] });
       // console.log("USER= ==== ", user);
@@ -47,7 +49,7 @@ export class BlockedService {
   }
 
   async unblock(userid: Number, recipientid: Number) {
-    // console.log(userid, " ========= ", recipientid);
+    console.log(userid, " ========= ", recipientid);
     const user = await this.userRepository.findOne({where:{id:Equal(userid)}, relations: ['blockedUsers', 'blockingUsers']});
     const blocked = await this.userRepository.findOne({where:{id:Equal(recipientid)}, relations: ['blockedUsers', 'blockingUsers']});
     if (!user || !blocked)

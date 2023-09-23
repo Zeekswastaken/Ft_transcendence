@@ -183,7 +183,7 @@ export class ChannelService {
 
     async joinChannel(channelID: Number, userID: Number, Pass: String): Promise<boolean | string>
     {
-        // console.log("-88888-------> ", userID);
+         console.log("-88888-------> ", userID, "==========> ", channelID);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
         if (!channel || !user)
@@ -206,10 +206,10 @@ export class ChannelService {
             throw new HttpException("The User is already in the chat", HttpStatus.FORBIDDEN);
         if (channel.Type == "protected")
         {
-            // console.log("TYPE IS PROTECTED")
+            console.log("TYPE IS PROTECTED==============> ", Pass);
             if (!(await this.checkPassword(channelID, Pass)))
             {
-                // console.log("HEEEERRU");
+                console.log("HEEEERRU");
                 return false;
             }
         }
@@ -270,13 +270,14 @@ export class ChannelService {
 
     async muteUser(channelID: Number, userID: Number,initiatorID: Number ,amount: number): Promise<ChannelMembership>
     {
+        console.log("CHECKING IN MUUUUURE ======", userID, "]]]]]]]]]]]]]]]]]]]]]]]]]]",initiatorID );
         const channel = await this.channelRepository.findOne({where: {id: Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
         const userinit = await this.userRepository.findOne({where: {id: Equal(initiatorID)}});
         if (!channel || !user || !userinit)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
         console.log("----------->INITIATOR ===== ", initiatorID);
-        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member'}});
+        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member', Channelid:Equal(channelID)}});
         if (user2)
         {
             console.log("===============>USER IN MUTE", user2);
@@ -318,7 +319,7 @@ export class ChannelService {
         if (!channel || !user)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
         
-        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member'}});
+        const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member', Channelid:Equal(channelID)}});
         if (user2)
             throw new HttpException("This User doesn't have the rights to perform this action", HttpStatus.FORBIDDEN);
 
@@ -423,6 +424,7 @@ console.log("==================================================");
           const channel = await this.channelRepository.findOne({where: { id: Equal(channelID)}});
       
           if (!channel) {
+            console.log("HEEEEEEEERUUUUU2222222");
             return false; // Channel with the specified ID not found
           }
       

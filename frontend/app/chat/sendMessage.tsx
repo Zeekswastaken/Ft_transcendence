@@ -8,20 +8,18 @@ import { useSocketContext } from '../socket';
 import initialContent, { Content } from "./content";
 import { useMyStore } from "./state";
 import { current } from "@reduxjs/toolkit";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/router';
 
 
-// interface addContentProps {
-//   addContent: (newContent: initialContent) => void;
-// }
+interface addContentProps {
+  addContent: (newContent: initialContent) => void;
+}
 
-const sendMessage = () => {
+const sendMessage = ({ addContent }: addContentProps) => {
 
   const {muted, tempo, setTempo, token, userData, setMessage,getChat, setGetChat, currUserData, setUpdateChat, updateChat, setNotification, setChanelType, chanelType} = useMyStore();
   const {socket} = useSocketContext();
   const [value, setValue] = useState("");
-  const router = useRouter();
-
 
   const submitSendMessage = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -35,19 +33,19 @@ const sendMessage = () => {
 
         const receiver = userData.user.username;
         const channelid = userData.channelid;
-        socket?.emit("Duo",  {token, message:value, receiver, channelid});;
+        socket?.emit("Duo",  {token, message:value, receiver, channelid});
         const message = {text:value, Created_at:"15:15" };
         const obj = {user:currUserData, message, channelid};
-        setTempo([...tempo, obj]);
+        setUpdateChat(obj);
         socket?.emit("obj", {obj, receiver});
       }
       else{
 
         const channelid = userData.id;
-          const message = {text:value, Created_at:"15:15" };
-          const obj = {user:currUserData, message, channelid};
-          setTempo([...tempo, obj]);
-          socket?.emit("ToRoom", {Token:token, message:value, channelid});
+        const message = {text:value, Created_at:"15:15" };
+        const obj = {user:currUserData, message, channelid};
+        setUpdateChat(obj);
+        socket?.emit("ToRoom", {Token:token, message:value, channelid});
       }
       setValue("");
     }
@@ -56,29 +54,40 @@ const sendMessage = () => {
   const handlSendMessage = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.keyCode == 13 && e.shiftKey == false) {
       e.preventDefault();
+      // console.log(chanelType);
       if (value.trim() != "") {
+        // const newContent: initialContent = {
+        //   id: Math.floor(Math.random() * 1000000),
+        //   text: value,
+        // };
+        // addContent(newContent);
         if (!chanelType){
 
-        const receiver = userData.user.username;
-        const channelid = userData.channelid;
-        socket?.emit("Duo",  {token, message:value, receiver, channelid});;
-        const message = {text:value, Created_at:"15:15" };
-        const obj = {user:currUserData, message, channelid};
-        setTempo([...tempo, obj]);
-        socket?.emit("obj", {obj, receiver});
+          const receiver = userData.user.username;
+          const channelid = userData.channelid;
+          socket?.emit("Duo",  {token, message:value, receiver, channelid});
+          const message = {text:value, Created_at:"15:15" };
+          const obj = {user:currUserData, message, channelid};
+          setUpdateChat(obj);
+          socket?.emit("obj", {obj, receiver});
         }
         else{
+          // const router = useRouter();
+          // router.reload()
+          // setUpdateChat([]);
           const channelid = userData.id;
           const message = {text:value, Created_at:"15:15" };
           const obj = {user:currUserData, message, channelid};
-          setTempo([...tempo, obj]);
+          console.log(obj);
+          setUpdateChat(obj);
           socket?.emit("ToRoom", {Token:token, message:value, channelid});
         }
         setValue("");
       }
     }
   };
-  
+
+
   // useEffect(() => {
   //   console.log("it works twice");
   //   socket?.on("OBJ", (data:any) => {
