@@ -230,7 +230,7 @@ useEffect(() => {
                         <img
                           src={avatar}
                           alt="avatar"
-                          className=" whandleAddFriend-full h-full rounded-full"
+                          className=" w-full h-full rounded-full"
                         />
                         <div className={` mt-[120px] absolute place-content-center items-center w-[70px] h-[30px] ${statusStyle} flex  pt-1 rounded-[26px]`}>
                           <p className=" text-white/[0.9] tracking-wide font-Bomb ">{Status}</p>

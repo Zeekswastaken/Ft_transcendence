@@ -70,9 +70,14 @@ export class UserService {
          stats.wins = 0;
          stats.losses = 0;
          stats.level = 0;
+         stats.score = 0;
          stats.matches_played = 0;
          stats.user = user;
         return await this.statsRepository.save(stats);
+    }
+    async findAll(): Promise<User[]>
+    {
+        return await this.userRepo.find({relations:['stats']});
     }
     //async update(Body:UserDto)
     //{

@@ -208,4 +208,5 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
       client.to(recuser.Socket).emit("OBJ",payload.obj as any);
       console.log("-------> PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP = ", recuser);
     }
+    
 }

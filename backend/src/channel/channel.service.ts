@@ -481,15 +481,18 @@ console.log("==================================================");
         return true;
     }
 
-    generateInvitationLink(channelID: number): string {
+    async generateInvitationLink(channelID: number, userid:Number): Promise<string> {
+    const user = this.channelMembershipRepository.find({where:{Userid:Equal(userid), Type:'owner'}});
+    if (!user)
+        throw new HttpException("This user doesn't have the right to perform this action", HttpStatus.FORBIDDEN);
     const timestamp = Date.now().toString();
     const randomData = Math.random().toString(36).substring(7);
     const token = `${channelID}-${timestamp}-${randomData}`;
 
     //Construct the full invitation link URL
-    const invitationLink = `https://localhost.com:3001/join-channel?token=${token}`;
+    // const invitationLink = `localhost:3001/join-channel?token=${token}`;
 
-    return invitationLink;
+    return token;
   }
 
   async getChannelsJoined(userid : Number): Promise<Channel[]>

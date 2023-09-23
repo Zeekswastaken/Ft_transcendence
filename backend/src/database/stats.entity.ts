@@ -16,6 +16,8 @@ export class Stats{
     level:number;
     @Column({type:"float", nullable:true})
     winrate:Number;
+    @Column({nullable:true})
+    score:number;
     // @Column()
     // Achievement;
     @OneToOne(() => User, user => user.stats, { cascade: true, eager: true, onDelete: 'CASCADE' })

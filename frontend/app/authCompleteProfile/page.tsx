@@ -36,7 +36,7 @@ const completProfile = () => {
     formData.append("file", avatar.current as File);
     formData.append("birthDay", birthDay as unknown as string);
     formData.append("gender", gender );
-    formData.append("id", currentUserID as Number);
+    formData.append("id", currentUserID as any);
     formData.append("ischange", ischange as any)
 
     if (username === "") {
@@ -45,7 +45,7 @@ const completProfile = () => {
     }
     e.preventDefault();
     await axios.put("http://localhost:3000/upload/update", formData, {headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "multipart/form-data"
     }}).then(res => {
       deleteCookie("accessToken")
       if (res.data == "invalid") {
