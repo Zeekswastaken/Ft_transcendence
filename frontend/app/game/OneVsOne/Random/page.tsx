@@ -76,7 +76,7 @@ const page = () => {
     }, []);
 
     return (
-        opponent ? gameOver ? celebrate ? <Winning user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username!, avatar_url: opponent?.avatar_url!}} playerScore={p1Score} bootScore={p2Score}></Winning>
+        gameOver ? celebrate ? <Winning user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username!, avatar_url: opponent?.avatar_url!}} playerScore={p1Score} bootScore={p2Score}></Winning>
                  :             <Losing user={{username: "YOU", avatar_url:user?.avatar_url}} bot={{username:opponent?.username!, avatar_url:opponent?.avatar_url!}} playerScore={p1Score} bootScore={p2Score}></Losing>
         :<div className=' text-3xl text-white pt-[150px]  max-w-[1400px]  rounded-[20px]   w-full h-screen '>
             <div className=' glass mx-3 w-auto rounded-[20px] grid place-content-center border-[2px] border-[#FF1382] p-3 min-w-[350px]' >
@@ -111,7 +111,7 @@ const page = () => {
                     </div>
                 </div>
             </div>
-        </div> : <GameOponent />
+        </div>
     );
 }
 export default page;

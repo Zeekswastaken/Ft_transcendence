@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  frontend:
-    container_name: frontend
-    build: ./frontend/
+  frontend-backend:
+    container_name: FronBack
+    build: ./
     restart: always
     networks:
       - PingPong
@@ -11,20 +11,21 @@ services:
     #   - ./.env
     ports:
       - 3001:3001
-    depends_on:
-      - backend
-  backend:
-    container_name: backend
-    build: ./backend/
-    restart: always
-    networks:
-      - PingPong
-    # env_file:
-    #   - ./.env
+      - 3000:3000
     depends_on:
       - my-postgres
-    ports:
-      - 3000:3000
+  # backend:
+  #   container_name: backend
+  #   build: ./backend/
+  #   restart: always
+  #   networks:
+  #     - PingPong
+  #   # env_file:
+  #   #   - ./.env
+  #   depends_on:
+  #     - my-postgres
+  #   ports:
+  #     - 3000:3000
   my-postgres:
     image: postgres:latest
     restart: always
