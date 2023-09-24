@@ -16,7 +16,7 @@ import { ChannelController } from './channel.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Channel, ChannelMembership, User, Stats]),JwtModule.register({
-    secret:"0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6", 
+    secret:process.env.JWT_SECRET, 
     signOptions: { expiresIn: '1h' }, 
   }), ],
   exports: [TypeOrmModule],

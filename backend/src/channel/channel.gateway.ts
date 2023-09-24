@@ -40,10 +40,10 @@ export class ChannelGateway {
   {
     try{
     const bool = await this.channelService.changePass(data.channelID, data.userID, data.Pass);
-    if (bool)
+    if (typeof bool == 'object')
       client.to(data.channelID.toString()).emit("isPass", true);
     else
-      client.to(data.channelID.toString()).emit("isPass", false);
+      client.to(data.channelID.toString()).emit("isPass", bool);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
       this.server.to(client.id).emit("isjoined", false);

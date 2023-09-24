@@ -41,7 +41,7 @@ export class ChannelService {
         channel.Type = data.type;
         if (file)
             channel.avatar = '/avatars/' +file.filename as String;
-        // channel.avatar = 'http://localhost:3000/src/uploads/' + avatar;
+        // channel.avatar = '`http://${process.env.HOST}:${process.env.PORT}/src/uploads/' + avatar;
         // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
         if (checkChannel)
@@ -102,7 +102,7 @@ export class ChannelService {
     {
         return await this.channelRepository.findOne({where:{ id: Equal(channelID)}});
     }
-    async changePass(ChannelID : Number, initiatorID : Number, newPass : String)
+    async changePass(ChannelID : Number, initiatorID : Number, newPass : String) : Promise<Channel | string>
     {
         const initiator = await this.userRepository.find({where: {id:Equal(initiatorID)}});
         const channel = await this.channelRepository.findOne({ where: { id: Equal(ChannelID) } });
@@ -114,7 +114,10 @@ export class ChannelService {
             , Type: 'admin'}});
         if (!membership)
             throw new HttpException("User doesn't have the right to perform this action",HttpStatus.FORBIDDEN);
-        const hashedPass = await this.hashPassword(newPass);
+            const checkPass = checkPasswordStrength(newPass)
+            if (checkPass === 'Weak')
+                return "Password not strong enough";
+            const hashedPass = await this.hashPassword(newPass);
         channel.Password = hashedPass;
         return await this.channelRepository.save(channel);
     }

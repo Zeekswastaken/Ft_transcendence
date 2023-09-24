@@ -5,7 +5,6 @@ import GroupList from "./groupList";
 import { useMyStore } from "./state";
 import { useSocketContext } from '../socket';
 import { useRouter } from "next/navigation";
-import 'alpinejs';
 
 
 
