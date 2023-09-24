@@ -337,13 +337,13 @@ useEffect(() => {
                                 title="Friends"
                               />
                             </Link>
-                            <Link href={`/users/${User}/groups`}>
+                            {/* <Link href={`/users/${User}/groups`}>
                               <ProfileTabs
                                 link={`/users/${User}/groups`}
                                 styles=""
                                 title="Channels"
                               />
-                            </Link>
+                            </Link> */}
                           </div>
                         </div>
                       )}

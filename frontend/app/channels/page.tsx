@@ -67,7 +67,7 @@ const token = getCookie("accessToken");
   interface GroupInfoStatesProps {
     channel: {
       Name: string;
-      Image: string;
+      avatar: string;
       Members: number;
       Type: string;
       Password:string;

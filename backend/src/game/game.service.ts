@@ -188,16 +188,21 @@ export class GameService {
         return queue;
     }
 
-    async getUsersForLeaderboard(userid:Number) : Promise<{Topten:User[] , UserPos:User}>
+    async getUsersForLeaderboard(userid:Number) : Promise<{Topthree:User[] ,Rest:User[], User:User, Pos:number}>
     {
+      if (userid)
+      {
       const user = await this.userservice.findById(userid);
       const users = await this.userservice.findAll();
       // console.log("CURRENT USERS ======== ",user, "OTHER USERRS ======= ", users);
       if (!users || !user)
           throw new HttpException("Users not found", HttpStatus.NOT_FOUND);
       users.sort((a,b) => b.stats.score - a.stats.score);
-      const topTenUsers = users.slice(0, 10);
-      
-      return {Topten:topTenUsers, UserPos:user};
+      const ind = users.findIndex(User => User.id === user.id);
+      const topThreeUsers = users.slice(0, 3);
+      const Rest = users.slice(3,10);
+      return {Topthree:topThreeUsers, Rest:Rest, User:user, Pos:ind+1};
+      }
+      return null;
     }
 }

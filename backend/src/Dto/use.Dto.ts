@@ -65,10 +65,10 @@ export  class update{
     username:String;
     password:String;
     Bio:String;
-    privacy:Boolean;
-    constructor(){
-        this.privacy = true;
-    }
+    privacy:String;
+    // constructor(){
+    //     this.privacy = true;
+    // }
 }
 // export class UserDtosave {
 //     username:String;

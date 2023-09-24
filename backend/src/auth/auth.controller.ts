@@ -109,10 +109,10 @@ export class googleController{
             //httpOnly: true,
               });
               
-            res.redirect("http://localhost:3001/authCompleteProfile");
+            res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/authCompleteProfile`);
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
             // console.log('coockie token = '+ cookie_token);
-            //res.status(200).redirect("http://localhost:3001/");
+            //res.status(200).redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/");
             return {
                 status:200,
                 token : cookie_token,
@@ -129,7 +129,7 @@ export class googleController{
                 res.cookie('accessToken', cookie_token, {
                     // httpOnly: true
                   });
-                res.redirect("http://localhost:3001/authCompleteProfile");
+                res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/authCompleteProfile`);
                 return;
             }
             res.cookie('accessToken', cookie_token, {
@@ -138,14 +138,14 @@ export class googleController{
             if (usertoken.twofactorenabled == true)
             {
                 res.cookie('accessToken', cookie_token);
-                res.redirect("http://localhost:3001/login/2fa");
+                res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/login/2fa`);
                 return;
             }
-            res.redirect("http://localhost:3001/");
+            res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/`);
             // console.log('coockie token = '+ cookie_token + "\n\n\n\n");
 
             //res.sendFile('/Users/orbiay/Desktop/Ft_Transcendance/Model/views/home.html');
-            //res.status(200).redirect("http://localhost:3001/");
+            //res.status(200).redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/");
             return{
                 status:200,
                 token: cookie_token,
@@ -208,6 +208,7 @@ export class fortytwo_Controller{
     @UseGuards(AuthGuard('42'))
     async fortytwo_loginredirect(@Req() req, @Res() res ){
         // console.log("CallBack");
+        console.log("==============================================================>", process.env.HOST, "=======", process.env.PORT);
         const user = await req.user;
         const newUser = await this.authservice.create_Oauth(user);
         // console.log("New User = "+ newUser);
@@ -219,8 +220,8 @@ export class fortytwo_Controller{
                 // httpOnly: true,
               });
               
-              //res.redirect("http://localhost:3001/");
-              res.redirect("http://localhost:3001/authCompleteProfile");
+              //res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/");
+              res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/authCompleteProfile`);
             const user_data = {token: cookie_token,
                 user:newUser,
                 message:'success'}
@@ -235,7 +236,7 @@ export class fortytwo_Controller{
                 res.cookie('accessToken', cookie_token, {
                     // httpOnly: true
                   });
-                res.redirect("http://localhost:3001/authCompleteProfile");
+                res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/authCompleteProfile`);
                 return;
             }
             if (usertoken.twofactorenabled == true)
@@ -243,7 +244,7 @@ export class fortytwo_Controller{
                 res.cookie('accessToken', cookie_token, {
                     // httpOnly: true
                   });
-                res.redirect("http://localhost:3001/login/2fa");
+                res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/login/2fa`);
                 return;
             }
             // console.log(usertoken);
@@ -255,8 +256,8 @@ export class fortytwo_Controller{
             //res.status(201);
             //res.setHeader('Authorization', `Bearer ${cookie_token}`);
             //res.sendFile('/Users/orbiay/Desktop/App2/app/views/home.html');
-            //res.redirect("http://localhost:3001/");
-            res.redirect("http://localhost:3001/");
+            //res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/");
+            res.redirect(`http://${process.env.HOST}:${process.env.FRONT_PORT}/`);
             const user_data = {token: cookie_token,
                 user:usertoken,
                 message:'user already exist'}

@@ -75,6 +75,7 @@ const CreatGroup = () =>
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
         setGroup(!group);
     }
+    
     return (
         <div className='rounded-xl bg-[#670647]/[0.4] items-center place-content-center mt-20 px-5 sm:px-[3rem] py-[3rem] mb-[100px]'>
             <form  encType="multipart/form-data">

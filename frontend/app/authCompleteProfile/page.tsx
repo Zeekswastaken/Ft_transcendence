@@ -31,14 +31,6 @@ const completProfile = () => {
   const [invalidUsername, setInvalidUsername] = useState(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const ischange = true
-    const formData = new FormData();
-
-    formData.append("file", avatar.current as File);
-    formData.append("birthDay", birthDay as unknown as string);
-    formData.append("gender", gender );
-    formData.append("id", currentUserID as any);
-    formData.append("ischange", ischange as any)
     const usernameRegex = /^[A-Za-z0-9_-]+$/;
     const isValidUsername = usernameRegex.test(username);
     if (!isValidUsername || username.length > 10 || username.length === 0) {
@@ -47,6 +39,15 @@ const completProfile = () => {
       setInvalidUsername(true)
     }
     else {
+      const ischange = true
+      const formData = new FormData();
+  
+      formData.append("file", avatar.current as File);
+      formData.append("birthDay", birthDay as unknown as string);
+      formData.append("gender", gender );
+      formData.append("id", currentUserID as any);
+      formData.append("ischange", ischange as any);
+      formData.append("username", username);
       await axios.put("http://localhost:3000/upload/update", formData, {headers: {
         "Content-Type": "multipart/form-data"
       }}).then(res => {

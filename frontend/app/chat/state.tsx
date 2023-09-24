@@ -10,7 +10,6 @@ export  interface MyStore {
     updateChat:any;
     tempo:any[];
     chanelType:boolean;
-    notification:any;
     chatMembers:any[];
     muted:any;
     baned:any;
@@ -25,7 +24,6 @@ export  interface MyStore {
     setUpdateChat: (data: any) => void;
     setTempo: (data: any[]) => void;
     setChanelType: (value: boolean) => void;
-    setNotification: (value: any) => void;
     setChatMembers: (value: any) => void;
     setMuted: (value: any) => void;
     setBaned: (value: any) => void;
@@ -43,7 +41,6 @@ export  interface MyStore {
     updateChat:[],
     tempo:[],
     chanelType:false,
-    notification:[],
     chatMembers:[],
     muted:[],
     baned:[],
@@ -58,7 +55,6 @@ export  interface MyStore {
     setUpdateChat: (data:any) => set({ updateChat: data }),
     setTempo: (data) => set({ tempo: data }),
     setChanelType: (value: boolean) => set({ chanelType: value }),
-    setNotification: (value: any) => set({ notification: value }),
     setChatMembers: (data) => set({ chatMembers: data }),
     setMuted: (value: any) => set({ muted: value }),
     setBaned: (value: any) => set({ baned: value }),

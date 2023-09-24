@@ -149,7 +149,7 @@ const GroupInfos = ({Name, Image, Members, Type, Id, Joined}: GroupsStateprops) 
             })
         }
         
-        console.log("heeeeer")
+        console.log("heeeeer = ", Image)
         return (
         <div className='rounded-xl h-[100px]  sm:h-[110px] bg-[#2F033180] px-[3%] sm:mx-10 flex justify-between items-center mb-[20px] min-w-[350px]'>
            <div className='flex space-x-2'>

@@ -79,6 +79,9 @@ const page = () => {
   const token = getCookie("accessToken");
   const [currentUsername ,setCurrentUsername] = useState("");
   const [currentUserid, setCurrentUserid] = useState("");
+  const [currentUserPos, setCurrentUserPos] = useState();
+  const [topThree, setTopThree] = useState<Array<any>>([]);
+  const [rest, setRest] = useState<Array<any>>([]);
   const {socket} = useSocketContext();
   useEffect(() => {
     try {
@@ -96,11 +99,15 @@ const page = () => {
     if (currentUserid !== undefined) {
       socket?.emit("getLeaderboard", {userID: currentUserid})
       socket?.on("leaderboard", (data:any) => {
+        if (data)
+          setTopThree(data.Topthree);
+          setRest(data?.Rest);
+          setCurrentUserPos(data?.Pos)
         console.log("leaderBoard = ", data);
       })
     }
   },[currentUserid])
-
+  console.log(" kkkkk = ", topThree)
   return (
     <div className=" flex place-content-center items-center w-full h-screen max-w-[1300px] min-w-[350px] ">
         <div className=" pt-[150px] pb-10 place-content-center w-full mx-1 h-full  ">
@@ -108,9 +115,9 @@ const page = () => {
             
             
             <div className=" grid grid-cols-1 lg:grid-cols-3 gap-y-10 lg:space-y-0 lg:mx-0 sm:mx-36 mx-5 space-y-4 lg:gap-8 items-center place-content-center p-2 sm:p-5 lg:p-10 ">
-              <LeadersCard tagStyle="bg-[#C0C0C0]" name="Francisco" level="15" matches="401" score="7 000" image="/Spectate.png" styles="lg:pt-20 pt-0 lg:order-1 order-2" />
-              <LeadersCard tagStyle="bg-[#FFD700]" name="Theresa" level="15" matches="435" score="10 000" image="/theresa.jpeg" styles="lg:order-2 order-1" />
-              <LeadersCard tagStyle="bg-[#B08D57]" name="Bernard" level="14" matches="365" score="4 300" image="/robot.jpg" styles="lg:pt-32 pt-0 lg:order-3 order-3" />
+              <LeadersCard tagStyle="bg-[#C0C0C0]" name={topThree[1]?.username} level={Math.floor(topThree[1]?.stats?.level)+""} matches={topThree[1]?.stats?.matches_played} score={topThree[1]?.stats?.score} image={topThree[1]?.avatar_url} styles="lg:pt-20 pt-0 lg:order-1 order-2" />
+              <LeadersCard tagStyle="bg-[#FFD700]" name={topThree[0]?.username} level={Math.floor(topThree[0]?.stats?.level)+""} matches={topThree[0]?.stats?.matches_played} score={topThree[0]?.stats?.score} image={topThree[0]?.avatar_url} styles="lg:order-2 order-1" />
+              <LeadersCard tagStyle="bg-[#B08D57]" name={topThree[2]?.username} level={Math.floor(topThree[2]?.stats?.level)+""} matches={topThree[2]?.stats?.matches_played} score={topThree[2]?.stats?.score} image={topThree[2]?.avatar_url} styles="lg:pt-32 pt-0 lg:order-3 order-3" />
             </div>
               
             <div className="mt-16 lg:mx-20 mx-5">
@@ -122,13 +129,22 @@ const page = () => {
                   <p className=" mx-1">score</p>
                 </div>
                 <div className=" space-y-[2px]">
-                  <LeadersTable styles="" place="4" username="soham" matches="311" level="14" score="3934" />
+                  {rest?.map((player:any, id) => {
+                    let style = ""
+                    if (currentUsername === player.username && (id + 4) === currentUserPos) {
+                      style = "bg-primary-pink-300/[0.6]"
+                    }
+                    return <LeadersTable key={id} styles={style} place={"" + (id + 4)} username={player.username} matches={player?.stats?.matches_played} level={Math.floor(player?.stats.level) + ""} score={player.stats.score}/>
+                  })
+
+                  }
+                  {/* <LeadersTable styles="" place="4" username="soham" matches="311" level="14" score="3934" />
                   <LeadersTable styles="" place="5" username="Hawkins" matches="286" level="13" score="3934" />
                   <LeadersTable styles="" place="6" username="lane" matches="225" level="12" score="3934" />
                   <LeadersTable styles="" place="7" username="Priscilla" matches="201" level="12" score="3934" />
                   <LeadersTable styles="" place="8" username="Esther" matches="185" level="12" score="3934" />
                   <LeadersTable styles="" place="9" username="Aubrey" matches="179" level="11" score="3934" />
-                  <LeadersTable styles="bg-primary-pink-300/[0.6]" place="10" username={currentUsername} matches="245" level="13" score="3934" />
+                  <LeadersTable styles="bg-primary-pink-300/[0.6]" place="10" username={currentUsername} matches="245" level="13" score="3934" /> */}
                 </div>
             </div>
           </div>

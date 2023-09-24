@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   frontend-backend:
-    container_name: FronBack
+    container_name: FrontBack
     build: ./
     restart: always
     networks:
@@ -14,6 +14,8 @@ services:
       - 3000:3000
     depends_on:
       - my-postgres
+    env_file:
+      - .env
   # backend:
   #   container_name: backend
   #   build: ./backend/

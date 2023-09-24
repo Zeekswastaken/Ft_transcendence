@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 interface GroupInfoStatesProps {
     channel: {
         Name: string;
-        Image: string;
+        avatar: string;
         Members: number;
         Type: string;
         Password:string;
@@ -67,14 +67,14 @@ const FindGroup = ({groupsInfos, search}: GroupInfosStatesProps) => {
         <div className=' rounded-xl max-h-[700px] bg-[#670647]/[0.4] px-1 sm:px-5 pt-[3rem] overflow-auto no-scrollbar sm:mt-10 mt-3'>               
             <div>
                     <form>
-                        <div className=' rounded-xl h-[80px] flex px-5 justify-between place-content-center items-center mb-[1rem] bg-[#670647]/[0.8]'>
+                        <div className=' rounded-xl h-[80px] flex px-1 justify-between place-content-center items-center mb-[1rem] bg-[#670647]/[0.8]'>
                             <h1 className=' pt-1 font-Bomb text-white'>private channel Link</h1>
                             <div className=' flex space-x-5'>
                                 <div>
-                                    <input onChange={e => {setLink(e.target.value)}} value={link} placeholder='Enter Channel Link' type="text" className=' w-[160px] sm:w-[400px] rounded-lg outline-none focus:outline bg-[#532051]  text-center placeholder:font-Heading font-bold text-white h-14 px-10  placeholder:text-gray-400' name="" id="" />
+                                    <input onChange={e => {setLink(e.target.value)}} value={link} placeholder='Enter Channel Link' type="text" className=' w-[160px] md:w-[400px] rounded-lg outline-none focus:outline bg-[#532051]  text-center placeholder:font-Heading font-bold text-white h-14 px-10  placeholder:text-gray-400' name="" id="" />
                                     {invalidLink && <p className="text-red-500 text-xs pt-1 text-left">{invalidLink}</p>}
                                 </div>
-                                <button onClick={handleSubmit} className='  text-[1rem] text-white bg-[#532051] px-3 pt-1 opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Bomb drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[2px]'>submit</button>
+                                <button onClick={handleSubmit} className='  text-base text-white bg-[#532051] px-3  opacity-75 hover:opacity-100 duration-300 rounded-[25px] font-Bomb drop-shadow-[0_5px_5px_rgba(0,0,0,1)] tracking-[2px]'>submit</button>
                             </div>
                         </div>
                     </form>
@@ -91,7 +91,7 @@ const FindGroup = ({groupsInfos, search}: GroupInfosStatesProps) => {
                                     Id={group.channel.id}
                                     Name={group.channel.Name} 
                                     Password={group.channel.Password}
-                                    Image={group.channel.Image} 
+                                    Image={group.channel.avatar} 
                                     Members={group.channel.Members} 
                                     Type={group.channel.Type}
                                     Joined={group.joined}

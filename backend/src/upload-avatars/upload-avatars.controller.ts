@@ -40,7 +40,9 @@ export class UploadAvatarsController {
   
     async uploadFile(@UploadedFile() file: Express.Multer.File,@Body() Body,@Res() res) {
         console.log("Boduuuuuuuuuuuu =     >>>>   ",Body);
-        // if(file)
+        if (Body.id)
+        {
+          // if(file)
           // console.log("Fileeeeeeeeeeeeeeeeeeeeee = ",Body.file);
         // const decode = await this.jwttoken.decoded(Body.cookie);
         var user = await this.userservice.findById(Body.id);
@@ -67,9 +69,8 @@ export class UploadAvatarsController {
                 Body.avatar_url = user.avatar_url;
             if (!Body.Bio)
                 Body.Bio = user.Bio;
-            if (Body.privacy == null)
-                Body.privacy = user.privacy;
-            
+            if (Body.pr === null)
+                delete Body.privacy;
         // console.log("TWPFA == ",Body.twofactorenabled);
         // console.log("Bodyyyyyyyy",Body);
         Body.ischange = true;
@@ -81,8 +82,15 @@ export class UploadAvatarsController {
         // console.log("->>>>>>>>>>>>>>>>>>>>>>>>>",file.path);
         if (!file)
           delete Body.file;
+        if (Body.pr == 'public')
+            Body.privacy = true;
+        else if (Body.pr == 'private')
+          Body.privacy = false;
+        delete Body.pr;
+      console.log("before update ====================== >",Body);
         await this.userservice.update(Body,user.id as number);
         const after = await this.userservice.findById(user.id);
+        console.log("after update -======== > ",after);
         // console.log("Body == ",Body);
         // console.log("file  ==",file);
         // console.log("user after == ", after);
@@ -93,5 +101,8 @@ export class UploadAvatarsController {
       }
       else
         res.send('invalid Token');
+    }
+    else
+      res.send('invalid id');
   }
 }

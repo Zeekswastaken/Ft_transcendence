@@ -14,11 +14,11 @@ import { ChannelMembership } from "../database/channelMembership.entity";
 
 const config = {
     type: 'postgres',
-    host: 'my-postgres', // Use the service name defined in your Docker Compose file
-    port: 5432,
-    username: 'admin',
-    password: 'pass',
-    database: 'mydb',
+    host: process.env.POSTGRES_HOST, // Use the service name defined in your Docker Compose file
+    port: parseInt(process.env.POSTGRES_PORT, 10),
+    username: process.env.POSTGRES_USERNAME,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
     entities: [Message, Channel, User, ChannelMembership, Stats, Match, GameInvite, BlockedUser, UserFriends, Achievements, Notification],
     logging: false,
     synchronize: true,
