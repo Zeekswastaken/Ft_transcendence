@@ -5,7 +5,9 @@ import { redirect } from 'next/navigation'
 import { useRouter } from "next/navigation";
 import React, { useState } from "react"
 import { FormEvent } from "react";
-
+const url1 = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/login`;
+const url2 = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/42`;
+const url3 = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/google`;
 const login = ({response}:any) => {
   
   const router = useRouter();
@@ -14,7 +16,8 @@ const login = ({response}:any) => {
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission behavior
-    await axios.post("http://localhost:3000/auth/login", {
+    console.log("====-======-===--->", url1);
+    await axios.post(url1, {
       password,
       username,
     }).then(res => {
@@ -42,8 +45,8 @@ const login = ({response}:any) => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  const link_42 = "http://localhost:3000/auth/42";
-  const link_google = "http://localhost:3000/auth/google"
+  const link_42 = url2;
+  const link_google = url3
 
   return (
     <div className=" grid place-items-center h-screen ">

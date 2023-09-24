@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { getCookie } from "cookies-next";
 import jwt,{ JwtPayload } from "jsonwebtoken";
 import axios from "axios";
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/profile/`;
 
 type TableDataFreind = {
 	avatar: string
@@ -18,7 +19,16 @@ type TableDataFreind = {
 
 
 const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
-	const onOrOffColor = status === "Online" ? "text-[#22C55E]" : "text-[#FF4747]";
+	// const onOrOffColor = status === "Online" ? "text-[#22C55E]" : "text-[#FF4747]";
+	let StatusColor;
+	if (status === "Online")
+		StatusColor =  "text-[#22C55E]";
+	else if (status === "Offline")
+		StatusColor = "text-[#FF4747]";
+	else
+		StatusColor = "text-[#63B3ED]";
+
+
 	return (
 		<Link href={`/users/${name}`}>
 		<ul className={` ${styles} hover:bg-primary-pink-200/[0.6] transition-all duration-500 hover:rounded-3xl hover:drop-shadow-2xl pt-4 lg:pt-6  divide-y divide-gray-200 dark:divide-gray-700 tracking-wider text-[24px] text-white font-bold`}>
@@ -30,7 +40,7 @@ const Friend = ( { avatar, name, status, styles} : TableDataFreind ) => {
 					<div className=" flex-1 min-w-0">
 						<p className="  duration-300 cursor-pointer truncat ">{name}</p>
 					</div>
-					<div className= {`inline-flex items-center font-Heading tracking-wider text-lg ${onOrOffColor}`}>
+					<div className= {`inline-flex items-center font-Heading tracking-wider text-lg ${StatusColor}`}>
 						{status}
 					</div>
 				</div>
@@ -62,7 +72,7 @@ const MatchHistory = () => {
 	},[])
 	useEffect(() => {
 		if (User) {
-			axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
+			axios.get(`${url}${User}`).then((res) =>{
 				if(res.data.message === "not-found"){
 				  setUser(undefined)
 				  return;

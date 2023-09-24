@@ -4,6 +4,8 @@ import axios from 'axios'
 import { deleteCookie, getCookie, setCookie } from "cookies-next";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useRouter } from "next/navigation";
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/verify`;
+const url2 = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/qr-code`;
 
 
 const page = () => {
@@ -19,7 +21,7 @@ const page = () => {
   const handleSubmit =  (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
      if (currentUserID != 0) {
-      axios.post("http://localhost:3000/auth/verify", {
+      axios.post(url, {
          QRCode,
          currentUserID
        }).then(res => {
@@ -46,7 +48,7 @@ const page = () => {
   }, [])
   useEffect(() => {
     if (currentUserID != 0) {
-      axios.post("http://localhost:3000/auth/qr-code", {
+      axios.post(url2, {
         currentUserID,
       }).then(res => {
         // if (res.data.qrCodeUri)

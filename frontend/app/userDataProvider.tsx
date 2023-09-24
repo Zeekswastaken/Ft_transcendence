@@ -7,7 +7,7 @@ import { getCookie } from "cookies-next";
 import jwt,{ JwtPayload } from "jsonwebtoken";
 import { useParams, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
 export type userData = {
   user: {
     id:number

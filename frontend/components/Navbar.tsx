@@ -12,6 +12,7 @@ import axios from "axios";
 import { deleteCookie, getCookie } from "cookies-next";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useSocketContext } from "@/app/socket";
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/profile/`;
 
 const MobileLinks = ( {pathname, toGo, value}:any) => {
 	return (
@@ -36,7 +37,7 @@ const Navbar = () => {
 		const [user, setUser] = useState<JwtPayload>()
 		
 		const token = getCookie("accessToken");
-		axios.post("http://localhost:3000", {
+		axios.post(url, {
 		token: token
 		}).then(res => {
 		if (res.data.status === "unauthorized")
@@ -72,7 +73,7 @@ const Navbar = () => {
 	
 		const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
 			e.preventDefault()
-			axios.get(`http://localhost:3000/profile/${searchForUser}`).then(res => {
+			axios.get(`${url}${searchForUser}`).then(res => {
 				if (res.data.message === "not-found") {
 					setUserNotFound("User Not Found")
 					return ;

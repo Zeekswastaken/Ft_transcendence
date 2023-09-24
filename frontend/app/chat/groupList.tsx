@@ -71,7 +71,7 @@ function groupList({ member }: members) {
   return (
     member.user.id != currUserData.id ? (
       <li className=" p-2 rounded-xl place-items-center">
-        <div className="relative h-[60px] flex-shrink-0 rounded-2xl bg-[#673E6A] space-x-4 max-sm:space-x-0 ">
+        <div className="relative h-[60px] flex-shrink-0 rounded-2xl bg-[#673E6A] space-x-4 max-sm:space-x-0 rounded-full">
           <img
             src={member.user.avatar_url}
             alt="pic"

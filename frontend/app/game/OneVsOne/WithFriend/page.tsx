@@ -16,7 +16,7 @@ const page = () => {
     const [gameId, setGameId] = useState<string>();
     const [opponentPos, setOpponentPos] = useState<number> ();
     const [ballCoordinates, setBallCoordinates] = useState<BallCoordinates> ();
-
+    const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
     let ball: BallCoordinates  = {
         x: 50,
         y: 50,
@@ -50,7 +50,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
+        const newSocket = io(url);
         setSocket(newSocket);
         newSocket.emit('setSocket', {token: token});
         newSocket.emit("Ready", {token: token});

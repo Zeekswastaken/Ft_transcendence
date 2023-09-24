@@ -2,7 +2,7 @@
 import { getCookie } from 'cookies-next';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
 // Create a context for the Socket
 const socketContext = createContext<any | undefined>(undefined);
 
@@ -22,9 +22,10 @@ export function SocketProvider({ children }: SocketProviderProps) {
   //   setSocket(newSocket);
   // };
   useEffect(() => {
+
     // Only create a new socket if it hasn't been created yet
     if (!socket) {
-      const newSocket = io("http://localhost:3000", {
+      const newSocket = io(url, {
         transports: ["websocket"],
         autoConnect: false,
       });

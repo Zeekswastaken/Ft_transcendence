@@ -8,7 +8,7 @@ import io, {Socket} from 'socket.io-client';
 import Winning from '../../component/winning';
 import { User } from '../GameComponents/gameInterfaces';
 import Losing from '../../component/losing';
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
 const COM_LEVEL = 0.15;
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
@@ -46,7 +46,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newSocket = io('http://localhost:3000');
+        const newSocket = io(url);
         setSocket(newSocket);
         return () => {
             socket?.disconnect();

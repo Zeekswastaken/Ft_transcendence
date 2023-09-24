@@ -91,6 +91,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           this.server.to(player2.data.PlayerSocket as string).emit("celebrate");
           await this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
         }
+        
         this.GamesData.delete(id);
         this.users.delete(player1.data.PlayerSocket as string);
         this.users.delete(player2.data.PlayerSocket as string);
@@ -168,6 +169,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.users.set(player1.PlayerSocket as string, id);
       this.users.set(player2.PlayerSocket as string, id);
       this.GamesData.set(id, initGameData);
+      player1.status = 'inGame';
+      player2.status = 'inGame';
+      await this.userservice.update(player1,player1.id as number);
+      await this.userservice.update(player2,player2.id as number);
       this.server.to(player1.PlayerSocket as string).emit("getGameData", player2, id);
       this.server.to(player2.PlayerSocket as string).emit("getGameData", player1, id);
     }

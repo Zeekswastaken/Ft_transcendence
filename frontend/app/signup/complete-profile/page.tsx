@@ -7,6 +7,7 @@ import axios from "axios";
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { useRouter } from "next/navigation";
 import jwt,{ JwtPayload } from "jsonwebtoken";
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/upload/update`;
 
 // import omar from '../../../../backend/uploads/'
 // backend return => 'uploads/avatar-1695408516407-131218539.jpeg'
@@ -40,7 +41,7 @@ const completProfile = () => {
     formData.append("gender", gender );
     formData.append("id", currentUserID as any);
     e.preventDefault();
-    await axios.put("http://localhost:3000/upload/update", formData, {headers: {
+    await axios.put(url, formData, {headers: {
       "Content-Type": 'multipart/form-data'
     }}).then(res => {
       setCookie("accessToken", res.data.token);

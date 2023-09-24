@@ -6,7 +6,7 @@ import { useSocketContext } from '../socket';
 import { getCookie } from 'cookies-next';
 import jwt,{ JwtPayload } from 'jsonwebtoken';
 import axios, { HttpStatusCode } from 'axios';
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/channel/createChannel`;
 const CreatGroup = () =>
 {
     const [path, setPath] = useState("/Spectate.png");
@@ -65,7 +65,7 @@ const CreatGroup = () =>
         // formData.forEach((value, key) => {
         //     console.log(`${key}: ${value}`);
         // });
-        axios.post("http://localhost:3000/channel/createChannel", formData)
+        axios.post(url, formData)
         .then(res => {
             if (res.status == HttpStatusCode.Created)
             setGroup(!group)
