@@ -59,17 +59,18 @@ const Settings = () => {
         // setUserNotFound("Invalid Username, please try again!");
       }
       else {
-        let pr:boolean | null
+        let pr:string | null
         if (privacy === "Private")
-          pr = false
+          pr = "private"
         else if (privacy === "Public")
-          pr = true
+          pr = "public"
         else
           pr = null
   
         const formData = new FormData();
         formData.append("id", user?.id);
-        formData.append("privacy", pr as any);
+        formData.append("pr", pr as any);
+        console.log("privacy = ", pr)
         formData.append("password", password );
         formData.append("Bio", bio as string);
         formData.append("twofactorenabled", isEnable as any);
@@ -107,6 +108,7 @@ const Settings = () => {
   const [canSee, setCanSee] = useState<boolean>(false)
   const [inputType, setInputType] = useState("password");
   const handleEyeclicked = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
     setCanSee(!canSee)
     if(!canSee)
       setInputType("text");
@@ -218,7 +220,7 @@ const Settings = () => {
                       Username
                   </label>
                   <div className=" mt-1">
-                    <input onChange={e => setUserName(e.target.value)} value={username} type="text" name="text" autoComplete="off" className=" font-Heading tracking-widest bg-[#562257] w-full h-[50px] sm:text-sm border-transparent focus:ring-0 focus:border-transparent rounded-2xl placeholder:text-[#B1B1B1] placeholder:font-bold placeholder:text-base" placeholder={userData?.username} />
+                    <input onChange={e => setUserName(e.target.value)} value={username} type="text" name="text" autoComplete="off" className=" font-bold tracking-widest bg-[#562257] w-full h-[50px] sm:text-sm border-transparent focus:ring-0 focus:border-transparent rounded-2xl placeholder:text-[#B1B1B1] placeholder:font-bold placeholder:text-base" placeholder={userData?.username} />
                     {invalidUsername && <p className="text-red-500 text-xs pt-1 text-left">{invalidUsername}</p>}
                   </div>
                 </div>
@@ -254,7 +256,7 @@ const Settings = () => {
                           <EyeIcon className=" w-6 h-6 "/>
                         )}
                       </button>
-                      <input onChange={e => setPassword(e.target.value)} value={password} type={inputType} name="password" autoComplete="off" className=" font-Heading tracking-wider border-transparent focus:ring-0 focus:border-transparent bg-[#562257] w-full h-[50px] sm:text-sm  rounded-2xl placeholder:text-[#B1B1B1] placeholder:font-bold placeholder:text-base" />
+                      <input onChange={e => setPassword(e.target.value)} value={password} type={inputType} name="password" autoComplete="off" className=" font-bold tracking-wider border-transparent focus:ring-0 focus:border-transparent bg-[#562257] w-full h-[50px] sm:text-sm  rounded-2xl placeholder:text-[#B1B1B1] placeholder:font-bold placeholder:text-base" />
                     </div>
                     {passwordError && <p className="text-red-500 text-xs pt-1 text-left">{passwordError}</p>}
                   </div>

@@ -13,19 +13,27 @@ interface Props {
   number?: string | number;
 }
 
-const percentage:string = "0%";
-const level:string = "5";
-
-const progress: CSS.Properties = {
-  width: '180px',
-  height: '180px',
-  borderRadius: '50%',
-  // background: `conic-gradient(#FF1382 ${percentage}, #91145D 0)`,
-  background: `radial-gradient(closest-side, #474572 79%, transparent 80% 100%), conic-gradient(#FF1382 ${percentage}, #91145D 0)`,
-}
-
 const LevelReached: React.FC<Props> = ({ styles, title }) => {
+  
   const userData = useUserDataContext()?.user;
+  let LevelReached;
+  let percentage
+  if (userData && userData.stats && userData.stats.level !== undefined) {
+    LevelReached = Math.floor(userData.stats.level)
+    let check = userData.stats.level - Math.floor(userData.stats.level);
+    console.log("level = " , LevelReached)
+    percentage = check * 100 + "%";
+  }
+  const level:string = "5";
+  
+  const progress: CSS.Properties = {
+    width: '180px',
+    height: '180px',
+    borderRadius: '50%',
+    // background: `conic-gradient(#FF1382 ${percentage}, #91145D 0)`,
+    background: `radial-gradient(closest-side, #474572 79%, transparent 80% 100%), conic-gradient(#FF1382 ${percentage}, #91145D 0)`,
+  }
+  console.log("levelReached = ", LevelReached)
   return (
     <div
       className={` animate-fade-right  glass overflow-auto no-scrollbar h-[350px] ${styles}`}
@@ -33,7 +41,7 @@ const LevelReached: React.FC<Props> = ({ styles, title }) => {
         <p className=" p-6 font-Bomb text-3xl text-white">{title}</p>
         <div className=" flex place-content-center items-end">
           <div className=" order-2 text-white font-Bomb text-3xl tracking-wider">
-            <p>level {userData?.stats?.level}</p>
+            <p>level {(LevelReached)}</p>
           </div>
           <div style={progress} className=" flex place-content-center items-center">
             <p className=" font-Bomb text-4xl text-white ">{percentage}</p>
@@ -56,6 +64,10 @@ const CardStats:React.FC<Props> = ( {styles, title, number} ) => {
 
 const WinRate: React.FC<Props> = ({ styles, title }) => {
   const userData = useUserDataContext()?.user;
+  let winrate;
+  if (userData && userData.stats && userData.stats.level !== undefined) {
+    winrate = Math.floor(userData?.stats?.winrate)
+  }
   return (
     <div
       className={` glass animate-fade-right animate-delay-150 ${styles}`}
@@ -65,7 +77,7 @@ const WinRate: React.FC<Props> = ({ styles, title }) => {
           <div className="  flex items-center place-content-center opacity-90 rounded-3xl">
               <div className=" flex items-end justify-center">
                 <img className="" src="/trophy.png" alt="trophy" height={70} width={70} />
-                <p className=" font-Bomb text-white text-4xl">{userData?.stats?.winrate + "%"}</p>
+                <p className=" font-Bomb text-white text-4xl">{winrate + "%"}</p>
               </div>
           </div>
           <CardStats title="Played" styles="text-[#D4D4D4]" number={userData?.stats?.matches_played}/>
