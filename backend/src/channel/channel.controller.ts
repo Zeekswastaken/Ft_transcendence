@@ -12,7 +12,6 @@ export class ChannelController {
     @UseInterceptors(FileInterceptor('file',{storage: diskStorage({
       destination: '../frontend/public/avatars/', // Specify the destination folder where files will be stored
       filename: (req, file, callback) => {
-        console.log("dir : ",__dirname)
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
         const fileExtension = extname(file.originalname);
         const newFileName = `channelavatar-${uniqueSuffix}${fileExtension}`;
@@ -20,18 +19,10 @@ export class ChannelController {
     
     async create(@UploadedFile() file: Express.Multer.File,@Body() data, @Res() res) {
         try{ 
-          // console.log("it kinda worked");
-          // const token = client.handshake.query.token;
-          // const decodedToken = this.jwtService.verify(token.toString());
-          // const userid = decodedToken.sub;
-          // const avatar = await this.uploadController.uploadFile(file)
-          // const { filename, originalName } = avatar;
           const channel = await this.channelService.createChannel(data, data.userid, file);
           
-          // console.log("=====> ", channel);
         if (typeof channel == 'object')
         {
-          console.log("IT DID WORK")
           res.status(HttpStatus.CREATED).json(channel);
         }
         else

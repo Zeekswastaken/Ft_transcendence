@@ -36,7 +36,6 @@ export class UserService {
     // else if (Body.privacy == false)
     // Body.privacy = false;
    
-    console.log("in update =========================",Body);
             await this.userRepo.update(id,Body);
     }
     async findByName(username:any): Promise<User | null>

@@ -29,7 +29,6 @@ const RandomQueue = () => {
   
     const router = useRouter()
     useEffect(() => {
-      console.log("===============>>>>>>><<<<<<<+++++++++++++9999999+++")
       if (socket) {
         socket.emit('AddtoQueue', {userid: currentUserId})
         socket.on('queue', (data: any) => {
@@ -40,7 +39,6 @@ const RandomQueue = () => {
         });
       }
       return () => {
-        console.log("Hello ====================> ");
         socket?.emit("RemoveQueue", {userid: currentUserId})
       }
     }, [socket, currentUserId])

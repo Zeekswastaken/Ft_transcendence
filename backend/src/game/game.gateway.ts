@@ -86,9 +86,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           this.server.to(player1.data.PlayerSocket as string).emit("celebrate");
           this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player1.data.id});
           const user = await this.userservice.findById(player1.data.id);
-          // console.log("USER AFTER FAME====> ", user);
           const user2 = await this.userservice.findById(player2.data.id);
-          // console.log("USER2 AFTER FAME====> ", user2);
         } else {
           this.server.to(player2.data.PlayerSocket as string).emit("celebrate");
           await this.gameservice.save({player1:player1.data, player2: player2.data, player1Score: player1.score, player2Score: player2.score, result: player2.data.id});
@@ -186,7 +184,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         client.emit("getBallOpponentPostion", gameData.player2.y, {x: gameData.ball.x, y: gameData.ball.y});
       }
       else {
-        console.log("===============================> ",gameData.player1.data.username,  gameData.player1.y);
         client.emit("getBallOpponentPostion", gameData.player1.y, {x: 100 - gameData.ball.x, y: gameData.ball.y});
       }
     }
@@ -242,36 +239,29 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('AddtoQueue')
   async add(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
   {
-    // console.log("========================================", data.userid)
     if (data.userid != 0) {
       const queue = await this.gameservice.addToQueue(data.userid);
-      // console.log("*********** ", notif);
-      // console.log("----------->QEUEUUEUEEUEUE ", queue);
+
       this.server.to(client.id).emit("queue", queue);
       if (queue.receiver != null)
       {
-        // console.log("sendeeeeerrrrrrr================== ", queue.sender);
-        // console.log("RECEIVER======================= ", queue.receiver);
+
 
         this.server.to(queue.sender.Socket).emit("queue", queue);
         let queueData = queue;
         await this.gameservice.DeleteQueue(queue.id);
         await this.connectPlayers({p1: queueData.sender.username as string, p2: queueData.receiver.username as string})
       }
-        // console.log("--------------------------------->",queue.receiver);
         const message = "The gameinvite has been sent";
-      // this.server.to(recipient.Socket).emit('message', message);
     }
   }
 
   @SubscribeMessage('RemoveQueue')
   async remove(@MessageBody() data: {userid:Number}, @ConnectedSocket() client: Socket)
   {
-    // console.log("========================================*****************************", data.userid);
       const queue = await this.gameservice.findQueue(data.userid);
       if (queue)
       {
-        console.log("QUEUE ACTUALLY FUND */*/*/*/*/*/*/**/");
         await this.gameservice.DeleteQueue(queue.id);
       }
         this.server.to(client.id).emit("queued", "queuedeleted");
@@ -283,11 +273,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage('AddtoInviteQueue')
   async addinvite(@MessageBody() data: {userid:Number, receiver:string}, @ConnectedSocket() client: Socket)
   {
-    // console.log("========================================", data.userid)
-    // console.log("========================================", data.receiver)
     if (data.userid != 0) {
       const receiver = await this.userservice.findByName(data.receiver);
-      // console.log("WE ARE HERE TO HAVE A FEAST===", receiver);
       const queue = await this.gameservice.addToGroupQueue(data.userid, receiver.id);
       await this.notifService.createGameNotification(data.userid, receiver.id);
       const friendnotif = await this.notifService.getFriendNotifs(receiver.id);
@@ -296,10 +283,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           "friendRequest": friendnotif,
           "gameInvite": gamenotif
         };
-        // console.log("QUEUE= ====== ", queue);
         this.server.to(queue.receiver.Socket).emit("friend notif", notif);
         this.server.to(client.id).emit("pendingqueue", queue);
-        // console.log("NOTIFICATIONS ===== ", notif);
       }
   }
   
@@ -308,7 +293,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     {
       try
       {
-      // console.log("========================================", data.receiver)
       if (data.userid != 0) {
         const receiver = await this.userservice.findByName(data.receiver);
         const queue = await this.gameservice.acceptInvite(data.userid, receiver.id);
@@ -334,7 +318,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     @SubscribeMessage('getLeaderboard')
     async getlead(@ConnectedSocket() client: Socket, @MessageBody() data: {userID:Number})
     {
-      console.log ("userId = ", data.userID)
       try{
         const users = await this.gameservice.getUsersForLeaderboard(data.userID);
         this.server.to(client.id).emit("leaderboard", users);

@@ -34,7 +34,6 @@ export class FriendsService {
     actualFriendship.status = "pending";
     await this.userFriendsRepository.save(actualFriendship);
     initiator.friendsassender.push(actualFriendship);
-    // console.log("-----=-=-=-=-> ", initiator.friendsassender)
     recipient.friendsasreceiver.push(actualFriendship);
     await this.userRepository.save(initiator);
     await this.userRepository.save(recipient);
@@ -62,9 +61,6 @@ export class FriendsService {
   if (!accepting || !waiting) {
       throw new HttpException("User not found", HttpStatus.FORBIDDEN);
   }
-  // console.log("Friendship Receiver ID:", friendship.receiver);
-  // console.log("Accepting Sender ID:", accepting.friendsasreceiver[0].sender);
-  // console.log("Waiting Receiver ID", waiting.friendsassender[0].receiver);
   const position = waiting.friendsassender.findIndex(
     (friendship2) => friendship2.id === friendship.id
   );
@@ -83,13 +79,11 @@ export class FriendsService {
   await this.userFriendsRepository.save(friendship);
   await this.userRepository.save([accepting, waiting]);
   await this.notifService.deleteNotif(accepting, waiting ,"Friend Request");
-  // console.log("---==========> ", accepting.friendsasreceiver[position2].channelid);
 }
 
   
 
 async refuseRequest(userid:Number, recipientid:Number){
-    // console.log("Zakaria ghalet");
     const refusing = await this.userRepository.findOne({
       where: { id: Equal(userid) },
       relations: ['friendsasreceiver','receivednotifications']
@@ -125,23 +119,18 @@ async refuseRequest(userid:Number, recipientid:Number){
     const friendship = await this.userFriendsRepository.findOne({where: [{sender: Equal(userid), receiver: Equal(recipientid)},{ sender: Equal(recipientid), receiver: Equal(userid)}]});
     if (!friendship)
     {
-      // console.log("HEEEEEREERERERERERERERERER");
       throw new HttpException("No friendship to remove", HttpStatus.FORBIDDEN);
 
     }
-    // console.log("pepepeppepee");
     if (friendship.status === "accepted")
     {
-      // console.log("CHANNNENEEEEEEEL DELTETETETETETED");
       await this.channelService.findAndDelete(friendship.channelid);
     }
       await this.userFriendsRepository.remove(friendship);
-      // console.log("leleleleleel");
       await this.notifService.deleteNotif(refusing, waiting ,"Friend Request");
     }
 
   async getUserFriends(userid: any): Promise<User[]> {
-    // console.log("---------->DDDDDDDDDD ", userid);
         const user = await this.userRepository.findOne({
         where: { username: userid },
         relations: ['friendsassender', 'friendsasreceiver'],
@@ -150,7 +139,6 @@ async refuseRequest(userid:Number, recipientid:Number){
       if (!user) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-      // console.log("---------->DDDDDDDDDD here", user.friendsasreceiver[0]);
       const friends = user.friendsasreceiver
         .concat(user.friendsassender)
         .filter(friendship =>
@@ -161,7 +149,6 @@ async refuseRequest(userid:Number, recipientid:Number){
   }
 
   async getChannelUserFriends(userid: any): Promise<{ user: User; channelid: Number; }[]> {
-    // console.log("---------->DDDDDDDDDD ", userid);
     const user = await this.userRepository.findOne({
       where: { username: userid },
       relations: ['friendsassender', 'friendsasreceiver'],
@@ -170,9 +157,7 @@ async refuseRequest(userid:Number, recipientid:Number){
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    
-    // console.log("---------->DDDDDDDDDD here", user.friendsasreceiver[0]);
-    
+        
     const friendsWithChannels = user.friendsasreceiver
       .concat(user.friendsassender)
       .filter(friendship => friendship.status === 'accepted')
@@ -195,7 +180,6 @@ async isFriend(userid: Number, recipientid: Number): Promise<boolean>
   if (!user) {
     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
-//  console.log(userid, " ===== ", recipientid);
   const  friends = user.friendsasreceiver
   .concat(user.friendsassender)
   .filter(friendship =>
@@ -217,7 +201,6 @@ async isPending(userid: Number, recipientid: Number): Promise<any>
   if (!user) {
     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
-//  console.log(userid, " ===== ", recipientid);
   const  friends = user.friendsasreceiver
   .concat(user.friendsassender)
   .filter(friendship =>
@@ -225,7 +208,6 @@ async isPending(userid: Number, recipientid: Number): Promise<any>
   .find(friend => friend.sender.id == recipientid || friend.receiver.id == recipientid);
   if (friends)
   {
-    // console.log("============= " , friends);
     const friends2 = {
       state: true,
       receiver_username: friends.receiver.username
@@ -236,17 +218,4 @@ async isPending(userid: Number, recipientid: Number): Promise<any>
     return false;
   }
  
-  
-  
-  //  async findOne(id: Number): Promise<User>{
-  //   return await this.user;
-  // }
-
-  // update(id: number, updateFriendDto: UpdateFriendDto) {
-  //   return `This action updates a #${id} friend`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} friend`;
-  // }
 }

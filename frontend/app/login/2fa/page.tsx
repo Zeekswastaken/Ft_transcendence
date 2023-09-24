@@ -18,13 +18,11 @@ const page = () => {
 
   const handleSubmit =  (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("QRCode", QRCode);
      if (currentUserID != 0) {
       axios.post("http://localhost:3000/auth/verify", {
          QRCode,
          currentUserID
        }).then(res => {
-         console.log("res = ", res.data.isValid);
          if (res.data.isValid) {
            setCookie("accessToken", res.data.token)
            router.push(`/home`);
@@ -51,7 +49,6 @@ const page = () => {
       axios.post("http://localhost:3000/auth/qr-code", {
         currentUserID,
       }).then(res => {
-        console.log(res.data.qrCodeUri);
         // if (res.data.qrCodeUri)
         // console.log("res = ", res.data); 
         setQRcodeUrl(res.data.qrCodeUri)

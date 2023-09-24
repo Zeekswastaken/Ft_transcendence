@@ -14,27 +14,19 @@ export class AppController {
   @UseGuards(TokenGuard)
   async default(@Res() res:Response,@Req() req:Request,@Query() query: UserDto){
     const status = (req as any).user;
-    // console.log(status.message);
     if (status.status == 'unauthorized')
     {
-      //res.redirect('10.14.4.8:3000/login')
         res.send(status);
         return {
           status:status,
         }
     }
-        //res.sendFile('/Users/orbiay/Desktop/App2/app/views/index.html');
     if(status.status == 'authorized')
     {
-        // console.log(query.avatar_url);
-        //return req.body;
         const decoded = await this.jwt.decoded(status.token);
         const user = await this.userservice.findByName((decoded).username);
-        //user.username = JSON.stringify(user.username);
-        //res.render('profile',{user});
         res.send({user:user,status:status});
     }
-    // console.log("status = " + status);
     return status;
   }
 }

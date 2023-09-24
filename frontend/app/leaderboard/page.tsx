@@ -95,7 +95,6 @@ const page = () => {
     }
   }, [])
   useEffect(() => {
-    console.log("currentUserid = ", currentUserid)
     if (currentUserid !== undefined) {
       socket?.emit("getLeaderboard", {userID: currentUserid})
       socket?.on("leaderboard", (data:any) => {
@@ -103,11 +102,9 @@ const page = () => {
           setTopThree(data.Topthree);
           setRest(data?.Rest);
           setCurrentUserPos(data?.Pos)
-        console.log("leaderBoard = ", data);
       })
     }
   },[currentUserid])
-  console.log(" kkkkk = ", topThree)
   return (
     <div className=" flex place-content-center items-center w-full h-screen max-w-[1300px] min-w-[350px] ">
         <div className=" pt-[150px] pb-10 place-content-center w-full mx-1 h-full  ">

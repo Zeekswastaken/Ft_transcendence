@@ -59,7 +59,6 @@ const FindGroup = ({groupsInfos, search}: GroupInfosStatesProps) => {
             else {
                 setInvalidLink("Invalid Link");
             }
-            console.log("isValid = ", data);
         })
         // console.log("link = ", link)
     }

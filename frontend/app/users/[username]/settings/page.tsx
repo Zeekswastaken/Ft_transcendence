@@ -54,26 +54,28 @@ const Settings = () => {
         setInvalidBio("Invalid Bio")
       }
       else if (username && (!isValidUsername || username.length > 10)) {
-        console.log("Invalid username");
         setInvalidUsername("Invalid Username, please try again!");
         // setUserNotFound("Invalid Username, please try again!");
       }
       else {
-        let pr:string | null
-        if (privacy === "Private")
-          pr = "private"
-        else if (privacy === "Public")
-          pr = "public"
-        else
-          pr = null
-  
+        var towfa;
+        if (isEnable === true)
+        towfa = "true";
+        else if (isEnable === false)
+        towfa = "false";
         const formData = new FormData();
         formData.append("id", user?.id);
+        let pr;
+        if (privacy === "Private")
+          pr = "private"
+        if (privacy === "Public")
+          pr = "public"
+        else if (privacy === "")
+          pr = null
         formData.append("pr", pr as any);
-        console.log("privacy = ", pr)
         formData.append("password", password );
         formData.append("Bio", bio as string);
-        formData.append("twofactorenabled", isEnable as any);
+        formData.append("towfa", towfa as any);
         formData.append("username", username);
         formData.append("file", avatar.current as File);
         await axios.put(`http://localhost:3000/upload/update`, formData).then(res => {
@@ -98,7 +100,6 @@ const Settings = () => {
             }
             else
             {
-              console.log("here")
               router.push(`/users/${user?.username}`)
             }
           }
@@ -133,10 +134,8 @@ const Settings = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       avatar.current = e.target.files[0];
-      console.log("avatar = ", avatar.current)
       try {
         const path = URL.createObjectURL(avatar.current);
-        console.log("path = ", path)
         setPath(path);
       } catch (error) {
         console.error('Error creating URL:', error);

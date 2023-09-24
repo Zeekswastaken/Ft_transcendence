@@ -59,7 +59,6 @@ export default class Paddel implements Player{
     {
         if(this.isLeft){
             if(p5.mouseY <  (p5.height - this.height / 2) && p5.mouseY > 0 - this.height / 2){
-                console.log("Mouse = ", p5.mouseY);
                 this.pos.y = p5.mouseY;
                 return (this.pos.y);
             }

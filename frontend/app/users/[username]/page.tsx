@@ -21,7 +21,6 @@ const LevelReached: React.FC<Props> = ({ styles, title }) => {
   if (userData && userData.stats && userData.stats.level !== undefined) {
     LevelReached = Math.floor(userData.stats.level)
     let check = userData.stats.level - Math.floor(userData.stats.level);
-    console.log("level = " , LevelReached)
     percentage = check * 100 + "%";
   }
   const level:string = "5";
@@ -33,7 +32,6 @@ const LevelReached: React.FC<Props> = ({ styles, title }) => {
     // background: `conic-gradient(#FF1382 ${percentage}, #91145D 0)`,
     background: `radial-gradient(closest-side, #474572 79%, transparent 80% 100%), conic-gradient(#FF1382 ${percentage}, #91145D 0)`,
   }
-  console.log("levelReached = ", LevelReached)
   return (
     <div
       className={` animate-fade-right  glass overflow-auto no-scrollbar h-[350px] ${styles}`}
@@ -91,8 +89,6 @@ const WinRate: React.FC<Props> = ({ styles, title }) => {
 const MatchHistory: React.FC<Props> = ({ styles, title }) => {
   const matchHistory = useUserDataContext()?.matches;
   const userData = useUserDataContext()?.user;
-  console.log ("userData = ", userData)
-  console.log("matchHistory = ", matchHistory)
   return (
     <div
       className={` glass animate-fade-right animate-delay-150 no-scrollbar h-autoData 2xl:h-[350px] overflow-auto ${styles}`}
@@ -109,7 +105,6 @@ const MatchHistory: React.FC<Props> = ({ styles, title }) => {
 					</thead>
 					<tbody className=" font-bold overflow-auto text-xl">
             {matchHistory?.map((match:any) => {
-              console.log("result = ", match.result, " id = ", userData?.id)
               let score = match.player1Score + "-" + match.player2Score
               let result;
               if (match.result === userData?.id){

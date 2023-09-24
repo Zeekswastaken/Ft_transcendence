@@ -89,7 +89,6 @@ const  NotificationDropDown = () => {
       if (data.status === "accepted")
         router.push("/game/OneVsOne/Random")
     })
-    // console.log("username = ", sender)
   }
 
   return (

@@ -32,14 +32,10 @@ const completProfile = () => {
   const avatar = useRef<File | undefined>(undefined);
   const router = useRouter();
 
-  console.log("token = ", token)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     const formData = new FormData();
     formData.append("file", avatar.current as File);
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });    
     formData.append("birthDay", birthDay as unknown as string);
     formData.append("gender", gender );
     formData.append("id", currentUserID as any);
@@ -47,7 +43,6 @@ const completProfile = () => {
     await axios.put("http://localhost:3000/upload/update", formData, {headers: {
       "Content-Type": 'multipart/form-data'
     }}).then(res => {
-      console.log(res.data);
       setCookie("accessToken", res.data.token);
       router.push("/home");
     }).catch(err => {console.log(err)});
@@ -66,10 +61,8 @@ const completProfile = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       avatar.current = e.target.files[0];
-      console.log("avatar = ", avatar.current)
       try {
         const path = URL.createObjectURL(avatar.current);
-        console.log("path = ", path)
         setPath(path);
       } catch (error) {
         console.error('Error creating URL:', error);

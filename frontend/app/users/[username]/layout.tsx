@@ -125,7 +125,6 @@ export default function RootLayout({
   });
 
   socket?.on("isblocked", (data:any) => {
-    console.log("daaaaaaaaaaaaatttttttttaaaaaaaaaaaaaaa = ", data)
     if (!data) {
       setIsBlocked(false);
       setBlockClicked(false)
@@ -195,7 +194,6 @@ useEffect(() => {
     e.preventDefault();
     setBlockClicked(!blockClicked)
     setBlockedDropdown(!blockedDropdown)
-    console.log ("----------userID = ", currentUserID, " --------- recipientID = ", Data?.user?.id)
     socket?.emit("Unblock", {userID: currentUserID, recipientID: Data?.user?.id});
     router.push(`/users/${Data?.user.username}/`)
   }

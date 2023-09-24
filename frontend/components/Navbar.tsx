@@ -33,11 +33,6 @@ const Navbar = () => {
 				<></>
 			)
 	else {
-		// const token = getCookie("accessToken");
-		// const [isUserValid, setIsUserValid] = useState<boolean>(false);
-		// const router = useRouter();
-	  
-		// const user = useUserDataContext()
 		const [user, setUser] = useState<JwtPayload>()
 		
 		const token = getCookie("accessToken");

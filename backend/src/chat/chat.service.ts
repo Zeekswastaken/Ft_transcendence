@@ -31,11 +31,9 @@ export class ChatService {
 
     }
     async saveMsg(text:Partial<Message>, channelid : Number, sender: User){
-        // console.log("------------------>ID ", channelid);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelid)}, relations: ['memberships', 'memberships.messages']});
         if (!channel)
             throw new HttpException("The channel doesn't exist", HttpStatus.FORBIDDEN);
-        // console.log("==========> ", sender);
             const membership = channel.memberships.find(member => member.Userid == sender.id);
         if (!membership)
             throw new HttpException("The user isn't in the channel", HttpStatus.FORBIDDEN);
@@ -63,13 +61,11 @@ export class ChatService {
           message,
           user: users.find((user) => user.id === message.membership.Userid),
         }));
-        // console.log("------>", messagesWithUsers);
         return messagesWithUsers;
     }
     async checkDuo(channelid:Number):Promise<Boolean>
     {
         const channel = await this.channelRepository.findOne({where:{id: Equal(channelid)}});
-        // console.log("-------->", channelid);
         if (!channel)
             throw new HttpException("Channel not found", HttpStatus.FORBIDDEN);
         if (channel.Type === "Duo")
@@ -79,7 +75,6 @@ export class ChatService {
 
     async getType(channelid : Number, userid : Number) : Promise<String>
     {
-        // console.log("===CHANNELID====> ", channelid, " +++++userid++++++ ", userid);
         const membership =  await this.ChannelMRepo.findOne({where:{Userid:Equal(userid), Channelid: Equal(channelid)}});
         if (membership)
             return membership.Type;

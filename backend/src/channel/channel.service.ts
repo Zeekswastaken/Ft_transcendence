@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 import { Equal, In } from 'typeorm';
 import { checkPasswordStrength } from 'src/utils/passwordChecker';
 
-console.log("HEETEe");
 
 @Injectable()
 export class ChannelService {
@@ -21,17 +20,9 @@ export class ChannelService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ){
-        // console.log('ChannelRepository:', channelRepository);
-        // console.log('ChannelMembershipRepository:', channelMembershipRepository);
-        // console.log('UserRepository:', userRepository);
     }
     async createChannel(data: any, owner: Number,file: Express.Multer.File) : Promise<Channel| string>
     {
-        // console.log('--------> ', data.name);
-        // console.log('--------> ', data.type);
-        // console.log('--------> ', data.password);
-        // const filename = 'testest.png';
-        // const image = new Image();
         const channel = new Channel();
         if (data.type == null)
             data.type = "public";
@@ -41,8 +32,6 @@ export class ChannelService {
         channel.Type = data.type;
         if (file)
             channel.avatar = '/avatars/' +file.filename as String;
-        // channel.avatar = '`http://${process.env.HOST}:${process.env.PORT}/src/uploads/' + avatar;
-        // channel.avatar = filename;
         const checkChannel = await this.channelRepository.findOne({ where: { Name: data.name } });    
         if (checkChannel)
             throw new HttpException("Channel already exists with the same name", HttpStatus.FORBIDDEN);
@@ -56,21 +45,14 @@ export class ChannelService {
         }
         if (data.type === "protected" && !data.password)
             throw new HttpException('Password required', HttpStatus.FORBIDDEN); 
-        // if (createChannelDto.type === "private")
-        // {
-                //TRY TO THINK OF A WAY FOR INVITATION LINKS TO WORK HERE/// FRIEND LIST
-        // }
         const membership = new ChannelMembership();
         membership.Userid = owner;
         membership.Type = "owner";
         channel.memberships = [];
-        // console.log("----- ", membership);
         const savedChannel = await this.channelRepository.save(channel);
         membership.Channelid = savedChannel.id
-        // console.log("------->", savedChannel)
         channel.memberships.push(membership)
         await this.channelMembershipRepository.save(membership);
-        // console.log("CHANNELS IN CREATE ======> ", await this.channelRepository.find());
         return savedChannel;
     }
 
@@ -91,7 +73,6 @@ export class ChannelService {
 
         const savedChannel = await this.channelRepository.save(channel);
         membership.Channelid = savedChannel.id
-        // console.log("--------------------------", membership);
         channel.memberships.push(membership);
 
         await this.channelMembershipRepository.save(membership);
@@ -125,19 +106,15 @@ export class ChannelService {
     {
         
         const initiator = await this.userRepository.findOne({where: { id: Equal(initiatorId)}});
-        // console.log("-------8888-> ");
         const channel = await this.channelRepository.findOne({ where: {id: Equal(channelID)}});
-        // console.log("-------8899988-> ");
         const user = await this.userRepository.findOne({where: {id: Equal(userId)}});
         if (!channel || !user || !initiator)
         throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
         
-        // console.log("-------88101010188-> ");
         const membership = await this.channelMembershipRepository.findOne( { where:  {
             user: {id: Equal(user.id)}
             , channel:{id: Equal(channel.id)}
             , Type: 'admin'}});
-            // console.log("-------88111111188-> ");
             if (membership)
             throw new HttpException("The user is already an admin", HttpStatus.FORBIDDEN);
             
@@ -156,7 +133,6 @@ export class ChannelService {
             if (!adminmembership)
             throw new HttpException("The user hasn't joined this channel", HttpStatus.FORBIDDEN);
             adminmembership.Type = 'admin';
-            // console.log("-------8888-> ", adminmembership.Type);
         return await this.channelMembershipRepository.save(adminmembership);
     }
 
@@ -188,18 +164,15 @@ export class ChannelService {
 
     async joinChannel(channelID: Number, userID: Number, Pass: String): Promise<boolean | string>
     {
-        //  console.log("-88888-------> ", userID, "==========> ", channelID);
         const channel = await this.channelRepository.findOne({where: {id : Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
         if (!channel || !user)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
-        // console.log("--------> ", user.id);
         if (user.blacklist)
         {
         const foundChannel = user.blacklist.find(channelID => channelID === channel.id as number)
         if (foundChannel)
         {
-            // console.log("TIOUCHEEEEEEEE PISSYCATTTTT");
             return false; 
         }
         }
@@ -211,14 +184,11 @@ export class ChannelService {
             throw new HttpException("The User is already in the chat", HttpStatus.FORBIDDEN);
         if (channel.Type == "protected")
         {
-            // console.log("TYPE IS PROTECTED==============> ", Pass);
             if (!(await this.checkPassword(channelID, Pass)))
             {
-                // console.log("HEEEERRU");
                 return false;
             }
         }
-        // console.log("DAZ");
         const newmembership = new ChannelMembership();
         newmembership.Userid = user.id;
         newmembership.Channelid = channel.id
@@ -275,17 +245,14 @@ export class ChannelService {
 
     async muteUser(channelID: Number, userID: Number,initiatorID: Number ,amount: number): Promise<ChannelMembership>
     {
-        // console.log("CHECKING IN MUUUUURE ======", userID, "]]]]]]]]]]]]]]]]]]]]]]]]]]",initiatorID );
         const channel = await this.channelRepository.findOne({where: {id: Equal(channelID)}});
         const user = await this.userRepository.findOne({where: {id: Equal(userID)}});
         const userinit = await this.userRepository.findOne({where: {id: Equal(initiatorID)}});
         if (!channel || !user || !userinit)
             throw new HttpException("Channel or User not found", HttpStatus.FORBIDDEN);
-        // console.log("----------->INITIATOR ===== ", initiatorID);
         const user2 = await this.channelMembershipRepository.findOne( { where: {Userid: Equal(initiatorID), Type: 'member', Channelid:Equal(channelID)}});
         if (user2)
         {
-            // console.log("===============>USER IN MUTE", user2);
             throw new HttpException("This User doesn't have the rights to perform this action", HttpStatus.FORBIDDEN);
         }
             const membership = await this.channelMembershipRepository.findOne({
@@ -382,18 +349,14 @@ export class ChannelService {
 
     async getAllChannels(userid: Number): Promise<{ channel: Channel; joined: boolean }[]>
     {
-        // console.log("HEERERERERERERE");
         const user = await this.userRepository.findOne({where:{id:Equal(userid)}});
         if (!user)
             throw new HttpException("User not found", HttpStatus.FORBIDDEN);
-// console.log("==================================================");
         const channels = await this.channelRepository.find({
             where: {
                 Type: Not(In(["private","Duo"])) 
             },relations:['memberships']
         });
-        // console.log("=========================================");
-        // console.log("====CHANNELS=====> ", channels);
         const channelsWithStatus = channels.map((channel) => ({
             channel,
             joined: (channel.memberships || []).some(
@@ -429,7 +392,6 @@ export class ChannelService {
           const channel = await this.channelRepository.findOne({where: { id: Equal(channelID)}});
       
           if (!channel) {
-            // console.log("HEEEEEEEERUUUUU2222222");
             return false; // Channel with the specified ID not found
           }
       
@@ -496,8 +458,6 @@ export class ChannelService {
     const randomData = Math.random().toString(36).substring(7);
     const token = `${channelID}-${timestamp}-${randomData}`;
 
-    //Construct the full invitation link URL
-    // const invitationLink = `localhost:3001/join-channel?token=${token}`;
 
     return token;
   }
@@ -511,10 +471,8 @@ export class ChannelService {
         },
             relations: ['channel']
     });
-    // console.log("=========CHANNENENENENELs=>" ,userid,"{}{}{}}}}}}}" ,channelmemberships);
     const filtered = channelmemberships.filter((membership) => membership.channel.Type != 'Duo');
     const channelIds = filtered.map((membership)=> membership.channel);
-    // console.log("================= ", channelIds);
     return channelIds;
 }
 
@@ -538,7 +496,6 @@ export class ChannelService {
         const memberships = await this.channelMembershipRepository.find({where:{Channelid: Equal(channelid), Type:Not('owner')}, relations:['user']});
         if (!memberships)
             throw new HttpException("Error getting the members", HttpStatus.FORBIDDEN);
-        // console.log("---------->MEMBERSHIPS==== ", memberships)
         const owner = await this.channelMembershipRepository.findOne({where:{Channelid: Equal(channelid), Type:'owner'}, relations:['user']})
         const members = {owner:owner, members:memberships};
         return members

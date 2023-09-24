@@ -137,8 +137,6 @@ export const useGameSocketStore = create<Store>((set) => ({
 
 const page = () => {
   const {buttonType} = useInviteFriendData()
-  console.log("hhh2 = ", buttonType)
-
   return (
     <>
       {/* { buttonType === "friend" ? (<FriendQueue/>) : (<RandomQueue/>)} */}

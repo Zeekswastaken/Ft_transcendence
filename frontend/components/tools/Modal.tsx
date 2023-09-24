@@ -76,15 +76,12 @@ const OneVsOne:React.FC<Props> = ({ title }) => {
 
   const handleFriendInvite = (e : React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log("reciever = ", username)
     socket.emit("AddtoInviteQueue", {userid: currentUserID, receiver: username});
     socket.on("pendingqueue", (data:any) => {
-      console.log(data);
       setInviteFriendData(data);
       router.push("/queue/friendqueue")
     })
   }
-  // console.log("username = ", username)
   return (
     <div className=" w-o place-content-center backdrop-blur-sm">
       {clicked && (

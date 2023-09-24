@@ -25,7 +25,6 @@ export class GameService {
         let User1a, User2a, User1, User2;
         Player2.status = 'online';
         // delete Player2.status;
-        console.log('Player2 == ',Player2);
         User2a = await this.userservice.save(Player2);
         // console.log("Before push: ", Player1.stats.matches);
         Player1.stats.matches.push(savedMatch);
@@ -33,7 +32,6 @@ export class GameService {
         // Player1.stats.matches.push( savedMatch);
         Player1.status = 'online';
         // delete Player1.status;
-        console.log('Player1 == ',Player1);
         User1a = await this.userservice.save(Player1);
         if (match.result === Body.player1.id) {
             User1 = await this.updateWinner(User1a);

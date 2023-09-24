@@ -74,7 +74,6 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
         }
         else {
           setUser(res.data);
-          console.log("profile res = ", res.data)
         }
       }).catch((err) => {
         console.log(err);

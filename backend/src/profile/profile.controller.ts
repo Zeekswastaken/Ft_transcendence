@@ -87,8 +87,6 @@ export class ProfileController {
                         Body.Bio = usersec.Bio;
                     if (Body.privacy == null)
                         Body.privacy = usersec.privacy;
-                    console.log("TWPFA == ",Body.twofactorenabled);
-
                     await this.userservice.update(Body,id);
                     const user = await this.userservice.findById(id); 
                     // console.log(user.stats);

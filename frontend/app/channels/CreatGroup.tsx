@@ -69,7 +69,6 @@ const CreatGroup = () =>
         .then(res => {
             if (res.status == HttpStatusCode.Created)
             setGroup(!group)
-                console.log("here refresh");
         }).catch(err => {console.log(err)})
     }
     const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {

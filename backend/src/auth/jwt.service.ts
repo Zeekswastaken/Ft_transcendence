@@ -9,12 +9,7 @@ export class JWToken{
   constructor(private readonly jwtService: JwtService) {}
 
     private secret_key:String = '0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
-    // async generateToken(user:Partial<User>){
-      
-    //     return  this.jwtService.sign(user);
-    // }
     async generateToken_2(user:Partial<User>):Promise<String>{
-      //console.log("user = " + JSON.stringify(user))
       const obj = {id:user.id,email:user.email,username:user.username,gender:user.gender,birthDay:user.birthDay,twofactorenabled:user.twofactorenabled,avatar_url:user.avatar_url,status:user.status,Socket:user.Socket,PlayerSocket:user.PlayerSocket};
         return  this.jwtService.sign(obj,{secret:process.env.JWT_SECRET});
     }
@@ -25,13 +20,6 @@ export class JWToken{
           if (token)
           {
             const decoded = await this.jwtService.verifyAsync(token, {secret:this.secret_key.toString()});
-            // console.log('Decoded:', decoded);
-            // if (decoded.exp > currentTime) {
-            //   console.log('EHO EHO');
-            //   return true; // Token is valid and has not expired
-            // } else {
-            //   return false; // Token has expired
-            // }
             return true;
           }
           else 
@@ -62,7 +50,6 @@ export class JWToken{
             return null;
         } 
         catch (error) {
-          // console.log('4---------------->>>>');
           return error; // Token is invalid
         }
     }

@@ -60,7 +60,6 @@ const token = getCookie("accessToken");
     if (socket) {
       socket.on('channels', (data: any) => {
         setGroupsInfo(data);
-        console.log("data = ", data)
       });
     }
   }, [currentUserID, socket, group]); 

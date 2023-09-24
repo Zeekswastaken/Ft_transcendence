@@ -60,7 +60,6 @@ const MatchHistory = () => {
 			}
 		}
 	},[])
-	console.log("User = ", User)
 	useEffect(() => {
 		if (User) {
 			axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
@@ -72,7 +71,6 @@ const MatchHistory = () => {
 					setUserFriends(res.data.friends);
 					setMatchHistory(res.data.matches);
 					setUserData(res.data.user)
-					console.log("res = ", res.data)
 				}
 			  }).catch((err) => {
 				console.log(err);
@@ -94,7 +92,6 @@ const MatchHistory = () => {
 					</thead>
 					<tbody className=" font-bold text-xl  ">
 					{matchHistory?.map((match:any) => {
-					console.log("result = ", match.result, " id = ", userData?.id)
 					let score = match.player1Score + "-" + match.player2Score
 					let result;
 					if (match.result === userData?.id){

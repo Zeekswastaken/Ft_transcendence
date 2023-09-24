@@ -39,7 +39,6 @@ export class UploadAvatarsController {
       callback(null, newFileName);},}),}))
   
     async uploadFile(@UploadedFile() file: Express.Multer.File,@Body() Body,@Res() res) {
-        console.log("Boduuuuuuuuuuuu =     >>>>   ",Body);
         if (Body.id)
         {
           // if(file)
@@ -71,6 +70,11 @@ export class UploadAvatarsController {
                 Body.Bio = user.Bio;
             if (Body.pr === null)
                 delete Body.privacy;
+            if(Body.towfa == 'true')
+              Body.twofactorenabled = true;
+            if (Body.towfa == 'false')
+              Body.twofactorenabled = false;
+            delete Body.towfa;
         // console.log("TWPFA == ",Body.twofactorenabled);
         // console.log("Bodyyyyyyyy",Body);
         Body.ischange = true;
@@ -87,10 +91,8 @@ export class UploadAvatarsController {
         else if (Body.pr == 'private')
           Body.privacy = false;
         delete Body.pr;
-      console.log("before update ====================== >",Body);
         await this.userservice.update(Body,user.id as number);
         const after = await this.userservice.findById(user.id);
-        console.log("after update -======== > ",after);
         // console.log("Body == ",Body);
         // console.log("file  ==",file);
         // console.log("user after == ", after);

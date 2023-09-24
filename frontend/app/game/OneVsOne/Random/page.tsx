@@ -70,7 +70,6 @@ const page = () => {
         newsocket.emit("setSocket", {token: token});
         return () => {
             // console.log("client id == ",socket?.id);
-            console.log("Client Disconnected");
             socket?.disconnect();
         }
     }, []);

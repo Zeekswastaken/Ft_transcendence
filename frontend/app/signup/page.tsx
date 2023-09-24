@@ -20,7 +20,6 @@ const signup = () => {
     const usernameRegex = /^[A-Za-z0-9_-]+$/;
     const isValidUsername = usernameRegex.test(username);
     if (!isValidUsername || username.length > 10) {
-      console.log("Invalid username");
       setUserNotFound("Invalid Username, please try again!");
     }
     else {
