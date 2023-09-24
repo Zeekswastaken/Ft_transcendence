@@ -24,7 +24,7 @@ export class ChannelGateway {
   @SubscribeMessage('JoinChannel')
   async Join(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket){
     try {
-      // console.log("MY PINEAPPLE IS RED DEDEDEDEDEDEDEDEDe =====> ", data.channelID, "===============", data.userID, "**************", data.Pass);
+      console.log("MY PINEAPPLE IS RED DEDEDEDEDEDEDEDEDe =====> ", data.channelID, "===============", data.userID, "**************", data.Pass);
     const bool = await this.channelService.joinChannel(data.channelID, data.userID, data.Pass);
     this.server.to(client.id).emit("isjoined", bool);
     this.server.to(data.channelID.toString()).emit("members", await this.channelService.getChannelMembers(data.channelID));
@@ -279,7 +279,7 @@ export class ChannelGateway {
   {
     try{
         const validate = await this.channelService.validateInvitationLink(data.invite);
-          this.server.to(client.id).emit("validateLink",validate);      
+          this.server.to(client.id).emit("validatelink",validate);    
         }
     catch(error)
     {

@@ -2,6 +2,7 @@ import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, Conne
 import { BlockedService } from './blocked.service';
 import { Socket, Server } from 'socket.io';
 import { UserService } from 'src/user/user.service';
+import { FriendsService } from 'src/friends/friends.service';
 
 @WebSocketGateway({
   cors: {
@@ -11,7 +12,7 @@ import { UserService } from 'src/user/user.service';
 export class BlockedGateway {
   @WebSocketServer()
   server: Server;
-  constructor(private readonly blockedService: BlockedService,private readonly userService: UserService) {}
+  constructor(private readonly blockedService: BlockedService,private readonly userService: UserService, private readonly friendsService : FriendsService) {}
 
   @SubscribeMessage('Block')
   async create(@MessageBody() data: { userID: Number, recipientID: Number}, @ConnectedSocket() client: Socket) {
@@ -22,8 +23,10 @@ export class BlockedGateway {
       // console.log("REQUEST ====== ", request);  
       const message = "The User has been blocked";
       const user = await this.userService.findById(data.userID);
+      const recipient = await this.userService.findById(data.recipientID);
       this.server.to(user.Socket).emit('message', message);
-
+      this.server.to(user.Socket).emit('isblocked', await this.blockedService.isBlocked(data.userID, data.recipientID));
+      this.server.to(recipient.Socket).emit('isblocking', await this.blockedService.isBlocking(data.recipientID, data.userID));
       return request;
     } catch (error)
     {
@@ -41,7 +44,11 @@ export class BlockedGateway {
       await this.blockedService.unblock(data.userID, data.recipientID);
       const message = "The user has been unblocked";
       const user = await this.userService.findById(data.userID);
+      const recipient = await this.userService.findById(data.recipientID);
       this.server.to(user.Socket).emit('message', message);
+      this.server.to(recipient.Socket).emit('isblocking', await this.blockedService.isBlocking(data.recipientID, data.userID));
+      this.server.to(user.Socket).emit('isfriend', await this.friendsService.isFriend(data.recipientID, data.userID));
+      this.server.to(recipient.Socket).emit('isfriend', await this.friendsService.isFriend(data.userID, data.recipientID));
 
     } catch(error){
       console.error('Error sending unblocking the user: ',error.message);

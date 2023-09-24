@@ -23,7 +23,7 @@ export class GameService {
         const savedMatch = await this.MatchRepo.save(match);
         Player2.stats.matches.push(savedMatch);
         let User1a, User2a, User1, User2;
-        // Player2.status = 'online';
+        Player2.status = 'online';
         // delete Player2.status;
         console.log('Player2 == ',Player2);
         User2a = await this.userservice.save(Player2);
@@ -31,7 +31,7 @@ export class GameService {
         Player1.stats.matches.push(savedMatch);
         // console.log("After push: ", Player1.stats.matches);
         // Player1.stats.matches.push( savedMatch);
-        // Player1.status = 'online';
+        Player1.status = 'online';
         // delete Player1.status;
         console.log('Player1 == ',Player1);
         User1a = await this.userservice.save(Player1);
@@ -192,7 +192,8 @@ export class GameService {
     {
       const user = await this.userservice.findById(userid);
       const users = await this.userservice.findAll();
-      if (!users || user)
+      // console.log("CURRENT USERS ======== ",user, "OTHER USERRS ======= ", users);
+      if (!users || !user)
           throw new HttpException("Users not found", HttpStatus.NOT_FOUND);
       users.sort((a,b) => b.stats.score - a.stats.score);
       const topTenUsers = users.slice(0, 10);

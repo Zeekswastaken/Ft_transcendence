@@ -9,6 +9,7 @@ import { BallCoordinates, User } from "../GameComponents/gameInterfaces";
 import { useRouter } from 'next/navigation';
 import Losing from '../../component/losing';
 import Winning from '../../component/winning';
+import GameOponent from '../../component/choseGame';
 
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
@@ -100,13 +101,13 @@ const page = () => {
                 </div>
                 <div className=' grid place-items-center items-center'>
                     <div className='border-[2px] border-gray w-fit'>
-                        <ReactP5Wrapper sketch={sketch} 
-                                        socket={socket} 
-                                        gameId={gameId}
-                                        user={user}
-                                        opponentPos={opponentPos}
-                                        ballCoordinates={ballCoordinates}
-                                        />
+                            <ReactP5Wrapper sketch={sketch} 
+                                            socket={socket} 
+                                            gameId={gameId}
+                                            user={user}
+                                            opponentPos={opponentPos}
+                                            ballCoordinates={ballCoordinates}
+                                            />
                     </div>
                 </div>
             </div>
