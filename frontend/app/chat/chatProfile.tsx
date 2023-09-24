@@ -1,15 +1,24 @@
 "use client";
-import reaact from "react";
-import Image from "next/image";
-import GroupList from "./groupList";
+import react, { MouseEvent } from "react";
 import { useMyStore } from "./state";
+import { useRouter } from "next/navigation";
+import { useSocketContext } from "../socket";
 
 
 function chatProfile() {
-  const {setMyBoolean , myBoolean, userData} = useMyStore();
-  if (!userData.user)
-    return null;
-
+  const {userData, currUserData} = useMyStore();
+  const router = useRouter()
+  function showProfile () {
+    router.push("/users/" + userData.user.username);
+  }
+  const {socket} = useSocketContext()
+  function chaleng (e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    socket.emit("AddtoInviteQueue", {userid: currUserData.id, receiver: userData.user.username});
+    socket.on("pendingqueue", (data:any) => {
+      router.push("/queue/friendqueue")
+    })
+  }
   return (
     <div className="drawer drawer-end absolute w-[40%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">
       <input
@@ -32,8 +41,8 @@ function chatProfile() {
             <img src={userData.user.avatar_url} alt="icon" className="h-[100px] w-[100px] max-sm:mt-0 rounded-full max-xl:W-[65%]"/>
           </div>
           <div className=" space-y-2 my-4 flex-col flex items-center">
-            <div className="px-8 bg-purple-700 h-[40px] rounded-md font-Bomb text-md text-white flex justify-center items-center">View profile</div>
-            <div className="px-8 bg-pink-700 h-[40px] rounded-md font-Bomb text-md text-white flex justify-center items-center">chaleng to game</div>
+            <button onClick={showProfile} className="px-8 bg-purple-700 h-[40px] rounded-md font-Bomb text-md text-white flex justify-center items-center">View profile</button>
+            <button onClick={chaleng} className="px-8 bg-pink-700 h-[40px] rounded-md font-Bomb text-md text-white flex justify-center items-center">chaleng to game</button>
           </div>
         </div>
       </div>

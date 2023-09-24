@@ -32,6 +32,11 @@ export class UserService {
     async update(Body:Partial<User>,id:number){
        // console.log("\n\n\n\n\body after == "+ Body);
     //    console.log("id = " + id);
+    // Body.privacy = true;
+    // else if (Body.privacy == false)
+    // Body.privacy = false;
+   
+    console.log("in update =========================",Body);
             await this.userRepo.update(id,Body);
     }
     async findByName(username:any): Promise<User | null>
@@ -70,7 +75,7 @@ export class UserService {
          stats.wins = 0;
          stats.losses = 0;
          stats.level = 0;
-         stats.score = 0;
+         stats.score = 0 as number;
          stats.matches_played = 0;
          stats.user = user;
         return await this.statsRepository.save(stats);

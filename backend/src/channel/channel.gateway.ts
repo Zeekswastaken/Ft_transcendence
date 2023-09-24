@@ -38,12 +38,13 @@ export class ChannelGateway {
   @SubscribeMessage('changePass')
   async changePass(@MessageBody() data: { channelID: Number, userID: Number, Pass: string }, @ConnectedSocket() client: Socket)
   {
+    console.log(data);
     try{
     const bool = await this.channelService.changePass(data.channelID, data.userID, data.Pass);
     if (typeof bool == 'object')
-      client.to(data.channelID.toString()).emit("isPass", true);
+      this.server.to(data.channelID.toString()).emit("isPass", true);
     else
-      client.to(data.channelID.toString()).emit("isPass", bool);
+    this.server.to(data.channelID.toString()).emit("isPass", bool);
     }catch (error) {
       console.error('Error joining channel: ', error.message);
       this.server.to(client.id).emit("isjoined", false);

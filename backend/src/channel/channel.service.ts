@@ -111,7 +111,7 @@ export class ChannelService {
         const membership =  await this.channelMembershipRepository.findOne( { where:  {
             user: {id: Equal(initiatorID)}
             , channel:{id: Equal(channel.id)}
-            , Type: 'admin'}});
+            , Type: 'owner'}});
         if (!membership)
             throw new HttpException("User doesn't have the right to perform this action",HttpStatus.FORBIDDEN);
             const checkPass = checkPasswordStrength(newPass)

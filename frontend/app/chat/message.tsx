@@ -8,7 +8,7 @@ interface messageElements
 
 const message = ({messages}:messageElements) => { 
 
-  const {token, userData,setMyBoolean, chanelType, currUserData, updateChat} = useMyStore();
+  const {currUserData} = useMyStore();
   if (!messages || !messages.user || !messages.user.id || !messages.message) {
     return null;
   }

@@ -1,6 +1,5 @@
 "use client";
-import reaact, { MouseEvent, useEffect, useState } from "react";
-import Image from "next/image";
+import react, { MouseEvent, useEffect, useState } from "react";
 import GroupList from "./groupList";
 import { useMyStore } from "./state";
 import { useSocketContext } from '../socket';
@@ -10,29 +9,22 @@ import { useRouter } from "next/navigation";
 
 
 function chatMembers() {
-  const {setMyBoolean, myBoolean, userData, chatMembers, currUserData, setUserGroups} = useMyStore();
-  // const {socket} = useSocketContext();
-  // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  // const getMembers = (e: MouseEvent<HTMLButtonElement>) => {
-  //   e.preventDefault();
-  //   setIsDrawerOpen(!isDrawerOpen);
-  //   console.log(userData);
-  //   console.log(userData.id);
-  //   socket?.emit("getChannelMembers", {channelid:userData.id})
-  //   socket?.on("members", (data:any) => {
-  //     console.log(data);
-  //   })
-  // }
-  // if(chatMembers.length == 0)
-  //   return null;
-  // console.log(chatMembers.owner.user.username);
+  const {setMyBoolean, userData, chatMembers, currUserData, setUserGroups} = useMyStore();
   const [mem, setMem] = useState<any[]>([]);
   const [owner, setOwner] = useState<any[]>([]);
   const [password, setPassword] = useState<string>("")
   const [type, setType] = useState(userData.Type);
   const [isclicked, setIsclicked] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>("")
+
+  useEffect(() => {
+    socket.on("afterleave", (data:any)=> {
+      if (data.owner){
+        if (data.owner.Channelid === userData.id)
+        setMem(data.members);
+      }
+    })
+  })
 
   useEffect(() => {
     setMem(chatMembers?.members);
@@ -45,11 +37,17 @@ function chatMembers() {
   function redirectToProfile() {
     router.push("/users/" + owner?.user?.username)
   }
+  function Challenge (e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    socket.emit("AddtoInviteQueue", {userid: currUserData.id, receiver: chatMembers?.owner?.username});
+    socket.on("pendingqueue", (data:any) => {
+      router.push("/queue/friendqueue")
+    })
+  }
 
   function leaveGroup() {
     socket.emit("LeaveChannel", { channelID: userData.id, userID: currUserData.id })
     socket?.on("isleft", (data:any) =>{
-      console.log(data);
       if (data.isleft)
         setMyBoolean(false);
       setUserGroups(data);
@@ -57,6 +55,7 @@ function chatMembers() {
   }
 
   const openModal = () => {
+    setErrorMessage("");
     const modal = document.getElementById('my_modal_2') as HTMLDialogElement | null;
     if (modal) {
       modal.showModal();
@@ -70,16 +69,25 @@ function chatMembers() {
   };
 
   function handleChangePassword() {
-    closeModal();
-  }
+    socket.emit("changePass", {channelID:userData.id, userID:chatMembers?.owner?.Userid, Pass:password})
+    socket.on("isPass", (type:any) => {
+        if (type === true){
+          closeModal();
+          setErrorMessage("");
+        }
+        else
+          setErrorMessage(type);
+  })
+}
 
   function checkPrivacy () {
     if (type === "public"){
+      setErrorMessage("");
       document.getElementById('my_modal_1').showModal();
     }
     else {
       socket.emit("switchPrivacy", {channelid:userData.id, Password:null})
-      socket.on("privacy", (type:String) => {
+      socket.on("privacy", (type:any) => {
         setType(type);
       })
     }
@@ -87,10 +95,14 @@ function chatMembers() {
 
   function switchPrivacy (){
     socket.emit("switchPrivacy", {channelid:userData.id, Password:password})
-      socket.on("privacy", (type:String) => {
-        setType(type);
+      socket.on("privacy", (type:any) => {
+        if (type === "public" || type === "protected"){
+          setType(type);
+          document.getElementById('my_modal_1').close();
+        }
+        else
+          setErrorMessage(type);
       })
-      document.getElementById('my_modal_1').close();
   }
   const [privateLink, setPrivateLink] = useState<string>("");
   function getLink() {
@@ -100,7 +112,6 @@ function chatMembers() {
       setPrivateLink(link);
     })
   }
-
 
   return (
     <div className="drawer drawer-end absolute w-[60%] max-2xl:w-[70%] h-[60%] max-sm:h-[90%] right-0 max-sm:w-full">
@@ -124,7 +135,7 @@ function chatMembers() {
             <div className="grid grid-cols-3 grid-rows-3 h-full mx-4 w-full max-sm:mx-0">
               <div className=" row-span-2 h-full place-content-center flex items-center justify-center">
                 <img
-                  src="/avatars/avatar1.png"
+                  src={owner?.user?.avatar_url}
                   alt="icon"
                   className=" h-full max-sm:h-[80%] rounded-full "
                 />
@@ -169,7 +180,7 @@ function chatMembers() {
                           </button>
                         </li>
                         <li className=" place-content-center font-Bomb">
-                          <a>Chaleng</a>
+                          <button onClick={Challenge}>Challenge</button>
                         </li>
                       </ul>
                     </div>
@@ -222,6 +233,7 @@ function chatMembers() {
                           <h3 className="font-Bomb text-2xl text-center">Change Password!</h3>
                           <input onChange={e => { setPassword(e.target.value) }} value={password} type="text" className=" outline-none focus:outline bg-[#532051]  text-center placeholder:font-Bomb font-bold text-white h-14 px-10  w-full placeholder:text-white" placeholder="Password" />
                           <button onClick={handleChangePassword} className="bg-[#FF1382] hover:bg-[#FF1382]/[0.8] duration-300 text-white font-Bomb text-xl tracking-wide px-14 h-10 rounded-xl">Change</button>
+                          {errorMessage && <p className="text-red-500 font-Bomb">{errorMessage}</p>}
                         </div>
                         <form method="dialog" className="modal-backdrop">
                           <button onClick={closeModal}>Close</button>
@@ -232,6 +244,7 @@ function chatMembers() {
                           <h3 className="font-Bomb text-2xl text-center">Create Password</h3>
                           <input onChange={e => { setPassword(e.target.value) }} value={password} type="text" className=" outline-none focus:outline bg-[#532051]  text-center placeholder:font-Bomb font-bold text-white h-14 px-10  w-full placeholder:text-white" placeholder="Password" />
                           <button onClick={switchPrivacy} className="bg-[#FF1382] hover:bg-[#FF1382]/[0.8] duration-300 text-white font-Bomb text-xl tracking-wide px-14 h-10 rounded-xl">Submit</button>
+                          {errorMessage && <p className="text-red-500 font-Bomb">{errorMessage}</p>}
                         </div>
                         <form method="dialog" className="modal-backdrop">
                           <button >Close</button>
@@ -268,7 +281,6 @@ function chatMembers() {
             </ul>
           </div>
           <div className="menu h-[15%] rounded-b-2xl place-items-center max-sm:mb-8 flex items-center justify-center">
-            {/* <button className="btn btn-sm w-[50%] ">Small</button> */}
             <button onClick={leaveGroup} className="btn btn-sm btn-outline btn-error absolute w-[50%] ">
               Leave group
             </button>
