@@ -16,12 +16,16 @@ const CreatGroup = () =>
     const [channelName, setChannelName] = useState("");
     const [currentUserID, setCurrentUserID] = useState<Number>();
     const {socket} = useSocketContext();
+    const [ownerName, setOwnerName] = useState("")
+    const [ownerAvatar, setOwnerAvatar] = useState("")
     const token = getCookie("accessToken");
     useEffect(() => {
         try {
             const user = jwt.decode(token as string) as JwtPayload
             if (user) {
                 setCurrentUserID(user.id)
+                setOwnerName(user.username);
+                setOwnerAvatar(user.avatar_url);
           }
         } catch (error) {
             console.error('Error decoding token:');
@@ -81,10 +85,10 @@ const CreatGroup = () =>
                 <div className=' grid grid-cols-1 lg:grid-cols-2 gap-5'>
                     <div className=' cursor-not-allowed w-full h-[90px] bg-[#2E0231B2] rounded-xl flex items-center px-5 drop-shadow-lg'>
                         <div className=' w-[70px] h-[70px] rounded-full border-[5px] border-primary-pink-200 '>
-                            <img src="https://placekitten.com/g/200/200" className=' rounded-full w-full h-full' alt="" />
+                            <img src={ownerAvatar} className=' rounded-full w-full h-full' alt="" />
                         </div>
                         <div className=' flex-col'>
-                            <p className=' px-3 font-Heading text-white text-xl tracking-wide'>Fouamep</p>
+                            <p className=' px-3 font-Heading text-white text-xl tracking-wide'>{ownerName}</p>
                             <p className=' px-3 font-Heading text-lg tracking-wide text-[#b7b7b7]'>Group Owner</p>
                         </div>
                     </div>

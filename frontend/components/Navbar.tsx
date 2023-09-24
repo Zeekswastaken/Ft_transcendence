@@ -12,7 +12,6 @@ import axios from "axios";
 import { deleteCookie, getCookie } from "cookies-next";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useSocketContext } from "@/app/socket";
-const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/profile/`;
 
 const MobileLinks = ( {pathname, toGo, value}:any) => {
 	return (
@@ -29,51 +28,60 @@ const MobileLinks = ( {pathname, toGo, value}:any) => {
 
 const Navbar = () => {
 	const pathName = usePathname();
+	const [user, setUser] = useState<JwtPayload>()
+	const {socket} = useSocketContext();
+	const currentUsername = user?.username;
+	const isAboveMediumScreens = useMediaQuery("(min-width: 1024px)");
+	const [isMenuToggled, setIsMenuToggled] = useState<boolean>(false);
+	const [mobileSearchtoggle, setMobileSearchtoggle] = useState<boolean>(false);
+	const [searchForUser, setSearchForUser] = useState("");
+	const [userNotFound, setUserNotFound] = useState("");
+	const router = useRouter()
+	const [isInputFocused, setIsInputFocused] = useState(false);
+
+	let check = false
 	if (pathName === "/authCompleteProfile" || pathName === "/login" || pathName === "/login/2fa" || pathName === "/signup" || pathName === "/signup/complete-profile" || pathName === "/not-found")
-		return (
-				<></>
-			)
-	else {
-		const [user, setUser] = useState<JwtPayload>()
-		
+		check = true;	
+	// return (
+		// 		<></>
+		// 	)
+	// else {
+		// const token = getCookie("accessToken");
+		// const [isUserValid, setIsUserValid] = useState<boolean>(false);
+		// const router = useRouter();
+	  
+		// const user = useUserDataContext()
 		const token = getCookie("accessToken");
-		axios.post(url, {
-		token: token
-		}).then(res => {
-		if (res.data.status === "unauthorized")
-			router.push("/login");
-		}).catch(res => (console.log(res)))
-		useEffect(() => {
-			try {
-				const user = jwt.decode(token as string) as JwtPayload
-				if (user)
-				setUser(user)
-			// setCurrentUsername(jwt.decode(token).username);
-		  } catch (error) {
-			console.error('Error decoding token:');
+		if (!check) {
+			axios.post("http://localhost:3000", {
+				token: token
+			}).then(res => {
+				if (res.data.status === "unauthorized")
+				router.push("/login");
+			}).catch(res => (console.log(res)))
 		}
-		}, [token])
-		
-		const {socket} = useSocketContext();
-		useEffect(() => {
-			socket?.emit("getSocketId&JoinRoom", {token: token})
-		}, [socket])
-		// useEffect(() => {u
+	useEffect(() => {
+		try {
+			const user = jwt.decode(token as string) as JwtPayload
+			if (user)
+			setUser(user)
+		// setCurrentUsername(jwt.decode(token).username);
+	  } catch (error) {
+		console.error('Error decoding token:');
+	}
+	}, [token])
+	
+	useEffect(() => {
+		socket?.emit("getSocketId&JoinRoom", {token: token})
+	}, [socket])
+	// useEffect(() => {u
 		//   }, [socket])
 		
-		const currentUsername = user?.username;
-		const isAboveMediumScreens = useMediaQuery("(min-width: 1024px)");
-		const [isMenuToggled, setIsMenuToggled] = useState<boolean>(false);
-		const [mobileSearchtoggle, setMobileSearchtoggle] = useState<boolean>(false);
-		const [searchForUser, setSearchForUser] = useState("");
-		const [userNotFound, setUserNotFound] = useState("");
-		const router = useRouter()
-		const [isInputFocused, setIsInputFocused] = useState(false);
 
 	
 		const handleSearchSubmit = (e: FormEvent<HTMLFormElement>) => {
 			e.preventDefault()
-			axios.get(`${url}${searchForUser}`).then(res => {
+			axios.get(`http://localhost:3000/profile/${searchForUser}`).then(res => {
 				if (res.data.message === "not-found") {
 					setUserNotFound("User Not Found")
 					return ;
@@ -98,7 +106,11 @@ const Navbar = () => {
 		const handleInputBlur = () => {
 			setIsInputFocused(false);
 		};
+	// }
 		return (
+			<>
+				{check ? (<></>) : (
+
 				<nav className="  absolute place-content-center  items-center mt-[30px] mb-[55px] h-auto flex w-full sm:w-[80%] justify-between space-x-5 z-20  p-3 rounded-xl glass">
 					
 					<div className=" flex justify-between">
@@ -194,11 +206,13 @@ const Navbar = () => {
 						)}
 					
 					</nav>
+				)}
+			</>
 
 			// </div>
 			// Mobile navigation
 		)
-	}
+	// }
 }
 
 export default Navbar
