@@ -149,12 +149,8 @@ export class WebsocketGateway implements OnGatewayInit, OnGatewayConnection, OnG
     async getGroupMessage(client: Socket, obj: {token:String, channelid:Number}) {
       if (await this.jwt.verify(obj.token)){
         const sender = await this.jwt.decoded(obj.token)
-<<<<<<< HEAD
-          const messages = await this.chatservice.getmessages(obj.channelid);
-=======
           const messages = await this.chatservice.getmessages(obj.channelid)
           // console.log("===============>SOCKET in the chat ", sender.Socket);
->>>>>>> 88988ab0e55f501487629fb934171184580fd244
           const messagePromises = messages.map((message) =>
           this.blockedService.isBlocked(sender.id, message.user.id)
         );
