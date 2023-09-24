@@ -12,7 +12,7 @@ import axios from "axios";
 import { deleteCookie, getCookie } from "cookies-next";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { useSocketContext } from "@/app/socket";
-const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/`;
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/profile/`;
 
 const MobileLinks = ( {pathname, toGo, value}:any) => {
 	return (
