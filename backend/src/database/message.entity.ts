@@ -10,8 +10,8 @@ export class Message {
   text: string;
 
   @Column({
-    default: () => "TO_CHAR(NOW(), 'HH24:MI')", // CURRENT_TIMESTAMP in hours and minutes
-  })
+    default: () => "TO_CHAR(NOW() AT TIME ZONE INTERVAL '+1 hour', 'HH24:MI')",
+  })  
   Created_at: string;
   
   @ManyToOne(() => ChannelMembership, membership => membership.messages,{
