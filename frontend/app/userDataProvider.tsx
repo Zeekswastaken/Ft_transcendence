@@ -7,7 +7,7 @@ import { getCookie } from "cookies-next";
 import jwt,{ JwtPayload } from "jsonwebtoken";
 import { useParams, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
 export type userData = {
   user: {
     id:number
@@ -67,7 +67,7 @@ export function UserDataProvider({ children, }: userDataProviderProps) {
   const [user, setUser] = useState<userData | undefined>({} as userData)
   useEffect(() => {
     if (User) {
-      axios.get(`http://localhost:3000/profile/${User}`).then((res) =>{
+      axios.get(`${url}/profile/${User}`).then((res) =>{
         if(res.data.message === "not-found"){
           setUser(undefined)
           return;

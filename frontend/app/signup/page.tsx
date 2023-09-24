@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Cookies from 'js-cookie'
 import { setCookie } from 'cookies-next';
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/signup`;
+const url2 = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/42`;
+const url3 = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/auth/google`;
 
 const signup = () => {
   
@@ -24,7 +26,7 @@ const signup = () => {
       setUserNotFound("Invalid Username, please try again!");
     }
     else {
-      await axios.post("http://localhost:3000/auth/signup", {
+      await axios.post(url, {
           username,
           password,
           repassword
@@ -54,8 +56,8 @@ const signup = () => {
     }
   }
   
-  const link_42 = "http://localhost:3000/auth/42";
-  const link_google = "http://localhost:3000/auth/google"
+  const link_42 = url2;
+  const link_google = url3
   
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

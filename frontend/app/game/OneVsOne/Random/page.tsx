@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import Losing from '../../component/losing';
 import Winning from '../../component/winning';
 import GameOponent from '../../component/choseGame';
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
 const page = () => {
     const [user, setUser] = useState<JwtPayload>();
     const [socket, setSocket] = useState<Socket>();
@@ -65,7 +65,7 @@ const page = () => {
     }, [socket]);
 
     useEffect(() => { 
-        const newsocket = io('http://localhost:3000');
+        const newsocket = io(url);
         setSocket(newsocket);
         newsocket.emit("setSocket", {token: token});
         return () => {

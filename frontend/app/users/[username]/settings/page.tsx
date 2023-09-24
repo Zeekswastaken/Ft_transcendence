@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useUserDataContext } from "@/app/userDataProvider";
 import Link from "next/link";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/upload/update`;
 
 
 interface Props {
@@ -76,7 +77,7 @@ const Settings = () => {
         formData.append("twofactorenabled", isEnable as any);
         formData.append("username", username);
         formData.append("file", avatar.current as File);
-        await axios.put(`http://localhost:3000/upload/update`, formData).then(res => {
+        await axios.put(url, formData).then(res => {
           if (res.data.message === "error") {
             return ;
           }

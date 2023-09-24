@@ -13,8 +13,9 @@ export default  function Home() {
   const token = getCookie("accessToken");
   // const [isUserValid, setIsUserValid] = useState<boolean>(false);
   const router = useRouter();
-
-   axios.post("http://localhost:3000", {
+  const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
+  console.log("**************", url);
+  axios.post(url, {
     token: token
   }).then(res => {
     if (res.data.status === "unauthorized")

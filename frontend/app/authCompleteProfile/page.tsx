@@ -8,7 +8,7 @@ import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { useRouter } from "next/navigation";
 import jwt,{ JwtPayload } from "jsonwebtoken";
 
-
+const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/upload/update`;
 const completProfile = () => {
   const [birthDay, setBirthDay] = useState<Date |  null>(null);
   const [gender, setGender] = useState("");
@@ -48,7 +48,7 @@ const completProfile = () => {
       formData.append("id", currentUserID as any);
       formData.append("ischange", ischange as any);
       formData.append("username", username);
-      await axios.put("http://localhost:3000/upload/update", formData, {headers: {
+      await axios.put(url, formData, {headers: {
         "Content-Type": "multipart/form-data"
       }}).then(res => {
         deleteCookie("accessToken")
