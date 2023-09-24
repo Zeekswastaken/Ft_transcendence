@@ -7,7 +7,6 @@ import axios from "axios";
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
 import { useRouter } from "next/navigation";
 import jwt,{ JwtPayload } from "jsonwebtoken";
-const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}/upload/update`;
 
 // import omar from '../../../../backend/uploads/'
 // backend return => 'uploads/avatar-1695408516407-131218539.jpeg'
@@ -21,7 +20,6 @@ const completProfile = () => {
       const user = jwt.decode(token as string) as JwtPayload
       if (user) {
         setCurrentUserID(user.id)
-        deleteCookie("accessToken");
       }
     } catch (error) {
       console.error('Error decoding token:');
@@ -32,18 +30,24 @@ const completProfile = () => {
   // const [avatar_URL, setAvatar_URL] = useState<File>();
   const avatar = useRef<File | undefined>(undefined);
   const router = useRouter();
-
-
+  
+  console.log("token = ", token)
+  
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     const formData = new FormData();
     formData.append("file", avatar.current as File);
+    formData.forEach((value, key) => {
+      console.log(`${key}: ${value}`);
+    });    
     formData.append("birthDay", birthDay as unknown as string);
     formData.append("gender", gender );
     formData.append("id", currentUserID as any);
     e.preventDefault();
-    await axios.put(url, formData, {headers: {
+    await axios.put("http://localhost:3000/upload/update", formData, {headers: {
       "Content-Type": 'multipart/form-data'
     }}).then(res => {
+      console.log(res.data);
+      deleteCookie("accessToken");
       setCookie("accessToken", res.data.token);
       router.push("/home");
     }).catch(err => {console.log(err)});
@@ -62,8 +66,10 @@ const completProfile = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       avatar.current = e.target.files[0];
+      console.log("avatar = ", avatar.current)
       try {
         const path = URL.createObjectURL(avatar.current);
+        console.log("path = ", path)
         setPath(path);
       } catch (error) {
         console.error('Error creating URL:', error);

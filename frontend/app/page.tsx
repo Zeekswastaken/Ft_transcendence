@@ -14,7 +14,6 @@ export default  function Home() {
   // const [isUserValid, setIsUserValid] = useState<boolean>(false);
   const router = useRouter();
   const url = `http://${process.env.NEXT_PUBLIC_HOST}:${process.env.NEXT_PUBLIC_PORT}`;
-  console.log("**************", url);
   axios.post(url, {
     token: token
   }).then(res => {
