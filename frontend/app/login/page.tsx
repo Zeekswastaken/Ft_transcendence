@@ -16,7 +16,7 @@ const login = ({response}:any) => {
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission behavior
-    console.log("====-======-===--->", url1);
+    // console.log("====-======-===--->", url1);
     await axios.post(url1, {
       password,
       username,

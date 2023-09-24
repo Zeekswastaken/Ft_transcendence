@@ -97,7 +97,7 @@ export default function SelectFriend() {
                       }
                       value={person}
                     >
-                      {({ selected, active }) => (
+                      {({ selected:any, active }) => (
                         <>
                           <div className=" flex items-center">
                             <img src={person?.avatar_url} alt="" className="flex-shrink-0 h-6 w-6 rounded-full" />
@@ -117,7 +117,7 @@ export default function SelectFriend() {
                               >
                               <CheckIcon className="h-5 w-5" aria-hidden="true" />
                             </span>
-                          ) : null}
+                          ) : ""}
                         </>
                       )}
                     </Listbox.Option>

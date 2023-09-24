@@ -133,7 +133,7 @@ function chatMembers() {
         <div className="h-[95%] w-full mx-2 bg-[#4C2556] rounded-2xl">
           <div className="menu h-[30%] flex-row bg-[#321B38] rounded-t-2xl">
             <div className="grid grid-cols-3 grid-rows-3 h-full mx-4 w-full max-sm:mx-0">
-              <div className=" row-span-2 h-full place-content-center flex items-center justify-center">
+            <div className=" row-span-2 h-full place-content-center flex items-center justify-center">
                 
                 <img
                   src={userData.avatar}
