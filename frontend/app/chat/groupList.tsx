@@ -1,9 +1,7 @@
 "use client";
-import reaact, { useEffect, useState } from "react";
-import Image from "next/image";
+import react, { MouseEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMyStore } from "./state";
-import { Socket } from "socket.io-client";
 import { useSocketContext } from "../socket";
 
 interface members {
@@ -20,6 +18,13 @@ function groupList({ member }: members) {
   const router = useRouter();
   function redirectToProfile() {
     router.push("/users/" + member.user.username)
+  }
+  function Challenge (e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    socket.emit("AddtoInviteQueue", {userid: currUserData.id, receiver: member.user.username});
+    socket.on("pendingqueue", (data:any) => {
+      router.push("/queue/friendqueue")
+    })
   }
   function muteMember() {
     setIsMuted(true);
@@ -50,36 +55,27 @@ function groupList({ member }: members) {
   }
   useEffect(() => {
     socket?.on("newmembership", (data: any) => {
-      console.log(data);
       setMuted(data);
     })
   }, [])
   useEffect(() => {
     socket?.on("newmembership1", (data: any) => {
-      console.log(data);
       setBaned(data);
     })
   }, [])
   useEffect(() => {
     socket?.on("isadmin", (data: any) => {
-      console.log(data);
       setAdmin(data);
     })
   }, [])
-
-  // console.log(currUserData);
-  // console.log(member);
-  if (member.Type === "admin")
-    console.log("THIS IS ADMIN");
-  // console.log(chatMembers?.members?.isMuted);
   return (
     member.user.id != currUserData.id ? (
       <li className=" p-2 rounded-xl place-items-center">
         <div className="relative h-[60px] flex-shrink-0 rounded-2xl bg-[#673E6A] space-x-4 max-sm:space-x-0 ">
           <img
-            src="/avatars/avatar1.png"
+            src={member.user.avatar_url}
             alt="pic"
-            className="absolute w-[50px] mx-4 max-sm:mx-1 left-0 bottom-1"
+            className="absolute rounded-full w-[50px] mx-4 max-sm:mx-1 left-0 bottom-1"
           />
           <div className=" chat_text_username absolute bottom-4 left-6 max-sm:left-20">
             <p className=" font-Heading text-2xl max-sm:text-lg sm:w-36 truncate">{member.user.username}</p>
@@ -110,7 +106,7 @@ function groupList({ member }: members) {
                   <button onClick={redirectToProfile}> View profile </button>
                 </li>
                 <li className=" place-content-center font-Bomb ">
-                  <a>Challenge</a>
+                  <button onClick={Challenge}>Challenge</button>
                 </li>
                 {currUserData.id === chatMembers?.owner?.Userid ? (<>
 

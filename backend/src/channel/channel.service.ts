@@ -100,7 +100,7 @@ export class ChannelService {
     {
         return await this.channelRepository.findOne({where:{ id: Equal(channelID)}});
     }
-    async changePass(ChannelID : Number, initiatorID : Number, newPass : String)
+    async changePass(ChannelID : Number, initiatorID : Number, newPass : String) : Promise<Channel | string>
     {
         const initiator = await this.userRepository.find({where: {id:Equal(initiatorID)}});
         const channel = await this.channelRepository.findOne({ where: { id: Equal(ChannelID) } });
@@ -109,10 +109,13 @@ export class ChannelService {
         const membership =  await this.channelMembershipRepository.findOne( { where:  {
             user: {id: Equal(initiatorID)}
             , channel:{id: Equal(channel.id)}
-            , Type: 'admin'}});
+            , Type: 'owner'}});
         if (!membership)
             throw new HttpException("User doesn't have the right to perform this action",HttpStatus.FORBIDDEN);
-        const hashedPass = await this.hashPassword(newPass);
+            const checkPass = checkPasswordStrength(newPass)
+            if (checkPass === 'Weak')
+                return "Password not strong enough";
+            const hashedPass = await this.hashPassword(newPass);
         channel.Password = hashedPass;
         return await this.channelRepository.save(channel);
     }

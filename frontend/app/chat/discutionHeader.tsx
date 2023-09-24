@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { useMyStore } from "./state";
 
 type Obj  = {
@@ -24,15 +23,13 @@ const discutionHeader = () => {
     obj.bool = true;
   }
   else {
-    obj.avatar = "./avatars/avatar2.png"; //should be updated later
+    obj.avatar = userData.avatar;
     obj.name = userData.Name;
     obj.bool = false;
   }
   return (
     <div>
       <div className="relative h-[80px] flex-shrink-0 rounded-tl-xl rounded-tr-xl rounded-br-0 rounded-bl-0 bg-[#2D0130] ">
-        {/* <Image src="/vector.svg" width={40} height={40} alt="icon" className="absolute mx-4 right-2 bottom-8" /> */}
-        {/* <Image src="/icons.png" width={40} height={40} alt="icon" className="absolute mx-4 right-2 bottom-8" /> */}
         <div className="w-[50px] h-full lg:hidden">
 
         <button onClick={() =>setMyBoolean(false)} type="button" className=" mx-2 rounded-2xl absolute bottom-5 left-2 hover:bg-primary-purple-100">
