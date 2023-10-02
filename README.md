@@ -2,8 +2,7 @@
 
 ![PingPong Game](app_screenshot.png)
 
-Welcome to the PingPong Game App! This application is developed using NestJS and is designed to bring the excitement of a digital ping-pong game to your screen. Whether you're a casual player looking for some fun or a ping pong enthusiast aiming to test your skills, this app has something for everyone.
-
+Hello and welcome to the PingPong Game App! Thank you for choosing our application, which was developed using NestJS and NextJS, and brings the excitement of a digital ping-pong game to your screen. Whether you're a casual player seeking some fun or a ping-pong enthusiast aiming to test your skills, we've got you covered.
 ## Features
 
 - **User-Friendly Interface:** The app provides an intuitive and user-friendly interface, making it easy for players of all ages to enjoy the game.
